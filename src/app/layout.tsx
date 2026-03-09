@@ -12,6 +12,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("batonhub_dark")==="true")document.documentElement.classList.add("dark")}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col bg-gray-50 text-gray-900 antialiased">
         <a href="#main-content" className="skip-link">
           본문으로 건너뛰기

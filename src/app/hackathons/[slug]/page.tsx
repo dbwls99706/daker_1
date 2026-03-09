@@ -630,15 +630,17 @@ function SubmitTab({
             </div>
             <button
               onClick={() => {
-                onSave(
-                  existingSubmission!.items,
-                  existingSubmission!.memo,
-                  existingSubmission!.teamName
-                );
+                if (confirm("제출을 철회하고 수정 모드로 전환합니다. 계속하시겠습니까?")) {
+                  onSave(
+                    existingSubmission!.items,
+                    existingSubmission!.memo,
+                    existingSubmission!.teamName
+                  );
+                }
               }}
               className="rounded-lg border border-orange-300 px-3 py-1.5 text-xs font-medium text-orange-700 hover:bg-orange-50 transition"
             >
-              수정하기
+              수정하기 (재제출)
             </button>
           </div>
           <p className="mt-1 text-xs text-green-700">

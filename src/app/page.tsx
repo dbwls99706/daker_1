@@ -23,24 +23,20 @@ export default function HomePage() {
     refresh((n) => n + 1);
   }, []);
 
-  if (!ready) {
-    return <LoadingSpinner />;
-  }
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const hackathons = useMemo(() => getHackathons(), [ready]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const teams = useMemo(() => getTeams(), [ready]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const leaderboards = useMemo(() => getAllLeaderboards(), [ready]);
-  const bookmarks = getBookmarks(); // re-read on bookmark toggle
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const submissions = useMemo(() => getSubmissions(), [ready]);
+  const hackathons = useMemo(() => (ready ? getHackathons() : []), [ready]);
+  const teams = useMemo(() => (ready ? getTeams() : []), [ready]);
+  const leaderboards = useMemo(() => (ready ? getAllLeaderboards() : []), [ready]);
+  const bookmarks = ready ? getBookmarks() : [];
+  const submissions = useMemo(() => (ready ? getSubmissions() : []), [ready]);
 
   const ongoingCount = hackathons.filter((h) => h.status === "ongoing").length;
   const openTeamCount = teams.filter((t) => t.isOpen).length;
   const totalEntries = leaderboards.reduce((sum, lb) => sum + lb.entries.length, 0);
   const submittedCount = submissions.filter((s) => s.status === "submitted").length;
+
+  if (!ready) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="space-y-10">
