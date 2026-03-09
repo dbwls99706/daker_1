@@ -7,6 +7,7 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getDday, formatDate } from "@/lib/utils";
 
 type SortKey = "latest" | "deadline";
@@ -62,7 +63,7 @@ function HackathonsContent() {
   }, [ready]);
 
   if (!ready) {
-    return <div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -130,6 +131,17 @@ function HackathonsContent() {
               href={`/hackathons/${h.slug}`}
               className="group flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-blue-200"
             >
+              {h.thumbnailUrl && (
+                <div className="mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
+                  <img
+                    src={h.thumbnailUrl}
+                    alt={h.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  />
+                </div>
+              )}
               <div className="mb-3 flex items-center gap-2">
                 <StatusBadge status={h.status} />
                 {h.status !== "ended" && (
@@ -161,7 +173,7 @@ function HackathonsContent() {
 
 export default function HackathonsPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>}>
+    <Suspense fallback={<LoadingSpinner />}>
       <HackathonsContent />
     </Suspense>
   );

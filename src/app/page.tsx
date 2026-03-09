@@ -4,17 +4,14 @@ import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getDday, formatDate } from "@/lib/utils";
 
 export default function HomePage() {
   const ready = useSeedData();
 
   if (!ready) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-gray-500">로딩중...</div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   const hackathons = getHackathons();
@@ -80,6 +77,17 @@ export default function HomePage() {
               href={`/hackathons/${h.slug}`}
               className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
             >
+              {h.thumbnailUrl && (
+                <div className="mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
+                  <img
+                    src={h.thumbnailUrl}
+                    alt={h.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  />
+                </div>
+              )}
               <div className="mb-3 flex items-center gap-2">
                 <StatusBadge status={h.status} />
                 {h.status !== "ended" && (
@@ -117,12 +125,13 @@ export default function HomePage() {
             .filter((t) => t.isOpen)
             .slice(0, 4)
             .map((team) => (
-              <div
+              <Link
                 key={team.teamCode}
-                className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                href={team.hackathonSlug ? `/camp?hackathon=${team.hackathonSlug}` : "/camp"}
+                className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-green-200"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold">{team.name}</h3>
+                  <h3 className="font-bold group-hover:text-green-600">{team.name}</h3>
                   <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">
                     모집중
                   </span>
@@ -138,7 +147,7 @@ export default function HomePage() {
                 <p className="mt-2 text-xs text-gray-400">
                   {team.memberCount}명 참여중
                 </p>
-              </div>
+              </Link>
             ))}
         </div>
       </section>
@@ -151,8 +160,9 @@ export default function HomePage() {
             전체보기 →
           </Link>
         </div>
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-          <table className="w-full text-sm">
+        <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+          <table className="w-full min-w-[480px] text-sm">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th className="px-4 py-3 font-semibold text-gray-600">순위</th>
@@ -164,7 +174,11 @@ export default function HomePage() {
             <tbody>
               {[...leaderboards
                 .flatMap((lb) =>
-                  lb.entries.map((e) => ({ ...e, hackathonSlug: lb.hackathonSlug }))
+                  lb.entries.map((e) => ({
+                    ...e,
+                    hackathonSlug: lb.hackathonSlug,
+                    hackathonTitle: hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug,
+                  }))
                 )]
                 .sort((a, b) => b.score - a.score)
                 .slice(0, 5)
@@ -173,7 +187,9 @@ export default function HomePage() {
                     <td className="px-4 py-3 font-bold text-gray-900">{i + 1}</td>
                     <td className="px-4 py-3 font-medium">{entry.teamName}</td>
                     <td className="px-4 py-3 text-blue-600 font-semibold">{entry.score}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{entry.hackathonSlug}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {entry.hackathonTitle.length > 20 ? entry.hackathonTitle.slice(0, 20) + "..." : entry.hackathonTitle}
+                    </td>
                   </tr>
                 ))}
             </tbody>

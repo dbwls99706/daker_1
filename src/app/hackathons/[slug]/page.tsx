@@ -7,6 +7,7 @@ import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmiss
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { formatKRW, formatDateTime, getDday, generateId } from "@/lib/utils";
 import type { Submission } from "@/types";
 
@@ -32,7 +33,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   const [, forceUpdate] = useState(0);
 
   if (!ready) {
-    return <div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>;
+    return <LoadingSpinner />;
   }
 
   const detail = getHackathonDetail(slug);
@@ -89,7 +90,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     const sub: Submission = {
       id: existing?.id || generateId(),
       hackathonSlug: slug,
-      teamName: teamName || "내 팀",
+      teamName: teamName.trim(),
       status: "draft",
       items,
       memo,
@@ -102,7 +103,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
 
   function handleSubmit(items: { key: string; value: string }[], memo: string, teamName: string) {
     const existing = submissions[0];
-    const finalTeamName = teamName || "내 팀";
+    const finalTeamName = teamName.trim();
     const sub: Submission = {
       id: existing?.id || generateId(),
       hackathonSlug: slug,
@@ -386,6 +387,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               <EmptyState title="리더보드 데이터 없음" description="아직 제출된 결과가 없습니다." />
             ) : (
               <div className="overflow-x-auto">
+                <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-gray-50 text-left">
@@ -571,19 +573,25 @@ function SubmitTab({
       </div>
 
       {!isSubmitted && (
-        <div className="flex gap-3 pt-2">
-          <button
-            onClick={() => onSave(items, memo, teamName)}
-            className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
-          >
-            임시 저장
-          </button>
-          <button
-            onClick={() => setShowConfirm(true)}
-            className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            제출 완료
-          </button>
+        <div className="space-y-2 pt-2">
+          {!teamName.trim() && (
+            <p className="text-xs text-red-500">팀명을 입력해야 제출할 수 있습니다.</p>
+          )}
+          <div className="flex gap-3">
+            <button
+              onClick={() => onSave(items, memo, teamName)}
+              className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              임시 저장
+            </button>
+            <button
+              onClick={() => setShowConfirm(true)}
+              disabled={!teamName.trim()}
+              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              제출 완료
+            </button>
+          </div>
         </div>
       )}
 

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { generateId } from "@/lib/utils";
 import type { Team } from "@/types";
 
@@ -61,7 +62,7 @@ function CampContent() {
   }
 
   if (!ready) {
-    return <div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -274,7 +275,7 @@ function CampContent() {
 
 export default function CampPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>}>
+    <Suspense fallback={<LoadingSpinner />}>
       <CampContent />
     </Suspense>
   );

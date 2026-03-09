@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { getHackathons, getTeams } from "@/lib/storage";
 
 const navLinks = [
   { href: "/hackathons", label: "해커톤" },

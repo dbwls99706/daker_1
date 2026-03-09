@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getAllLeaderboards, getHackathons } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 type PeriodFilter = "all" | "7d" | "30d";
 
@@ -60,7 +61,7 @@ export default function RankingsPage() {
   }, [ready, period]);
 
   if (!ready) {
-    return <div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -93,8 +94,10 @@ export default function RankingsPage() {
       {rankings.length === 0 ? (
         <EmptyState title="랭킹 데이터 없음" description="해당 기간에 제출된 결과가 없습니다." />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm">
+        <>
+        <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table className="w-full min-w-[560px] text-sm">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th className="px-4 py-3 font-semibold text-gray-600 w-16">순위</th>
@@ -141,6 +144,7 @@ export default function RankingsPage() {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );
