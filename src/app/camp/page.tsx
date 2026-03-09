@@ -7,6 +7,7 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { Modal } from "@/components/ui/Modal";
 import { generateId, sanitizeUrl } from "@/lib/utils";
 import type { Team } from "@/types";
 
@@ -17,6 +18,7 @@ function CampContent() {
 
   const [showCreate, setShowCreate] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [deleteTarget, setDeleteTarget] = useState<{ teamCode: string; name: string } | null>(null);
 
   // Form state
   const [name, setName] = useState("");
@@ -266,12 +268,7 @@ function CampContent() {
                     </button>
                   )}
                   <button
-                    onClick={() => {
-                      if (window.confirm(`"${t.name}" 팀을 삭제하시겠습니까?`)) {
-                        deleteTeam(t.teamCode);
-                        setRefreshKey((n) => n + 1);
-                      }
-                    }}
+                    onClick={() => setDeleteTarget({ teamCode: t.teamCode, name: t.name })}
                     className="font-medium text-red-400 hover:text-red-600"
                   >
                     삭제
@@ -282,6 +279,37 @@ function CampContent() {
           ))}
         </div>
       )}
+
+      {/* Delete Confirm Modal */}
+      <Modal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title="팀 삭제"
+        actions={
+          <>
+            <button
+              onClick={() => setDeleteTarget(null)}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              onClick={() => {
+                if (deleteTarget) {
+                  deleteTeam(deleteTarget.teamCode);
+                  setRefreshKey((n) => n + 1);
+                  setDeleteTarget(null);
+                }
+              }}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            >
+              삭제
+            </button>
+          </>
+        }
+      >
+        <p>&ldquo;{deleteTarget?.name}&rdquo; 팀을 삭제하시겠습니까?</p>
+      </Modal>
     </div>
   );
 }

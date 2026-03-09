@@ -165,7 +165,22 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1" role="tablist" aria-label="해커톤 상세 탭">
+      <div
+        className="flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1"
+        role="tablist"
+        aria-label="해커톤 상세 탭"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            const idx = TABS.findIndex((t) => t.key === activeTab);
+            const next = e.key === "ArrowRight"
+              ? (idx + 1) % TABS.length
+              : (idx - 1 + TABS.length) % TABS.length;
+            setActiveTab(TABS[next].key);
+            document.getElementById(`tab-${TABS[next].key}`)?.focus();
+          }
+        }}
+      >
         {TABS.map((tab) => (
           <button
             key={tab.key}
@@ -174,6 +189,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             aria-selected={activeTab === tab.key}
             aria-controls={`tabpanel-${tab.key}`}
             id={`tab-${tab.key}`}
+            tabIndex={activeTab === tab.key ? 0 : -1}
             className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition ${
               activeTab === tab.key
                 ? "bg-white text-blue-700 shadow-sm"
@@ -190,20 +206,28 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
         {activeTab === "overview" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">개요</h2>
-            <p className="text-gray-700 leading-relaxed">{sec.overview.summary}</p>
-            <div className="rounded-lg bg-blue-50 p-4">
-              <h3 className="font-semibold text-blue-900">팀 정책</h3>
-              <ul className="mt-2 space-y-1 text-sm text-blue-800">
-                <li>개인 참가: {sec.overview.teamPolicy.allowSolo ? "가능" : "불가"}</li>
-                <li>최대 팀원: {sec.overview.teamPolicy.maxTeamSize}명</li>
-              </ul>
-            </div>
+            {sec.overview ? (
+              <>
+                <p className="text-gray-700 leading-relaxed">{sec.overview.summary}</p>
+                <div className="rounded-lg bg-blue-50 p-4">
+                  <h3 className="font-semibold text-blue-900">팀 정책</h3>
+                  <ul className="mt-2 space-y-1 text-sm text-blue-800">
+                    <li>개인 참가: {sec.overview.teamPolicy.allowSolo ? "가능" : "불가"}</li>
+                    <li>최대 팀원: {sec.overview.teamPolicy.maxTeamSize}명</li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <EmptyState title="개요 정보 없음" description="이 해커톤의 개요 정보가 아직 등록되지 않았습니다." />
+            )}
           </div>
         )}
 
         {activeTab === "eval" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">평가</h2>
+            {sec.eval ? (
+            <>
             <div className="rounded-lg bg-gray-50 p-4">
               <div className="text-sm font-semibold text-gray-600">평가 지표</div>
               <div className="mt-1 text-xl font-bold text-blue-600">{sec.eval.metricName}</div>
@@ -228,12 +252,17 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 <p>일일 최대 제출: {sec.eval.limits.maxSubmissionsPerDay}건</p>
               </div>
             )}
+            </>
+            ) : (
+              <EmptyState title="평가 정보 없음" description="이 해커톤의 평가 정보가 아직 등록되지 않았습니다." />
+            )}
           </div>
         )}
 
         {activeTab === "schedule" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">일정</h2>
+            {sec.schedule?.milestones?.length ? (
             <div className="relative space-y-0">
               {sec.schedule.milestones.map((m, i) => {
                 const isPast = new Date(m.at) < new Date();
@@ -257,62 +286,75 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 );
               })}
             </div>
+            ) : (
+              <EmptyState title="일정 정보 없음" description="이 해커톤의 일정 정보가 아직 등록되지 않았습니다." />
+            )}
           </div>
         )}
 
         {activeTab === "prize" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">상금</h2>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {sec.prize.items.map((p, i) => (
-                <div
-                  key={i}
-                  className={`rounded-xl border-2 p-6 text-center ${
-                    i === 0
-                      ? "border-yellow-300 bg-yellow-50"
-                      : i === 1
-                      ? "border-gray-300 bg-gray-50"
-                      : "border-orange-200 bg-orange-50"
-                  }`}
-                >
-                  <div className="text-2xl">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</div>
-                  <div className="mt-2 text-sm font-medium text-gray-600">{p.place}</div>
-                  <div className="mt-1 text-xl font-bold">{formatKRW(p.amountKRW)}</div>
-                </div>
-              ))}
-            </div>
+            {sec.prize?.items?.length ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                {sec.prize.items.map((p, i) => (
+                  <div
+                    key={i}
+                    className={`rounded-xl border-2 p-6 text-center ${
+                      i === 0
+                        ? "border-yellow-300 bg-yellow-50"
+                        : i === 1
+                        ? "border-gray-300 bg-gray-50"
+                        : "border-orange-200 bg-orange-50"
+                    }`}
+                  >
+                    <div className="text-2xl">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</div>
+                    <div className="mt-2 text-sm font-medium text-gray-600">{p.place}</div>
+                    <div className="mt-1 text-xl font-bold">{formatKRW(p.amountKRW)}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState title="상금 정보 없음" description="이 해커톤의 상금 정보가 아직 등록되지 않았습니다." />
+            )}
           </div>
         )}
 
         {activeTab === "info" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">안내</h2>
-            <div className="space-y-3">
-              {sec.info.notice.map((n, i) => (
-                <div key={i} className="flex gap-2 rounded-lg bg-gray-50 p-3">
-                  <span className="text-blue-500">•</span>
-                  <p className="text-sm text-gray-700">{n}</p>
+            {sec.info ? (
+              <>
+                <div className="space-y-3">
+                  {sec.info.notice.map((n, i) => (
+                    <div key={i} className="flex gap-2 rounded-lg bg-gray-50 p-3">
+                      <span className="text-blue-500">•</span>
+                      <p className="text-sm text-gray-700">{n}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div className="flex gap-3 pt-2">
-              <a
-                href={sec.info.links.rules}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
-              >
-                규정 보기
-              </a>
-              <a
-                href={sec.info.links.faq}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
-              >
-                FAQ
-              </a>
-            </div>
+                <div className="flex gap-3 pt-2">
+                  <a
+                    href={sec.info.links.rules}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+                  >
+                    규정 보기
+                  </a>
+                  <a
+                    href={sec.info.links.faq}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+                  >
+                    FAQ
+                  </a>
+                </div>
+              </>
+            ) : (
+              <EmptyState title="안내 정보 없음" description="이 해커톤의 안내 정보가 아직 등록되지 않았습니다." />
+            )}
           </div>
         )}
 
@@ -372,19 +414,26 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
         )}
 
         {activeTab === "submit" && (
-          <SubmitTab
-            sections={sec.submit}
-            hackathonSlug={slug}
-            existingSubmission={submission || submissions[0] || null}
-            onSave={handleSaveSubmission}
-            onSubmit={handleSubmit}
-          />
+          sec.submit ? (
+            <SubmitTab
+              sections={sec.submit}
+              hackathonSlug={slug}
+              existingSubmission={submission || submissions[0] || null}
+              onSave={handleSaveSubmission}
+              onSubmit={handleSubmit}
+            />
+          ) : (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold">제출</h2>
+              <EmptyState title="제출 정보 없음" description="이 해커톤의 제출 양식이 아직 등록되지 않았습니다." />
+            </div>
+          )
         )}
 
         {activeTab === "leaderboard" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">리더보드</h2>
-            {sec.leaderboard.note && (
+            {sec.leaderboard?.note && (
               <p className="text-sm text-gray-500">{sec.leaderboard.note}</p>
             )}
             {!leaderboard || leaderboard.entries.length === 0 ? (

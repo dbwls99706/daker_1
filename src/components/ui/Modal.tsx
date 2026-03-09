@@ -46,6 +46,9 @@ export function Modal({ open, onClose, title, children, actions }: ModalProps) {
 
   useEffect(() => {
     if (!open) return;
+    // Lock body scroll
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", handleKeyDown);
     // Focus first focusable element
     const timer = setTimeout(() => {
@@ -57,6 +60,7 @@ export function Modal({ open, onClose, title, children, actions }: ModalProps) {
       }
     }, 50);
     return () => {
+      document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", handleKeyDown);
       clearTimeout(timer);
     };

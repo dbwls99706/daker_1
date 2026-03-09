@@ -1,5 +1,7 @@
 export function formatDate(iso: string): string {
+  if (!iso) return "-";
   const d = new Date(iso);
+  if (isNaN(d.getTime())) return "-";
   return d.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "2-digit",
@@ -8,7 +10,9 @@ export function formatDate(iso: string): string {
 }
 
 export function formatDateTime(iso: string): string {
+  if (!iso) return "-";
   const d = new Date(iso);
+  if (isNaN(d.getTime())) return "-";
   return d.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "2-digit",
