@@ -7,16 +7,29 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 type PeriodFilter = "all" | "monthly" | "yearly";
+type SortField = "rank" | "teamName" | "totalScore" | "count";
+type SortDir = "asc" | "desc";
 
 export default function RankingsPage() {
   const ready = useSeedData();
   const [period, setPeriod] = useState<PeriodFilter>("all");
   const [hackathonFilter, setHackathonFilter] = useState<string>("all");
+  const [sortField, setSortField] = useState<SortField>("rank");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const hackathons = useMemo(() => {
     if (!ready) return [];
     return getHackathons();
   }, [ready]);
+
+  function toggleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir(field === "totalScore" ? "desc" : "asc");
+    }
+  }
 
   const rankings = useMemo(() => {
     if (!ready) return [];
@@ -67,17 +80,38 @@ export default function RankingsPage() {
       }
     }
 
-    return Array.from(teamScores.values())
+    const ranked = Array.from(teamScores.values())
       .sort((a, b) => {
         if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
         return a.teamName.localeCompare(b.teamName);
       })
       .map((t, i) => ({ ...t, rank: i + 1 }));
-  }, [ready, period, hackathonFilter, hackathons]);
+
+    // Apply user sort
+    if (sortField !== "rank" || sortDir !== "asc") {
+      ranked.sort((a, b) => {
+        let cmp = 0;
+        switch (sortField) {
+          case "rank": cmp = a.rank - b.rank; break;
+          case "teamName": cmp = a.teamName.localeCompare(b.teamName); break;
+          case "totalScore": cmp = a.totalScore - b.totalScore; break;
+          case "count": cmp = a.count - b.count; break;
+        }
+        return sortDir === "desc" ? -cmp : cmp;
+      });
+    }
+
+    return ranked;
+  }, [ready, period, hackathonFilter, hackathons, sortField, sortDir]);
 
   if (!ready) {
     return <LoadingSpinner />;
   }
+
+  const sortIcon = (field: SortField) => {
+    if (sortField !== field) return " ↕";
+    return sortDir === "asc" ? " ↑" : " ↓";
+  };
 
   return (
     <div className="space-y-6">
@@ -138,10 +172,26 @@ export default function RankingsPage() {
           <table className="w-full min-w-[560px] text-sm" aria-label="글로벌 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16">순위</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">팀</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">총 점수</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">참가 횟수</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16">
+                  <button onClick={() => toggleSort("rank")} className="hover:text-blue-600 transition">
+                    순위{sortIcon("rank")}
+                  </button>
+                </th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">
+                  <button onClick={() => toggleSort("teamName")} className="hover:text-blue-600 transition">
+                    팀{sortIcon("teamName")}
+                  </button>
+                </th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">
+                  <button onClick={() => toggleSort("totalScore")} className="hover:text-blue-600 transition">
+                    총 점수{sortIcon("totalScore")}
+                  </button>
+                </th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">
+                  <button onClick={() => toggleSort("count")} className="hover:text-blue-600 transition">
+                    참가 횟수{sortIcon("count")}
+                  </button>
+                </th>
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600">참가 해커톤</th>
               </tr>
             </thead>

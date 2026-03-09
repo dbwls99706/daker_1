@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -27,11 +27,15 @@ export default function HomePage() {
     return <LoadingSpinner />;
   }
 
-  const hackathons = getHackathons();
-  const teams = getTeams();
-  const leaderboards = getAllLeaderboards();
-  const bookmarks = getBookmarks();
-  const submissions = getSubmissions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const hackathons = useMemo(() => getHackathons(), [ready]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const teams = useMemo(() => getTeams(), [ready]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const leaderboards = useMemo(() => getAllLeaderboards(), [ready]);
+  const bookmarks = getBookmarks(); // re-read on bookmark toggle
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const submissions = useMemo(() => getSubmissions(), [ready]);
 
   const ongoingCount = hackathons.filter((h) => h.status === "ongoing").length;
   const openTeamCount = teams.filter((t) => t.isOpen).length;
@@ -69,6 +73,40 @@ export default function HomePage() {
         <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
         <div className="absolute right-1/4 top-1/2 h-32 w-32 rounded-full bg-indigo-400/20 blur-2xl" />
       </section>
+
+      {/* Deadline Alert */}
+      {(() => {
+        const urgent = hackathons.filter((h) => {
+          if (h.status === "ended") return false;
+          const now = new Date();
+          const deadline = new Date(h.period.submissionDeadlineAt);
+          const daysLeft = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          return daysLeft > 0 && daysLeft <= 7;
+        });
+        if (urgent.length === 0) return null;
+        return (
+          <section className="rounded-xl border-2 border-orange-200 bg-orange-50 p-4 animate-slide-up">
+            <div className="flex items-start gap-3">
+              <span className="text-xl" aria-hidden="true">⏰</span>
+              <div className="flex-1">
+                <h2 className="font-bold text-orange-800">마감 임박 해커톤!</h2>
+                <div className="mt-2 space-y-1">
+                  {urgent.map((h) => (
+                    <a
+                      key={h.slug}
+                      href={`/hackathons/${h.slug}`}
+                      className="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 text-sm transition hover:bg-white"
+                    >
+                      <span className="font-medium text-gray-900">{h.title}</span>
+                      <span className="font-bold text-orange-600">{getDday(h.period.submissionDeadlineAt)}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Stats Dashboard */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 
 const navLinks = [
+  { href: "/", label: "홈" },
   { href: "/hackathons", label: "해커톤" },
   { href: "/camp", label: "캠프" },
   { href: "/rankings", label: "랭킹" },
@@ -66,7 +67,7 @@ export function Navbar() {
           </Link>
           <div className="hidden sm:flex items-center gap-1">
             {navLinks.map((link) => {
-              const active = pathname.startsWith(link.href);
+              const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
@@ -164,7 +165,7 @@ export function Navbar() {
         <div className="border-t border-gray-200 bg-white px-4 py-3 sm:hidden">
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => {
-              const active = pathname.startsWith(link.href);
+              const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
