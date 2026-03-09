@@ -26,7 +26,6 @@ export default function RankingsPage() {
       }))
     );
 
-    // Period filter (전체/월별/연도별)
     let filtered = allEntries;
     if (period !== "all") {
       const now = new Date();
@@ -39,7 +38,6 @@ export default function RankingsPage() {
       });
     }
 
-    // Aggregate scores per team
     const teamScores = new Map<string, { teamName: string; totalScore: number; count: number; hackathons: string[] }>();
     for (const entry of filtered) {
       const existing = teamScores.get(entry.teamName);
@@ -60,7 +58,10 @@ export default function RankingsPage() {
     }
 
     return Array.from(teamScores.values())
-      .sort((a, b) => b.totalScore - a.totalScore)
+      .sort((a, b) => {
+        if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+        return a.teamName.localeCompare(b.teamName);
+      })
       .map((t, i) => ({ ...t, rank: i + 1 }));
   }, [ready, period]);
 
@@ -96,6 +97,12 @@ export default function RankingsPage() {
         </div>
       </div>
 
+      <div className="flex gap-4 text-sm text-gray-500">
+        <span>총 {rankings.length}개 팀</span>
+        {period === "monthly" && <span>({new Date().getMonth() + 1}월 기준)</span>}
+        {period === "yearly" && <span>({new Date().getFullYear()}년 기준)</span>}
+      </div>
+
       {rankings.length === 0 ? (
         <EmptyState title="랭킹 데이터 없음" description="해당 기간에 제출된 결과가 없습니다." />
       ) : (
@@ -105,11 +112,11 @@ export default function RankingsPage() {
           <table className="w-full min-w-[560px] text-sm" aria-label="글로벌 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
-                <th className="px-4 py-3 font-semibold text-gray-600 w-16">순위</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">팀</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">총 점수</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">참가 횟수</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">참가 해커톤</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16">순위</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">팀</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">총 점수</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">참가 횟수</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">참가 해커톤</th>
               </tr>
             </thead>
             <tbody>

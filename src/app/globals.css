@@ -41,11 +41,7 @@ body {
     sans-serif;
   background-color: var(--bg-base);
   color: var(--text-primary);
-}
-
-.dark body {
-  background-color: var(--bg-base);
-  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Toast animation */
@@ -62,6 +58,28 @@ body {
 
 .animate-fade-in {
   animation: fade-in-down 0.25s ease-out;
+}
+
+/* Slide up animation for cards */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.35s ease-out;
+}
+
+/* Count up shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* Skip to main content */
@@ -86,54 +104,91 @@ body {
 .overflow-x-auto::-webkit-scrollbar { height: 0; }
 .overflow-x-auto { scrollbar-width: none; }
 
-/* Dark mode overrides */
+/* ==================== DARK MODE OVERRIDES ==================== */
+
+/* Backgrounds */
 .dark .bg-white { background-color: var(--bg-surface) !important; }
+.dark .bg-white\/80 { background-color: rgba(15, 23, 42, 0.8) !important; }
 .dark .bg-gray-50 { background-color: var(--bg-muted) !important; }
-.dark .bg-gray-100 { background-color: #0f172a !important; }
+.dark .bg-gray-100 { background-color: #1e293b !important; }
+.dark .bg-gray-200 { background-color: #334155 !important; }
+
+/* Borders */
+.dark .border-gray-100 { border-color: #1e293b !important; }
 .dark .border-gray-200 { border-color: var(--border-color) !important; }
 .dark .border-gray-300 { border-color: #475569 !important; }
+.dark .border-dashed { border-color: #475569 !important; }
+
+/* Text */
 .dark .text-gray-900 { color: var(--text-primary) !important; }
 .dark .text-gray-700 { color: #cbd5e1 !important; }
 .dark .text-gray-600 { color: var(--text-secondary) !important; }
 .dark .text-gray-500 { color: var(--text-muted) !important; }
 .dark .text-gray-400 { color: #64748b !important; }
+
+/* Blue */
 .dark .bg-blue-50 { background-color: #1e3a5f !important; }
-.dark .text-blue-700 { color: #93c5fd !important; }
+.dark .bg-blue-50\/50 { background-color: rgba(30, 58, 95, 0.5) !important; }
+.dark .bg-blue-600 { background-color: #2563eb !important; }
 .dark .text-blue-600 { color: #60a5fa !important; }
+.dark .text-blue-700 { color: #93c5fd !important; }
+.dark .text-blue-800 { color: #93c5fd !important; }
+.dark .text-blue-900 { color: #bfdbfe !important; }
+.dark .border-blue-200 { border-color: #1e3a5f !important; }
+.dark .border-blue-300 { border-color: #2563eb !important; }
+
+/* Green */
+.dark .bg-green-50 { background-color: #064e3b !important; }
 .dark .bg-green-100 { background-color: #064e3b !important; }
+.dark .text-green-600 { color: #34d399 !important; }
 .dark .text-green-700 { color: #6ee7b7 !important; }
 .dark .text-green-800 { color: #a7f3d0 !important; }
+.dark .border-green-200 { border-color: #065f46 !important; }
+.dark .border-green-300 { border-color: #065f46 !important; }
+
+/* Yellow/Orange */
 .dark .bg-yellow-50 { background-color: #422006 !important; }
+.dark .bg-yellow-100 { background-color: #422006 !important; }
 .dark .text-yellow-800 { color: #fde68a !important; }
-.dark .bg-orange-50 { background-color: #431407 !important; }
 .dark .border-yellow-300 { border-color: #ca8a04 !important; }
+.dark .bg-orange-50 { background-color: #431407 !important; }
+.dark .bg-orange-100 { background-color: #431407 !important; }
+.dark .text-orange-500 { color: #fb923c !important; }
+.dark .text-orange-600 { color: #f97316 !important; }
+.dark .text-orange-700 { color: #fb923c !important; }
 .dark .border-orange-200 { border-color: #c2410c !important; }
-.dark .border-gray-200\/80 { border-color: var(--border-color) !important; }
+
+/* Red */
+.dark .text-red-400 { color: #f87171 !important; }
+.dark .text-red-500 { color: #ef4444 !important; }
+.dark .text-red-600 { color: #dc2626 !important; }
+
+/* Purple */
+.dark .border-purple-300 { border-color: #7c3aed !important; }
+
+/* Nav */
 .dark nav { background-color: rgba(15, 23, 42, 0.8) !important; border-color: var(--border-color) !important; }
-.dark .bg-blue-600 { background-color: #2563eb !important; }
+
+/* Footer */
+.dark footer { background-color: var(--bg-surface) !important; border-color: var(--border-color) !important; }
+
+/* Inputs */
 .dark input, .dark textarea, .dark select {
   background-color: var(--bg-surface) !important;
   border-color: #475569 !important;
   color: var(--text-primary) !important;
 }
-.dark .border-dashed { border-color: #475569 !important; }
-.dark .bg-green-50 { background-color: #064e3b !important; }
-.dark .border-green-200 { border-color: #065f46 !important; }
-.dark .border-blue-200 { border-color: #1e3a5f !important; }
-.dark .bg-blue-50\/50 { background-color: rgba(30, 58, 95, 0.5) !important; }
-.dark .bg-orange-100 { background-color: #431407 !important; }
-.dark .text-orange-700 { color: #fb923c !important; }
-.dark .text-orange-600 { color: #f97316 !important; }
-.dark .text-orange-500 { color: #fb923c !important; }
-.dark .text-red-400 { color: #f87171 !important; }
-.dark .text-red-500 { color: #ef4444 !important; }
-.dark .text-red-600 { color: #dc2626 !important; }
-.dark .bg-gray-200 { background-color: #334155 !important; }
-.dark .text-blue-800 { color: #93c5fd !important; }
-.dark .text-blue-900 { color: #bfdbfe !important; }
-.dark .text-green-600 { color: #34d399 !important; }
-.dark .text-yellow-100 { background-color: #422006 !important; }
-.dark .border-gray-100 { border-color: #1e293b !important; }
-.dark .bg-white\/80 { background-color: rgba(15, 23, 42, 0.8) !important; }
+.dark input::placeholder, .dark textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Shadows */
 .dark .shadow-sm { --tw-shadow-color: rgba(0,0,0,0.3); }
-.dark footer { background-color: var(--bg-surface) !important; border-color: var(--border-color) !important; }
+.dark .shadow-md { --tw-shadow-color: rgba(0,0,0,0.4); }
+.dark .shadow-lg { --tw-shadow-color: rgba(0,0,0,0.5); }
+.dark .shadow-xl { --tw-shadow-color: rgba(0,0,0,0.5); }
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover { background-color: var(--bg-muted) !important; }
+.dark .hover\:bg-gray-100:hover { background-color: #1e293b !important; }
+.dark .hover\:border-gray-400:hover { border-color: #64748b !important; }

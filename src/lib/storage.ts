@@ -11,6 +11,7 @@ const KEYS = {
   leaderboards: "batonhub_leaderboards",
   teams: "batonhub_teams",
   submissions: "batonhub_submissions",
+  bookmarks: "batonhub_bookmarks",
   seeded: "batonhub_seeded",
 } as const;
 
@@ -59,6 +60,7 @@ export function seedIfNeeded() {
   localStorage.setItem(KEYS.leaderboards, JSON.stringify(normalizeLeaderboards()));
   localStorage.setItem(KEYS.teams, JSON.stringify(teamsJson));
   localStorage.setItem(KEYS.submissions, JSON.stringify([]));
+  localStorage.setItem(KEYS.bookmarks, JSON.stringify([]));
   localStorage.setItem(KEYS.seeded, "true");
 }
 
@@ -147,4 +149,27 @@ export function saveSubmission(submission: Submission) {
   if (idx >= 0) all[idx] = submission;
   else all.push(submission);
   setItem(KEYS.submissions, all);
+}
+
+// Bookmarks
+export function getBookmarks(): string[] {
+  return getItem<string[]>(KEYS.bookmarks, []);
+}
+
+export function toggleBookmark(slug: string): boolean {
+  const bookmarks = getBookmarks();
+  const idx = bookmarks.indexOf(slug);
+  if (idx >= 0) {
+    bookmarks.splice(idx, 1);
+    setItem(KEYS.bookmarks, bookmarks);
+    return false;
+  } else {
+    bookmarks.push(slug);
+    setItem(KEYS.bookmarks, bookmarks);
+    return true;
+  }
+}
+
+export function isBookmarked(slug: string): boolean {
+  return getBookmarks().includes(slug);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, useCallback, use } from "react";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard } from "@/lib/storage";
@@ -8,7 +8,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl } from "@/lib/utils";
+import { Toast } from "@/components/ui/Toast";
+import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, isValidUrl, getTimeRemaining } from "@/lib/utils";
 import type { Submission } from "@/types";
 
 const TABS = [
@@ -28,9 +29,12 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   const { slug } = use(params);
   const ready = useSeedData();
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
-  const [submission, setSubmission] = useState<Submission | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
-  const [, forceUpdate] = useState(0);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [dataVersion, setDataVersion] = useState(0);
+
+  const refreshData = useCallback(() => {
+    setDataVersion((n) => n + 1);
+  }, []);
 
   if (!ready) {
     return <LoadingSpinner />;
@@ -77,13 +81,10 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
 
   const sec = detail.sections;
   const teams = getTeams(slug);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _v = dataVersion; // trigger re-read on data change
   const leaderboard = getLeaderboard(slug);
   const submissions = getSubmissions(slug);
-
-  function showToast(msg: string) {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2500);
-  }
 
   function handleSaveSubmission(items: { key: string; value: string }[], memo: string, teamName: string) {
     const existing = submissions[0];
@@ -97,8 +98,8 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       createdAt: existing?.createdAt || new Date().toISOString(),
     };
     saveSubmission(sub);
-    setSubmission(sub);
-    showToast("임시 저장되었습니다.");
+    setToastMsg("임시 저장되었습니다.");
+    refreshData();
   }
 
   function handleSubmit(items: { key: string; value: string }[], memo: string, teamName: string) {
@@ -115,9 +116,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       createdAt: existing?.createdAt || new Date().toISOString(),
     };
     saveSubmission(sub);
-    setSubmission(sub);
 
-    // Update leaderboard
     const lb = getLeaderboard(slug) || {
       hackathonSlug: slug,
       updatedAt: new Date().toISOString(),
@@ -135,18 +134,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       updateLeaderboard(lb);
     }
 
-    showToast("제출 완료!");
-    forceUpdate((n) => n + 1);
+    setToastMsg("제출이 완료되었습니다!");
+    refreshData();
   }
 
   return (
     <div className="space-y-6">
-      {/* Toast */}
-      {toast && (
-        <div className="fixed right-4 top-20 z-50 animate-fade-in rounded-lg bg-gray-900 px-4 py-2.5 text-sm text-white shadow-lg">
-          {toast}
-        </div>
-      )}
+      <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
 
       {/* Header */}
       <div>
@@ -162,6 +156,28 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             </span>
           )}
         </div>
+        {hackathon.status !== "ended" && (
+          <div className="mt-3 max-w-md">
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <span>진행률</span>
+              <span>{getTimeRemaining(hackathon.period.submissionDeadlineAt)}%</span>
+            </div>
+            <div className="h-2 w-full rounded-full bg-gray-200">
+              <div
+                className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all"
+                style={{ width: `${getTimeRemaining(hackathon.period.submissionDeadlineAt)}%` }}
+              />
+            </div>
+          </div>
+        )}
+        {submissions.length > 0 && (
+          <div className="mt-3 flex items-center gap-2">
+            <div className={`h-2.5 w-2.5 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
+            <span className="text-sm text-gray-600">
+              {submissions[0].status === "submitted" ? "제출 완료" : "임시 저장됨"}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -197,6 +213,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             }`}
           >
             {tab.label}
+            {tab.key === "submit" && submissions.length > 0 && (
+              <span className={`ml-1.5 inline-flex h-2 w-2 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
+            )}
           </button>
         ))}
       </div>
@@ -279,8 +298,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                       )}
                     </div>
                     <div className="-mt-0.5">
-                      <div className="font-semibold text-gray-900">{m.name}</div>
+                      <div className={`font-semibold ${isPast ? "text-gray-400" : "text-gray-900"}`}>{m.name}</div>
                       <div className="text-sm text-gray-500">{formatDateTime(m.at)}</div>
+                      {!isPast && getDday(m.at) !== "D-Day" && (
+                        <span className="mt-1 inline-block rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                          {getDday(m.at)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 );
@@ -416,10 +440,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
         {activeTab === "submit" && (
           sec.submit ? (
             <SubmitTab
-              key={submission?.id || submissions[0]?.id || "new"}
+              key={submissions[0]?.id || "new"}
               sections={sec.submit}
-              hackathonSlug={slug}
-              existingSubmission={submission || submissions[0] || null}
+              existingSubmission={submissions[0] || null}
               onSave={handleSaveSubmission}
               onSubmit={handleSubmit}
             />
@@ -448,23 +471,23 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 <table className="w-full text-sm" aria-label="리더보드">
                   <thead>
                     <tr className="border-b bg-gray-50 text-left">
-                      <th className="px-4 py-3 font-semibold">순위</th>
-                      <th className="px-4 py-3 font-semibold">팀</th>
-                      <th className="px-4 py-3 font-semibold">점수</th>
+                      <th scope="col" className="px-4 py-3 font-semibold">순위</th>
+                      <th scope="col" className="px-4 py-3 font-semibold">팀</th>
+                      <th scope="col" className="px-4 py-3 font-semibold">점수</th>
                       {hasBreakdown && (
                         <>
-                          <th className="px-4 py-3 font-semibold">참가자</th>
-                          <th className="px-4 py-3 font-semibold">심사위원</th>
+                          <th scope="col" className="px-4 py-3 font-semibold">참가자</th>
+                          <th scope="col" className="px-4 py-3 font-semibold">심사위원</th>
                         </>
                       )}
-                      <th className="px-4 py-3 font-semibold">제출일</th>
+                      <th scope="col" className="px-4 py-3 font-semibold">제출일</th>
                     </tr>
                   </thead>
                   <tbody>
                     {[...leaderboard.entries]
                       .sort((a, b) => a.rank - b.rank)
                       .map((e) => (
-                        <tr key={e.teamName} className="border-b last:border-0">
+                        <tr key={e.teamName} className="border-b last:border-0 hover:bg-gray-50 transition">
                           <td className="px-4 py-3">
                             <span
                               className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
@@ -477,12 +500,16 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                                   : "text-gray-500"
                               }`}
                             >
-                              {e.score === 0 ? "-" : e.rank}
+                              {e.rank}
                             </span>
                           </td>
                           <td className="px-4 py-3 font-medium">{e.teamName}</td>
                           <td className="px-4 py-3 font-semibold text-blue-600">
-                            {e.score === 0 ? "미제출" : e.score}
+                            {e.score === 0 ? (
+                              <span className="text-gray-400 font-normal">채점 대기</span>
+                            ) : (
+                              e.score
+                            )}
                           </td>
                           {hasBreakdown && (
                             <>
@@ -509,7 +536,6 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
 // Submit Tab Component
 function SubmitTab({
   sections,
-  hackathonSlug,
   existingSubmission,
   onSave,
   onSubmit,
@@ -519,7 +545,6 @@ function SubmitTab({
     guide: string[];
     submissionItems?: { key: string; title: string; format: string }[];
   };
-  hackathonSlug: string;
   existingSubmission: Submission | null;
   onSave: (items: { key: string; value: string }[], memo: string, teamName: string) => void;
   onSubmit: (items: { key: string; value: string }[], memo: string, teamName: string) => void;
@@ -538,21 +563,72 @@ function SubmitTab({
   const [memo, setMemo] = useState(existingSubmission?.memo || "");
   const [teamName, setTeamName] = useState(existingSubmission?.teamName || "");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
 
   function updateItem(key: string, value: string) {
     setItems((prev) => prev.map((i) => (i.key === key ? { ...i, value } : i)));
+    if (urlErrors[key]) {
+      setUrlErrors((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    }
+  }
+
+  function validateUrls(): boolean {
+    const errors: Record<string, string> = {};
+    if (hasSteps) {
+      for (const step of sections.submissionItems!) {
+        if (step.format === "url" || step.format === "pdf_url") {
+          const val = items.find((i) => i.key === step.key)?.value || "";
+          if (val && !isValidUrl(val)) {
+            errors[step.key] = "올바른 URL 형식이 아닙니다 (https://...)";
+          }
+        }
+      }
+    }
+    setUrlErrors(errors);
+    return Object.keys(errors).length === 0;
   }
 
   const isSubmitted = existingSubmission?.status === "submitted";
 
+  const filledCount = items.filter((i) => i.value.trim()).length;
+  const totalItems = items.length + 1;
+  const filledTotal = filledCount + (teamName.trim() ? 1 : 0);
+  const completionPercent = Math.round((filledTotal / totalItems) * 100);
+
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold">제출</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold">제출</h2>
+        {!isSubmitted && (
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-gray-500">작성</span>
+            <div className="h-2 w-24 rounded-full bg-gray-200">
+              <div
+                className={`h-2 rounded-full transition-all ${completionPercent === 100 ? "bg-green-500" : "bg-blue-500"}`}
+                style={{ width: `${completionPercent}%` }}
+              />
+            </div>
+            <span className="font-semibold text-gray-700">{completionPercent}%</span>
+          </div>
+        )}
+      </div>
+
       {isSubmitted && (
-        <div className="rounded-lg bg-green-50 border border-green-200 p-4 text-sm text-green-800">
-          제출이 완료되었습니다. ({formatDateTime(existingSubmission!.submittedAt!)})
+        <div className="rounded-lg bg-green-50 border border-green-200 p-4">
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-full bg-green-500" />
+            <span className="text-sm font-semibold text-green-800">제출이 완료되었습니다</span>
+          </div>
+          <p className="mt-1 text-xs text-green-700">
+            제출일시: {formatDateTime(existingSubmission!.submittedAt!)} | 팀명: {existingSubmission!.teamName}
+          </p>
         </div>
       )}
+
       <div className="rounded-lg bg-gray-50 p-4">
         <h3 className="mb-2 font-semibold text-gray-700">제출 가이드</h3>
         <ul className="space-y-1">
@@ -566,15 +642,18 @@ function SubmitTab({
       </div>
 
       <div className="space-y-4">
-        {/* Team Name */}
         <div className="space-y-2">
-          <label htmlFor="submit-team-name" className="block text-sm font-semibold text-gray-700">팀명 / 닉네임 *</label>
+          <label htmlFor="submit-team-name" className="block text-sm font-semibold text-gray-700">
+            팀명 / 닉네임 <span className="text-red-500">*</span>
+          </label>
           <input
             id="submit-team-name"
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
             disabled={isSubmitted}
+            aria-required="true"
+            maxLength={50}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
             placeholder="리더보드에 표시될 팀명을 입력하세요"
           />
@@ -595,15 +674,20 @@ function SubmitTab({
                     placeholder="텍스트 또는 URL을 입력하세요"
                   />
                 ) : (
-                  <input
-                    id={`submit-${step.key}`}
-                    type="url"
-                    value={items.find((i) => i.key === step.key)?.value || ""}
-                    onChange={(e) => updateItem(step.key, e.target.value)}
-                    disabled={isSubmitted}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-                    placeholder="URL을 입력하세요"
-                  />
+                  <>
+                    <input
+                      id={`submit-${step.key}`}
+                      type="url"
+                      value={items.find((i) => i.key === step.key)?.value || ""}
+                      onChange={(e) => updateItem(step.key, e.target.value)}
+                      disabled={isSubmitted}
+                      className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 ${urlErrors[step.key] ? "border-red-400" : "border-gray-300"}`}
+                      placeholder="https://..."
+                    />
+                    {urlErrors[step.key] && (
+                      <p className="text-xs text-red-500">{urlErrors[step.key]}</p>
+                    )}
+                  </>
                 )}
               </div>
             ))
@@ -630,9 +714,11 @@ function SubmitTab({
             onChange={(e) => setMemo(e.target.value)}
             rows={2}
             disabled={isSubmitted}
+            maxLength={500}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-            placeholder="심사위원에게 전달할 메모"
+            placeholder="심사위원에게 전달할 메모 (최대 500자)"
           />
+          <p className="text-xs text-gray-400 text-right">{memo.length}/500</p>
         </div>
       </div>
 
@@ -643,13 +729,13 @@ function SubmitTab({
           )}
           <div className="flex gap-3">
             <button
-              onClick={() => onSave(items, memo, teamName)}
+              onClick={() => { if (validateUrls()) onSave(items, memo, teamName); }}
               className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
             >
               임시 저장
             </button>
             <button
-              onClick={() => setShowConfirm(true)}
+              onClick={() => { if (validateUrls()) setShowConfirm(true); }}
               disabled={!teamName.trim()}
               className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -659,7 +745,6 @@ function SubmitTab({
         </div>
       )}
 
-      {/* Confirm Modal */}
       <Modal
         open={showConfirm}
         onClose={() => setShowConfirm(false)}
@@ -684,10 +769,16 @@ function SubmitTab({
           </>
         }
       >
-        <p>제출 후에는 수정이 불가합니다. 내용을 다시 한번 확인해주세요.</p>
-        {teamName && (
-          <p className="mt-2 font-medium text-gray-900">팀명: {teamName}</p>
-        )}
+        <div className="space-y-3">
+          <p className="text-red-600 font-medium">제출 후에는 수정이 불가합니다.</p>
+          <div className="rounded-lg bg-gray-50 p-3 text-sm">
+            <p><span className="font-semibold">팀명:</span> {teamName}</p>
+            {items.filter((i) => i.value).map((i) => (
+              <p key={i.key} className="mt-1"><span className="font-semibold">{i.key}:</span> {i.value.length > 50 ? i.value.slice(0, 50) + "..." : i.value}</p>
+            ))}
+            {memo && <p className="mt-1"><span className="font-semibold">메모:</span> {memo.length > 50 ? memo.slice(0, 50) + "..." : memo}</p>}
+          </div>
+        </div>
       </Modal>
     </div>
   );

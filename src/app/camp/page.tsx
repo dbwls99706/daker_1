@@ -8,7 +8,8 @@ import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Modal } from "@/components/ui/Modal";
-import { generateId, sanitizeUrl } from "@/lib/utils";
+import { Toast } from "@/components/ui/Toast";
+import { generateId, sanitizeUrl, isValidUrl } from "@/lib/utils";
 import type { Team } from "@/types";
 
 function CampContent() {
@@ -19,15 +20,15 @@ function CampContent() {
   const [showCreate, setShowCreate] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<{ teamCode: string; name: string } | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  // Form state
   const [name, setName] = useState("");
   const [intro, setIntro] = useState("");
   const [contactUrl, setContactUrl] = useState("");
   const [lookingFor, setLookingFor] = useState("");
   const [selectedHackathon, setSelectedHackathon] = useState(hackathonFilter);
+  const [contactError, setContactError] = useState("");
 
-  // Sync selectedHackathon when URL filter changes
   useEffect(() => {
     setSelectedHackathon(hackathonFilter);
   }, [hackathonFilter]);
@@ -45,6 +46,12 @@ function CampContent() {
 
   function handleCreate() {
     if (!name.trim() || !intro.trim()) return;
+    if (contactUrl.trim() && !isValidUrl(contactUrl.trim())) {
+      setContactError("올바른 URL 형식이 아닙니다 (https://...)");
+      return;
+    }
+    setContactError("");
+
     const team: Team = {
       teamCode: `T-${generateId().toUpperCase()}`,
       hackathonSlug: selectedHackathon,
@@ -65,6 +72,7 @@ function CampContent() {
     setContactUrl("");
     setLookingFor("");
     setShowCreate(false);
+    setToastMsg("팀이 생성되었습니다!");
     setRefreshKey((n) => n + 1);
   }
 
@@ -74,6 +82,8 @@ function CampContent() {
 
   return (
     <div className="space-y-6">
+      <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
+
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">팀원 모집</h1>
         <button
@@ -84,7 +94,6 @@ function CampContent() {
         </button>
       </div>
 
-      {/* Hackathon Filter */}
       <div className="flex flex-wrap gap-2">
         <Link
           href="/camp"
@@ -111,20 +120,25 @@ function CampContent() {
         ))}
       </div>
 
-      {/* Create Form */}
+      <p className="text-sm text-gray-500">총 {teams.length}개의 팀</p>
+
       {showCreate && (
-        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-6 space-y-4">
+        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-6 space-y-4 animate-slide-up">
           <h2 className="text-lg font-bold">새 팀 모집글</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="camp-team-name" className="block text-sm font-semibold text-gray-700 mb-1">팀명 *</label>
+              <label htmlFor="camp-team-name" className="block text-sm font-semibold text-gray-700 mb-1">
+                팀명 <span className="text-red-500">*</span>
+              </label>
               <input
                 id="camp-team-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                aria-required="true"
+                maxLength={30}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="팀 이름"
+                placeholder="팀 이름 (최대 30자)"
               />
             </div>
             <div>
@@ -145,15 +159,20 @@ function CampContent() {
             </div>
           </div>
           <div>
-            <label htmlFor="camp-intro" className="block text-sm font-semibold text-gray-700 mb-1">소개 *</label>
+            <label htmlFor="camp-intro" className="block text-sm font-semibold text-gray-700 mb-1">
+              소개 <span className="text-red-500">*</span>
+            </label>
             <textarea
               id="camp-intro"
               value={intro}
               onChange={(e) => setIntro(e.target.value)}
               rows={2}
+              aria-required="true"
+              maxLength={200}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="팀 소개를 작성하세요"
+              placeholder="팀 소개를 작성하세요 (최대 200자)"
             />
+            <p className="text-xs text-gray-400 text-right mt-0.5">{intro.length}/200</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -173,10 +192,11 @@ function CampContent() {
                 id="camp-contact"
                 type="url"
                 value={contactUrl}
-                onChange={(e) => setContactUrl(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                onChange={(e) => { setContactUrl(e.target.value); setContactError(""); }}
+                className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${contactError ? "border-red-400" : "border-gray-300"}`}
                 placeholder="https://open.kakao.com/o/..."
               />
+              {contactError && <p className="text-xs text-red-500 mt-0.5">{contactError}</p>}
             </div>
           </div>
           {(!name.trim() || !intro.trim()) && (name || intro) && (
@@ -192,7 +212,6 @@ function CampContent() {
         </div>
       )}
 
-      {/* Team List */}
       {teams.length === 0 ? (
         <EmptyState
           title="등록된 팀이 없습니다"
@@ -211,7 +230,7 @@ function CampContent() {
           {teams.map((t) => (
             <div
               key={t.teamCode}
-              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md animate-slide-up"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-gray-900">{t.name}</h3>
@@ -245,7 +264,11 @@ function CampContent() {
                   {t.isOpen ? (
                     <>
                       <button
-                        onClick={() => { updateTeam(t.teamCode, { isOpen: false }); setRefreshKey((n) => n + 1); }}
+                        onClick={() => {
+                          updateTeam(t.teamCode, { isOpen: false });
+                          setToastMsg("모집이 마감되었습니다.");
+                          setRefreshKey((n) => n + 1);
+                        }}
                         className="font-medium text-orange-500 hover:text-orange-700"
                       >
                         모집마감
@@ -261,7 +284,11 @@ function CampContent() {
                     </>
                   ) : (
                     <button
-                      onClick={() => { updateTeam(t.teamCode, { isOpen: true }); setRefreshKey((n) => n + 1); }}
+                      onClick={() => {
+                        updateTeam(t.teamCode, { isOpen: true });
+                        setToastMsg("모집이 재개되었습니다.");
+                        setRefreshKey((n) => n + 1);
+                      }}
                       className="font-medium text-green-600 hover:text-green-800"
                     >
                       모집재개
@@ -280,7 +307,6 @@ function CampContent() {
         </div>
       )}
 
-      {/* Delete Confirm Modal */}
       <Modal
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
@@ -299,6 +325,7 @@ function CampContent() {
                   deleteTeam(deleteTarget.teamCode);
                   setRefreshKey((n) => n + 1);
                   setDeleteTarget(null);
+                  setToastMsg("팀이 삭제되었습니다.");
                 }
               }}
               className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
@@ -308,7 +335,7 @@ function CampContent() {
           </>
         }
       >
-        <p>&ldquo;{deleteTarget?.name}&rdquo; 팀을 삭제하시겠습니까?</p>
+        <p>&ldquo;{deleteTarget?.name}&rdquo; 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
       </Modal>
     </div>
   );

@@ -28,8 +28,10 @@ export function formatKRW(amount: number): string {
 
 export function getDday(iso: string): string {
   const now = new Date();
+  now.setHours(0, 0, 0, 0);
   const target = new Date(iso);
-  const diff = Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  target.setHours(0, 0, 0, 0);
+  const diff = Math.round((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   if (diff > 0) return `D-${diff}`;
   if (diff === 0) return "D-Day";
   return `D+${Math.abs(diff)}`;
@@ -74,6 +76,27 @@ export function sanitizeUrl(url: string): string {
   }
 }
 
+export function isValidUrl(url: string): boolean {
+  if (!url) return true; // empty is ok for optional fields
+  try {
+    const parsed = new URL(url);
+    return ["http:", "https:", "mailto:"].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
 export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+export function getTimeRemaining(iso: string): number {
+  const now = new Date().getTime();
+  const target = new Date(iso).getTime();
+  const total = target - now;
+  if (total <= 0) return 100;
+  const started = target - 30 * 24 * 60 * 60 * 1000; // assume 30 days total
+  const elapsed = now - started;
+  if (elapsed <= 0) return 0;
+  return Math.min(100, Math.round((elapsed / (target - started)) * 100));
 }
