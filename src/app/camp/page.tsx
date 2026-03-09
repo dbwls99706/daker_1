@@ -227,10 +227,11 @@ function CampContent() {
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((t) => (
+          {teams.map((t, i) => (
             <div
               key={t.teamCode}
-              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md animate-slide-up"
+              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
+              style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-gray-900">{t.name}</h3>

@@ -11,11 +11,16 @@ type PeriodFilter = "all" | "monthly" | "yearly";
 export default function RankingsPage() {
   const ready = useSeedData();
   const [period, setPeriod] = useState<PeriodFilter>("all");
+  const [hackathonFilter, setHackathonFilter] = useState<string>("all");
+
+  const hackathons = useMemo(() => {
+    if (!ready) return [];
+    return getHackathons();
+  }, [ready]);
 
   const rankings = useMemo(() => {
     if (!ready) return [];
     const leaderboards = getAllLeaderboards();
-    const hackathons = getHackathons();
 
     const allEntries = leaderboards.flatMap((lb) =>
       lb.entries.map((e) => ({
@@ -27,9 +32,14 @@ export default function RankingsPage() {
     );
 
     let filtered = allEntries;
+
+    if (hackathonFilter !== "all") {
+      filtered = filtered.filter((e) => e.hackathonSlug === hackathonFilter);
+    }
+
     if (period !== "all") {
       const now = new Date();
-      filtered = allEntries.filter((e) => {
+      filtered = filtered.filter((e) => {
         const d = new Date(e.submittedAt);
         if (period === "monthly") {
           return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
@@ -63,7 +73,7 @@ export default function RankingsPage() {
         return a.teamName.localeCompare(b.teamName);
       })
       .map((t, i) => ({ ...t, rank: i + 1 }));
-  }, [ready, period]);
+  }, [ready, period, hackathonFilter, hackathons]);
 
   if (!ready) {
     return <LoadingSpinner />;
@@ -73,27 +83,40 @@ export default function RankingsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">글로벌 랭킹</h1>
-        <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="기간 필터">
-          {(
-            [
-              { key: "all", label: "전체" },
-              { key: "monthly", label: "월별" },
-              { key: "yearly", label: "연도별" },
-            ] as { key: PeriodFilter; label: string }[]
-          ).map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setPeriod(f.key)}
-              aria-pressed={period === f.key}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                period === f.key
-                  ? "bg-white text-blue-700 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="기간 필터">
+            {(
+              [
+                { key: "all", label: "전체" },
+                { key: "monthly", label: "월별" },
+                { key: "yearly", label: "연도별" },
+              ] as { key: PeriodFilter; label: string }[]
+            ).map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setPeriod(f.key)}
+                aria-pressed={period === f.key}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                  period === f.key
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <select
+            value={hackathonFilter}
+            onChange={(e) => setHackathonFilter(e.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
+            aria-label="해커톤 필터"
+          >
+            <option value="all">전체 해커톤</option>
+            {hackathons.map((h) => (
+              <option key={h.slug} value={h.slug}>{h.title}</option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -101,10 +124,13 @@ export default function RankingsPage() {
         <span>총 {rankings.length}개 팀</span>
         {period === "monthly" && <span>({new Date().getMonth() + 1}월 기준)</span>}
         {period === "yearly" && <span>({new Date().getFullYear()}년 기준)</span>}
+        {hackathonFilter !== "all" && (
+          <span>· {hackathons.find((h) => h.slug === hackathonFilter)?.title}</span>
+        )}
       </div>
 
       {rankings.length === 0 ? (
-        <EmptyState title="랭킹 데이터 없음" description="해당 기간에 제출된 결과가 없습니다." />
+        <EmptyState title="랭킹 데이터 없음" description="해당 조건에 제출된 결과가 없습니다." />
       ) : (
         <>
         <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>

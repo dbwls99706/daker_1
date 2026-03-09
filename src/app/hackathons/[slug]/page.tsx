@@ -68,7 +68,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
           </div>
         </div>
         <div className="rounded-xl border-2 border-dashed border-gray-200 py-16 text-center">
-          <div className="mb-3 text-4xl">📋</div>
+          <div className="mb-3 text-4xl" aria-hidden="true">📋</div>
           <h3 className="text-lg font-semibold text-gray-700">상세 정보 준비중</h3>
           <p className="mt-1 text-sm text-gray-500">이 해커톤의 상세 정보가 아직 등록되지 않았습니다.</p>
           <Link href="/hackathons" className="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
@@ -144,9 +144,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
 
       {/* Header */}
       <div>
-        <Link href="/hackathons" className="mb-2 inline-block text-sm text-gray-500 hover:text-gray-700">
-          ← 해커톤 목록
-        </Link>
+        <nav className="mb-2 flex items-center gap-1.5 text-sm text-gray-500" aria-label="브레드크럼">
+          <Link href="/" className="hover:text-gray-700 transition">홈</Link>
+          <span aria-hidden="true">›</span>
+          <Link href="/hackathons" className="hover:text-gray-700 transition">해커톤</Link>
+          <span aria-hidden="true">›</span>
+          <span className="text-gray-900 font-medium truncate max-w-[200px]">{detail.title}</span>
+        </nav>
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-bold">{detail.title}</h1>
           <StatusBadge status={hackathon.status} />
@@ -162,9 +166,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               <span>진행률</span>
               <span>{getTimeRemaining(hackathon.period.submissionDeadlineAt)}%</span>
             </div>
-            <div className="h-2 w-full rounded-full bg-gray-200">
+            <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
               <div
-                className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all"
+                className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
                 style={{ width: `${getTimeRemaining(hackathon.period.submissionDeadlineAt)}%` }}
               />
             </div>
@@ -332,7 +336,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                         : "border-orange-200 bg-orange-50"
                     }`}
                   >
-                    <div className="text-2xl">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</div>
+                    <div className="text-2xl" aria-hidden="true">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</div>
                     <div className="mt-2 text-sm font-medium text-gray-600">{p.place}</div>
                     <div className="mt-1 text-xl font-bold">{formatKRW(p.amountKRW)}</div>
                   </div>
@@ -359,20 +363,20 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 </div>
                 <div className="flex gap-3 pt-2">
                   <a
-                    href={sec.info.links.rules}
+                    href={sanitizeUrl(sec.info.links.rules)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
                   >
-                    규정 보기
+                    규정 보기 ↗
                   </a>
                   <a
-                    href={sec.info.links.faq}
+                    href={sanitizeUrl(sec.info.links.faq)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
                   >
-                    FAQ
+                    FAQ ↗
                   </a>
                 </div>
               </>
@@ -619,9 +623,23 @@ function SubmitTab({
 
       {isSubmitted && (
         <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-green-500" />
-            <span className="text-sm font-semibold text-green-800">제출이 완료되었습니다</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-3 rounded-full bg-green-500" />
+              <span className="text-sm font-semibold text-green-800">제출이 완료되었습니다</span>
+            </div>
+            <button
+              onClick={() => {
+                onSave(
+                  existingSubmission!.items,
+                  existingSubmission!.memo,
+                  existingSubmission!.teamName
+                );
+              }}
+              className="rounded-lg border border-orange-300 px-3 py-1.5 text-xs font-medium text-orange-700 hover:bg-orange-50 transition"
+            >
+              수정하기
+            </button>
           </div>
           <p className="mt-1 text-xs text-green-700">
             제출일시: {formatDateTime(existingSubmission!.submittedAt!)} | 팀명: {existingSubmission!.teamName}

@@ -90,13 +90,14 @@ export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
-export function getTimeRemaining(iso: string): number {
+export function getTimeRemaining(deadlineIso: string, startIso?: string): number {
   const now = new Date().getTime();
-  const target = new Date(iso).getTime();
-  const total = target - now;
-  if (total <= 0) return 100;
-  const started = target - 30 * 24 * 60 * 60 * 1000; // assume 30 days total
-  const elapsed = now - started;
+  const target = new Date(deadlineIso).getTime();
+  if (target <= now) return 100;
+  const start = startIso ? new Date(startIso).getTime() : target - 30 * 24 * 60 * 60 * 1000;
+  const totalDuration = target - start;
+  if (totalDuration <= 0) return 100;
+  const elapsed = now - start;
   if (elapsed <= 0) return 0;
-  return Math.min(100, Math.round((elapsed / (target - started)) * 100));
+  return Math.min(100, Math.round((elapsed / totalDuration) * 100));
 }

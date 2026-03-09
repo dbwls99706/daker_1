@@ -174,18 +174,19 @@ function HackathonsContent() {
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {hackathons.map((h) => (
+          {hackathons.map((h, i) => (
             <Link
               key={h.slug}
               href={`/hackathons/${h.slug}`}
-              className="group flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-blue-200 animate-slide-up"
+              className="group flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 animate-slide-up"
+              style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
               {h.thumbnailUrl && (
                 <div className="mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
                   <img
                     src={h.thumbnailUrl}
                     alt={h.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                     onError={(e) => { const p = (e.target as HTMLImageElement).parentElement; if (p) p.style.display = "none"; }}
                   />
@@ -202,8 +203,9 @@ function HackathonsContent() {
                 </div>
                 <button
                   onClick={(e) => handleBookmark(h.slug, e)}
-                  className={`text-lg transition ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+                  className={`text-lg transition-all hover:scale-110 ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
                   aria-label={bookmarks.includes(h.slug) ? "북마크 제거" : "북마크 추가"}
+                  aria-pressed={bookmarks.includes(h.slug)}
                 >
                   {bookmarks.includes(h.slug) ? "★" : "☆"}
                 </button>
@@ -214,9 +216,9 @@ function HackathonsContent() {
               <div className="mt-3">
                 <p className="text-xs text-gray-500">{formatDate(h.period.submissionDeadlineAt)} 마감</p>
                 {h.status !== "ended" && (
-                  <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200">
+                  <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
                     <div
-                      className="h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all"
+                      className="h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
                       style={{ width: `${getTimeRemaining(h.period.submissionDeadlineAt)}%` }}
                     />
                   </div>

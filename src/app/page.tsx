@@ -43,65 +43,70 @@ export default function HomePage() {
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 px-8 py-16 text-white animate-slide-up">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-8 py-16 text-white animate-slide-up">
         <div className="relative z-10">
+          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-blue-200">해커톤 통합 플랫폼</p>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">BatonHub</h1>
           <p className="mt-3 max-w-xl text-lg text-blue-100">
             해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지 한곳에서 완결하는 해커톤 통합 대시보드
           </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/hackathons"
+              className="rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-lg transition hover:bg-blue-50 hover:shadow-xl"
+            >
+              해커톤 둘러보기
+            </Link>
+            <Link
+              href="/camp"
+              className="rounded-lg border border-white/30 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+            >
+              팀 찾기
+            </Link>
+          </div>
         </div>
         <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
+        <div className="absolute right-1/4 top-1/2 h-32 w-32 rounded-full bg-indigo-400/20 blur-2xl" />
       </section>
 
       {/* Stats Dashboard */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm text-center">
-          <div className="text-3xl font-extrabold text-blue-600">{hackathons.length}</div>
-          <div className="mt-1 text-sm text-gray-500">등록된 해커톤</div>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm text-center">
-          <div className="text-3xl font-extrabold text-green-600">{ongoingCount}</div>
-          <div className="mt-1 text-sm text-gray-500">진행중인 해커톤</div>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm text-center">
-          <div className="text-3xl font-extrabold text-purple-600">{openTeamCount}</div>
-          <div className="mt-1 text-sm text-gray-500">모집중인 팀</div>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm text-center">
-          <div className="text-3xl font-extrabold text-orange-600">{submittedCount}</div>
-          <div className="mt-1 text-sm text-gray-500">제출 완료</div>
-        </div>
+        {[
+          { value: hackathons.length, label: "등록된 해커톤", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
+          { value: ongoingCount, label: "진행중인 해커톤", color: "text-green-600", bg: "bg-green-50", border: "border-green-100" },
+          { value: openTeamCount, label: "모집중인 팀", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
+          { value: submittedCount, label: "제출 완료", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-100" },
+        ].map((stat, i) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border ${stat.border} ${stat.bg} p-5 text-center shadow-sm transition hover:shadow-md animate-slide-up`}
+            style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
+          >
+            <div className={`text-3xl font-extrabold ${stat.color}`}>{stat.value}</div>
+            <div className="mt-1 text-sm text-gray-600">{stat.label}</div>
+          </div>
+        ))}
       </section>
 
       {/* Quick Nav Cards */}
       <section className="grid gap-4 sm:grid-cols-3">
-        <Link
-          href="/hackathons"
-          className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-blue-300"
-        >
-          <div className="mb-3 text-3xl">🏆</div>
-          <h2 className="text-lg font-bold text-gray-900 group-hover:text-blue-600">해커톤 보러가기</h2>
-          <p className="mt-1 text-sm text-gray-500">{hackathons.length}개의 해커톤이 등록되어 있습니다</p>
-        </Link>
-        <Link
-          href="/camp"
-          className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-green-300"
-        >
-          <div className="mb-3 text-3xl">👥</div>
-          <h2 className="text-lg font-bold text-gray-900 group-hover:text-green-600">팀 찾기</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            {openTeamCount}개 팀이 모집중입니다
-          </p>
-        </Link>
-        <Link
-          href="/rankings"
-          className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-purple-300"
-        >
-          <div className="mb-3 text-3xl">📊</div>
-          <h2 className="text-lg font-bold text-gray-900 group-hover:text-purple-600">랭킹 보기</h2>
-          <p className="mt-1 text-sm text-gray-500">{totalEntries}명의 참가자가 등록되었습니다</p>
-        </Link>
+        {[
+          { href: "/hackathons", icon: "🏆", title: "해커톤 보러가기", desc: `${hackathons.length}개의 해커톤이 등록되어 있습니다`, hoverBorder: "hover:border-blue-300", hoverText: "group-hover:text-blue-600" },
+          { href: "/camp", icon: "👥", title: "팀 찾기", desc: `${openTeamCount}개 팀이 모집중입니다`, hoverBorder: "hover:border-green-300", hoverText: "group-hover:text-green-600" },
+          { href: "/rankings", icon: "📊", title: "랭킹 보기", desc: `${totalEntries}명의 참가자가 등록되었습니다`, hoverBorder: "hover:border-purple-300", hoverText: "group-hover:text-purple-600" },
+        ].map((card, i) => (
+          <Link
+            key={card.href}
+            href={card.href}
+            className={`group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md ${card.hoverBorder} hover:-translate-y-0.5 animate-slide-up`}
+            style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}
+          >
+            <div className="mb-3 text-3xl" aria-hidden="true">{card.icon}</div>
+            <h2 className={`text-lg font-bold text-gray-900 ${card.hoverText}`}>{card.title}</h2>
+            <p className="mt-1 text-sm text-gray-500">{card.desc}</p>
+          </Link>
+        ))}
       </section>
 
       {/* Bookmarked Hackathons */}
@@ -109,23 +114,24 @@ export default function HomePage() {
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold flex items-center gap-2">
-              <span className="text-yellow-500">★</span> 북마크한 해커톤
+              <span className="text-yellow-500" aria-hidden="true">★</span> 북마크한 해커톤
             </h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {hackathons
               .filter((h) => bookmarks.includes(h.slug))
-              .map((h) => (
+              .map((h, i) => (
                 <Link
                   key={h.slug}
                   href={`/hackathons/${h.slug}`}
-                  className="group rounded-xl border-2 border-yellow-200 bg-yellow-50 p-5 shadow-sm transition hover:shadow-md"
+                  className="group rounded-xl border-2 border-yellow-200 bg-yellow-50 p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
+                  style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <StatusBadge status={h.status} />
                     <button
                       onClick={(e) => handleBookmark(h.slug, e)}
-                      className="text-yellow-500 hover:text-yellow-600 text-lg"
+                      className="text-yellow-500 hover:text-yellow-600 text-lg transition-transform hover:scale-110"
                       aria-label="북마크 제거"
                     >
                       ★
@@ -139,9 +145,9 @@ export default function HomePage() {
                         <span className="font-semibold text-orange-600">{getDday(h.period.submissionDeadlineAt)}</span>
                         <span className="text-gray-400">{getTimeRemaining(h.period.submissionDeadlineAt)}%</span>
                       </div>
-                      <div className="mt-1 h-1.5 w-full rounded-full bg-gray-200">
+                      <div className="mt-1 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
                         <div
-                          className="h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all"
+                          className="h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
                           style={{ width: `${getTimeRemaining(h.period.submissionDeadlineAt)}%` }}
                         />
                       </div>
@@ -157,23 +163,24 @@ export default function HomePage() {
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">해커톤</h2>
-          <Link href="/hackathons" className="text-sm font-medium text-blue-600 hover:text-blue-800">
+          <Link href="/hackathons" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition">
             전체보기 →
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {hackathons.map((h) => (
+          {hackathons.map((h, i) => (
             <Link
               key={h.slug}
               href={`/hackathons/${h.slug}`}
-              className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
+              style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
             >
               {h.thumbnailUrl && (
                 <div className="mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
                   <img
                     src={h.thumbnailUrl}
                     alt={h.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                     onError={(e) => { const p = (e.target as HTMLImageElement).parentElement; if (p) p.style.display = "none"; }}
                   />
@@ -190,8 +197,9 @@ export default function HomePage() {
                 </div>
                 <button
                   onClick={(e) => handleBookmark(h.slug, e)}
-                  className={`text-lg transition ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+                  className={`text-lg transition-all hover:scale-110 ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
                   aria-label={bookmarks.includes(h.slug) ? "북마크 제거" : "북마크 추가"}
+                  aria-pressed={bookmarks.includes(h.slug)}
                 >
                   {bookmarks.includes(h.slug) ? "★" : "☆"}
                 </button>
@@ -201,9 +209,9 @@ export default function HomePage() {
                 {formatDate(h.period.submissionDeadlineAt)} 마감
               </p>
               {h.status !== "ended" && (
-                <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200">
+                <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
                   <div
-                    className="h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all"
+                    className="h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
                     style={{ width: `${getTimeRemaining(h.period.submissionDeadlineAt)}%` }}
                   />
                 </div>
@@ -224,7 +232,7 @@ export default function HomePage() {
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">팀원 모집</h2>
-          <Link href="/camp" className="text-sm font-medium text-blue-600 hover:text-blue-800">
+          <Link href="/camp" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition">
             전체보기 →
           </Link>
         </div>
@@ -235,11 +243,12 @@ export default function HomePage() {
           {teams
             .filter((t) => t.isOpen)
             .slice(0, 4)
-            .map((team) => (
+            .map((team, i) => (
               <Link
                 key={team.teamCode}
                 href={team.hackathonSlug ? `/camp?hackathon=${team.hackathonSlug}` : "/camp"}
-                className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-green-200"
+                className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-green-200 hover:-translate-y-0.5 animate-slide-up"
+                style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold group-hover:text-green-600">{team.name}</h3>
@@ -268,7 +277,7 @@ export default function HomePage() {
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">최근 랭킹</h2>
-          <Link href="/rankings" className="text-sm font-medium text-blue-600 hover:text-blue-800">
+          <Link href="/rankings" className="text-sm font-medium text-blue-600 hover:text-blue-800 transition">
             전체보기 →
           </Link>
         </div>
@@ -277,7 +286,7 @@ export default function HomePage() {
         ) : (
         <>
         <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full min-w-[480px] text-sm" aria-label="최근 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">

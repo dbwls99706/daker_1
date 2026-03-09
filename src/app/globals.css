@@ -76,6 +76,20 @@ body {
   animation: slide-up 0.35s ease-out;
 }
 
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up {
+    animation: none !important;
+  }
+  .animate-spin {
+    animation-duration: 1.5s !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Count up shimmer */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -192,3 +206,30 @@ body {
 .dark .hover\:bg-gray-50:hover { background-color: var(--bg-muted) !important; }
 .dark .hover\:bg-gray-100:hover { background-color: #1e293b !important; }
 .dark .hover\:border-gray-400:hover { border-color: #64748b !important; }
+
+/* Dark mode color badges */
+.dark .bg-blue-100 { background-color: #1e3a5f !important; }
+.dark .bg-purple-50 { background-color: #2e1065 !important; }
+.dark .bg-purple-100 { background-color: #2e1065 !important; }
+.dark .text-purple-600 { color: #a78bfa !important; }
+.dark .border-blue-100 { border-color: #1e3a5f !important; }
+.dark .border-green-100 { border-color: #064e3b !important; }
+.dark .border-purple-100 { border-color: #2e1065 !important; }
+.dark .border-orange-100 { border-color: #431407 !important; }
+
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

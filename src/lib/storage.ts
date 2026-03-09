@@ -55,13 +55,17 @@ export function seedIfNeeded() {
   if (typeof window === "undefined") return;
   if (localStorage.getItem(KEYS.seeded)) return;
 
-  localStorage.setItem(KEYS.hackathons, JSON.stringify(hackathonsJson));
-  localStorage.setItem(KEYS.details, JSON.stringify(normalizeDetails()));
-  localStorage.setItem(KEYS.leaderboards, JSON.stringify(normalizeLeaderboards()));
-  localStorage.setItem(KEYS.teams, JSON.stringify(teamsJson));
-  localStorage.setItem(KEYS.submissions, JSON.stringify([]));
-  localStorage.setItem(KEYS.bookmarks, JSON.stringify([]));
-  localStorage.setItem(KEYS.seeded, "true");
+  try {
+    localStorage.setItem(KEYS.hackathons, JSON.stringify(hackathonsJson));
+    localStorage.setItem(KEYS.details, JSON.stringify(normalizeDetails()));
+    localStorage.setItem(KEYS.leaderboards, JSON.stringify(normalizeLeaderboards()));
+    localStorage.setItem(KEYS.teams, JSON.stringify(teamsJson));
+    localStorage.setItem(KEYS.submissions, JSON.stringify([]));
+    localStorage.setItem(KEYS.bookmarks, JSON.stringify([]));
+    localStorage.setItem(KEYS.seeded, "true");
+  } catch (e) {
+    console.error("Failed to seed data:", e);
+  }
 }
 
 function getItem<T>(key: string, fallback: T): T {
@@ -77,7 +81,11 @@ function getItem<T>(key: string, fallback: T): T {
 
 function setItem(key: string, value: unknown) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error("Failed to write to localStorage:", e);
+  }
 }
 
 // Hackathons
