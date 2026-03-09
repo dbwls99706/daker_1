@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -11,12 +12,18 @@ import { getDday, formatDate } from "@/lib/utils";
 type SortKey = "latest" | "deadline";
 type StatusFilter = "all" | "ongoing" | "ended" | "upcoming";
 
-export default function HackathonsPage() {
+function HackathonsContent() {
   const ready = useSeedData();
+  const searchParams = useSearchParams();
+  const urlKeyword = searchParams.get("keyword") || "";
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tagFilter, setTagFilter] = useState<string>("");
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState(urlKeyword);
   const [sort, setSort] = useState<SortKey>("latest");
+
+  useEffect(() => {
+    if (urlKeyword) setKeyword(urlKeyword);
+  }, [urlKeyword]);
 
   const hackathons = useMemo(() => {
     if (!ready) return [];
@@ -149,5 +156,13 @@ export default function HackathonsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function HackathonsPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center text-gray-500">로딩중...</div>}>
+      <HackathonsContent />
+    </Suspense>
   );
 }

@@ -6,6 +6,7 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { Modal } from "@/components/ui/Modal";
 import { formatKRW, formatDateTime, getDday, generateId } from "@/lib/utils";
 import type { Submission } from "@/types";
 
@@ -37,7 +38,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   const detail = getHackathonDetail(slug);
   const hackathon = getHackathons().find((h) => h.slug === slug);
 
-  if (!detail || !hackathon) {
+  if (!hackathon) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold text-gray-700">404</h1>
@@ -45,6 +46,30 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
         <Link href="/hackathons" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
           목록으로 돌아가기
         </Link>
+      </div>
+    );
+  }
+
+  if (!detail) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Link href="/hackathons" className="mb-2 inline-block text-sm text-gray-500 hover:text-gray-700">
+            ← 해커톤 목록
+          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold">{hackathon.title}</h1>
+            <StatusBadge status={hackathon.status} />
+          </div>
+        </div>
+        <div className="rounded-xl border-2 border-dashed border-gray-200 py-16 text-center">
+          <div className="mb-3 text-4xl">📋</div>
+          <h3 className="text-lg font-semibold text-gray-700">상세 정보 준비중</h3>
+          <p className="mt-1 text-sm text-gray-500">이 해커톤의 상세 정보가 아직 등록되지 않았습니다.</p>
+          <Link href="/hackathons" className="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            다른 해커톤 보기
+          </Link>
+        </div>
       </div>
     );
   }
@@ -59,12 +84,12 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     setTimeout(() => setToast(null), 2500);
   }
 
-  function handleSaveSubmission(items: { key: string; value: string }[], memo: string) {
+  function handleSaveSubmission(items: { key: string; value: string }[], memo: string, teamName: string) {
     const existing = submissions[0];
     const sub: Submission = {
       id: existing?.id || generateId(),
       hackathonSlug: slug,
-      teamName: "내 팀",
+      teamName: teamName || "내 팀",
       status: "draft",
       items,
       memo,
@@ -75,12 +100,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     showToast("임시 저장되었습니다.");
   }
 
-  function handleSubmit(items: { key: string; value: string }[], memo: string) {
+  function handleSubmit(items: { key: string; value: string }[], memo: string, teamName: string) {
     const existing = submissions[0];
+    const finalTeamName = teamName || "내 팀";
     const sub: Submission = {
       id: existing?.id || generateId(),
       hackathonSlug: slug,
-      teamName: "내 팀",
+      teamName: finalTeamName,
       status: "submitted",
       items,
       memo,
@@ -96,11 +122,11 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       updatedAt: new Date().toISOString(),
       entries: [],
     };
-    const existingEntry = lb.entries.find((e) => e.teamName === "내 팀");
+    const existingEntry = lb.entries.find((e) => e.teamName === finalTeamName);
     if (!existingEntry) {
       lb.entries.push({
         rank: lb.entries.length + 1,
-        teamName: "내 팀",
+        teamName: finalTeamName,
         score: 0,
         submittedAt: new Date().toISOString(),
       });
@@ -376,7 +402,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                     </tr>
                   </thead>
                   <tbody>
-                    {leaderboard.entries
+                    {[...leaderboard.entries]
                       .sort((a, b) => a.rank - b.rank)
                       .map((e) => (
                         <tr key={e.teamName} className="border-b last:border-0">
@@ -434,8 +460,8 @@ function SubmitTab({
   };
   hackathonSlug: string;
   existingSubmission: Submission | null;
-  onSave: (items: { key: string; value: string }[], memo: string) => void;
-  onSubmit: (items: { key: string; value: string }[], memo: string) => void;
+  onSave: (items: { key: string; value: string }[], memo: string, teamName: string) => void;
+  onSubmit: (items: { key: string; value: string }[], memo: string, teamName: string) => void;
 }) {
   const hasSteps = sections.submissionItems && sections.submissionItems.length > 0;
   const keys = hasSteps
@@ -449,6 +475,8 @@ function SubmitTab({
 
   const [items, setItems] = useState(initialItems);
   const [memo, setMemo] = useState(existingSubmission?.memo || "");
+  const [teamName, setTeamName] = useState(existingSubmission?.teamName || "");
+  const [showConfirm, setShowConfirm] = useState(false);
 
   function updateItem(key: string, value: string) {
     setItems((prev) => prev.map((i) => (i.key === key ? { ...i, value } : i)));
@@ -477,6 +505,19 @@ function SubmitTab({
       </div>
 
       <div className="space-y-4">
+        {/* Team Name */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-gray-700">팀명 / 닉네임 *</label>
+          <input
+            type="text"
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            disabled={isSubmitted}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
+            placeholder="리더보드에 표시될 팀명을 입력하세요"
+          />
+        </div>
+
         {hasSteps
           ? sections.submissionItems!.map((step) => (
               <div key={step.key} className="space-y-2">
@@ -532,19 +573,50 @@ function SubmitTab({
       {!isSubmitted && (
         <div className="flex gap-3 pt-2">
           <button
-            onClick={() => onSave(items, memo)}
+            onClick={() => onSave(items, memo, teamName)}
             className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
           >
             임시 저장
           </button>
           <button
-            onClick={() => onSubmit(items, memo)}
+            onClick={() => setShowConfirm(true)}
             className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
             제출 완료
           </button>
         </div>
       )}
+
+      {/* Confirm Modal */}
+      <Modal
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        title="제출을 확정하시겠습니까?"
+        actions={
+          <>
+            <button
+              onClick={() => setShowConfirm(false)}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              onClick={() => {
+                setShowConfirm(false);
+                onSubmit(items, memo, teamName);
+              }}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              확인, 제출합니다
+            </button>
+          </>
+        }
+      >
+        <p>제출 후에는 수정이 불가합니다. 내용을 다시 한번 확인해주세요.</p>
+        {teamName && (
+          <p className="mt-2 font-medium text-gray-900">팀명: {teamName}</p>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -162,10 +162,10 @@ export default function HomePage() {
               </tr>
             </thead>
             <tbody>
-              {leaderboards
+              {[...leaderboards
                 .flatMap((lb) =>
                   lb.entries.map((e) => ({ ...e, hackathonSlug: lb.hackathonSlug }))
-                )
+                )]
                 .sort((a, b) => b.score - a.score)
                 .slice(0, 5)
                 .map((entry, i) => (

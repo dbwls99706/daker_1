@@ -120,6 +120,20 @@ export function addTeam(team: Team) {
   setItem(KEYS.teams, all);
 }
 
+export function updateTeam(teamCode: string, updates: Partial<Team>) {
+  const all = getItem<Team[]>(KEYS.teams, []);
+  const idx = all.findIndex((t) => t.teamCode === teamCode);
+  if (idx >= 0) {
+    all[idx] = { ...all[idx], ...updates };
+    setItem(KEYS.teams, all);
+  }
+}
+
+export function deleteTeam(teamCode: string) {
+  const all = getItem<Team[]>(KEYS.teams, []);
+  setItem(KEYS.teams, all.filter((t) => t.teamCode !== teamCode));
+}
+
 // Submissions
 export function getSubmissions(hackathonSlug?: string): Submission[] {
   const all = getItem<Submission[]>(KEYS.submissions, []);

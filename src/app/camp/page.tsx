@@ -4,7 +4,7 @@ import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
-import { getTeams, getHackathons, addTeam } from "@/lib/storage";
+import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { generateId } from "@/lib/utils";
 import type { Team } from "@/types";
@@ -15,7 +15,7 @@ function CampContent() {
   const hackathonFilter = searchParams.get("hackathon") || "";
 
   const [showCreate, setShowCreate] = useState(false);
-  const [, forceUpdate] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Form state
   const [name, setName] = useState("");
@@ -27,7 +27,8 @@ function CampContent() {
   const teams = useMemo(() => {
     if (!ready) return [];
     return getTeams(hackathonFilter || undefined);
-  }, [ready, hackathonFilter, forceUpdate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, hackathonFilter, refreshKey]);
 
   const hackathons = useMemo(() => {
     if (!ready) return [];
@@ -56,7 +57,7 @@ function CampContent() {
     setContactUrl("");
     setLookingFor("");
     setShowCreate(false);
-    forceUpdate((n) => n + 1);
+    setRefreshKey((n) => n + 1);
   }
 
   if (!ready) {
@@ -224,16 +225,44 @@ function CampContent() {
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-400">
                 <span>{t.memberCount}명 참여중</span>
-                {t.isOpen && (
-                  <a
-                    href={t.contact.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-blue-600 hover:underline"
+                <div className="flex items-center gap-2">
+                  {t.isOpen ? (
+                    <>
+                      <button
+                        onClick={() => { updateTeam(t.teamCode, { isOpen: false }); setRefreshKey((n) => n + 1); }}
+                        className="font-medium text-orange-500 hover:text-orange-700"
+                      >
+                        모집마감
+                      </button>
+                      <a
+                        href={t.contact.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-600 hover:underline"
+                      >
+                        연락하기
+                      </a>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => { updateTeam(t.teamCode, { isOpen: true }); setRefreshKey((n) => n + 1); }}
+                      className="font-medium text-green-600 hover:text-green-800"
+                    >
+                      모집재개
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`"${t.name}" 팀을 삭제하시겠습니까?`)) {
+                        deleteTeam(t.teamCode);
+                        setRefreshKey((n) => n + 1);
+                      }
+                    }}
+                    className="font-medium text-red-400 hover:text-red-600"
                   >
-                    연락하기 →
-                  </a>
-                )}
+                    삭제
+                  </button>
+                </div>
               </div>
             </div>
           ))}
