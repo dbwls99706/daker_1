@@ -4,6 +4,10 @@
 
 ## 1️⃣ 서비스 개요
 
+### 문제 정의
+> 많은 해커톤 플랫폼이 대회 탐색, 팀 빌딩, 제출, 결과 확인이 여러 페이지와 서비스에 분산되어 있어
+> 참가자가 전체 흐름을 한눈에 관리하기 어렵다.
+
 | 항목 | 내용 |
 |---|---|
 | **서비스명** | DACON Hackathon Hub |
@@ -218,6 +222,46 @@
    └─ 모든 변경은 페이지 새로고침 후에도 유지
 ```
 
+### 프로젝트 폴더 구조
+
+```
+src/
+├─ app/
+│   ├─ layout.tsx                  # 공통 레이아웃 (상단 네비게이션 바)
+│   ├─ page.tsx                    # 메인페이지 (/)
+│   ├─ hackathons/
+│   │   ├─ page.tsx                # 해커톤 목록 (/hackathons)
+│   │   └─ [slug]/
+│   │       └─ page.tsx            # 해커톤 상세 (/hackathons/:slug)
+│   ├─ camp/
+│   │   └─ page.tsx                # 팀원 모집 (/camp)
+│   └─ rankings/
+│       └─ page.tsx                # 랭킹 (/rankings)
+├─ components/
+│   ├─ ui/
+│   │   ├─ StatusState.tsx         # 3종 상태 (로딩/데이터 없음/에러)
+│   │   ├─ Card.tsx                # 공통 카드 컴포넌트
+│   │   └─ Tabs.tsx                # 탭 네비게이션
+│   └─ features/
+│       ├─ HackathonCard.tsx       # 해커톤 목록 카드
+│       ├─ LeaderboardTable.tsx    # 리더보드 순위 테이블
+│       ├─ TeamCard.tsx            # 팀 모집 카드
+│       ├─ SubmitForm.tsx          # 제출 폼 (동적)
+│       └─ TeamManagement.tsx      # 팀 초대/수락/거절
+├─ hooks/
+│   ├─ useSeedData.ts              # 최초 접속 시 JSON → localStorage 시드
+│   └─ useLocalStorage.ts          # localStorage CRUD 래퍼
+├─ lib/
+│   └─ storage.ts                  # localStorage 유틸리티 + 데이터 정규화
+├─ types/
+│   └─ index.ts                    # 전체 TypeScript 타입 정의
+└─ data/
+    ├─ public_hackathons.json
+    ├─ public_hackathon_detail.json
+    ├─ public_leaderboard.json
+    └─ public_teams.json
+```
+
 ### 핵심 데이터 파싱 주의사항
 - `public_hackathon_detail.json`: `daker-handover-2026-03` 상세는 `aimers` 객체의 `extraDetails[]` 안에 중첩 → 파싱 시 펼쳐서 slug별 정규화
 - `public_leaderboard.json`: 동일하게 `extraLeaderboards[]`에 핸드오버 리더보드 중첩 → slug별 분리
@@ -273,8 +317,17 @@
 | 항목 | 내용 |
 |---|---|
 | **입력** | 해커톤 상세 [리더보드] 탭 진입, 또는 제출 완료 이벤트 |
-| **동작** | `localStorage["leaderboards"]`에서 해당 `hackathonSlug` 엔트리 조회, 해커톤 설정(투표/평가 산식)에 따라 점수 계산, score 내림차순 정렬 |
+| **동작** | `localStorage["leaderboards"]`에서 해당 `hackathonSlug` 엔트리 조회, 해커톤 설정에 따라 점수 계산, score 내림차순 정렬 |
 | **결과** | 제출 결과 기반 순위 표시 (등수, 팀명, 점수, 제출일). 점수 breakdown 있으면 분리 표시. **참여했으나 미제출 시 "미제출" 표기 (순위 X)**. 엔트리 없으면 "데이터 없음" 상태 |
+
+**점수 계산 로직 (해커톤 설정별):**
+```
+# aimers 해커톤 (scoreSource: 평가 산식)
+finalScore = performanceScore × 0.8 + speedScore × 0.2
+
+# handover 해커톤 (scoreSource: "vote")
+finalScore = participantVote × 0.3 + judgeVote × 0.7
+```
 
 ### F7. 팀원 모집 (Camp)
 
@@ -412,13 +465,13 @@
 
 | 아이디어 | 설명 | 기대 효과 |
 |---|---|---|
-| **다크 모드** | 시스템 설정 연동 + 수동 토글 | 장시간 사용 피로 감소 |
-| **D-Day 카운트다운** | 해커톤 카드에 실시간 남은 시간 표시 | 마감 인지 강화 |
-| **팀 구성 유의사항 팝업** | 팀 초대 시 정책 안내 모달 | 실수 방지 |
-| **채팅/쪽지 보내기** | 팀원 간 간단한 메시지 기능 | 소통 편의 (Camp에서 Best 기능) |
-| **토스트 알림** | 제출 완료·팀 생성 등 액션 피드백 | UX 완성도 향상 |
-| **해커톤 북마크** | 관심 해커톤 즐겨찾기 (localStorage) | 빠른 재접근 |
-| **데이터 내보내기** | 리더보드·제출 이력 CSV 다운로드 | 편의 기능 |
+| **다크 모드** | 시스템 설정 연동 + 수동 토글 | 장시간 사용 피로 감소 → 해커톤 마감 전 야간 작업 시 눈의 부담을 줄여 집중력 유지 |
+| **D-Day 카운트다운** | 해커톤 카드에 실시간 남은 시간 표시 | 마감 인지 강화 → 참가자에게 긴장감을 부여하여 제출 기한 내 완료율 향상 |
+| **팀 구성 유의사항 팝업** | 팀 초대 시 정책 안내 모달 | 실수 방지 → 솔로 가능 여부·최대 인원 등을 미리 알려 초대 취소·재초대 반복 방지 |
+| **채팅/쪽지 보내기** | 팀원 간 간단한 메시지 기능 | 소통 편의 → 외부 메신저 없이도 팀 협업 시작 가능, Camp 페이지에서 첫 접촉 허들 제거 |
+| **토스트 알림** | 제출 완료·팀 생성 등 액션 피드백 | UX 완성도 → 사용자가 액션 결과를 즉시 인지, "저장됐나?" 불안 해소 |
+| **해커톤 북마크** | 관심 해커톤 즐겨찾기 (localStorage) | 빠른 재접근 → 여러 대회를 비교 탐색할 때 반복 검색 없이 바로 이동 |
+| **데이터 내보내기** | 리더보드·제출 이력 CSV 다운로드 | 편의 기능 → 운영자가 결과를 외부 도구로 분석·공유할 때 복사-붙여넣기 수고 제거 |
 
 ### Phase 4: 문서화 및 최종 제출 (4/7 ~ 4/13)
 
