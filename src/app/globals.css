@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
 
 :root {
   --color-primary: #2563eb;
@@ -81,6 +82,10 @@ body {
   top: 0;
 }
 
+/* Hide scrollbar for tab bar */
+.overflow-x-auto::-webkit-scrollbar { height: 0; }
+.overflow-x-auto { scrollbar-width: none; }
+
 /* Dark mode overrides */
 .dark .bg-white { background-color: var(--bg-surface) !important; }
 .dark .bg-gray-50 { background-color: var(--bg-muted) !important; }
@@ -122,4 +127,13 @@ body {
 .dark .text-orange-500 { color: #fb923c !important; }
 .dark .text-red-400 { color: #f87171 !important; }
 .dark .text-red-500 { color: #ef4444 !important; }
+.dark .text-red-600 { color: #dc2626 !important; }
+.dark .bg-gray-200 { background-color: #334155 !important; }
+.dark .text-blue-800 { color: #93c5fd !important; }
+.dark .text-blue-900 { color: #bfdbfe !important; }
+.dark .text-green-600 { color: #34d399 !important; }
+.dark .text-yellow-100 { background-color: #422006 !important; }
+.dark .border-gray-100 { border-color: #1e293b !important; }
+.dark .bg-white\/80 { background-color: rgba(15, 23, 42, 0.8) !important; }
+.dark .shadow-sm { --tw-shadow-color: rgba(0,0,0,0.3); }
 .dark footer { background-color: var(--bg-surface) !important; border-color: var(--border-color) !important; }

@@ -72,7 +72,7 @@ export default function RankingsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">글로벌 랭킹</h1>
-        <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+        <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="기간 필터">
           {(
             [
               { key: "all", label: "전체" },
@@ -83,6 +83,7 @@ export default function RankingsPage() {
             <button
               key={f.key}
               onClick={() => setPeriod(f.key)}
+              aria-pressed={period === f.key}
               className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
                 period === f.key
                   ? "bg-white text-blue-700 shadow-sm"

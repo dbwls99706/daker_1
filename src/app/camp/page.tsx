@@ -7,7 +7,7 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { generateId } from "@/lib/utils";
+import { generateId, sanitizeUrl } from "@/lib/utils";
 import type { Team } from "@/types";
 
 function CampContent() {
@@ -209,7 +209,7 @@ function CampContent() {
           {teams.map((t) => (
             <div
               key={t.teamCode}
-              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-gray-900">{t.name}</h3>
@@ -249,7 +249,7 @@ function CampContent() {
                         모집마감
                       </button>
                       <a
-                        href={t.contact.url}
+                        href={sanitizeUrl(t.contact.url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-medium text-blue-600 hover:underline"

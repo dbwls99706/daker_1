@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { formatKRW, formatDateTime, getDday, generateId } from "@/lib/utils";
+import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl } from "@/lib/utils";
 import type { Submission } from "@/types";
 
 const TABS = [
@@ -355,7 +355,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                       <span>{t.memberCount}명</span>
                       {t.isOpen && (
                         <a
-                          href={t.contact.url}
+                          href={sanitizeUrl(t.contact.url)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
@@ -392,13 +392,16 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             ) : (
               <div className="overflow-x-auto">
                 <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
-                <table className="w-full text-sm">
+                {(() => {
+                  const hasBreakdown = leaderboard.entries.some((e) => e.scoreBreakdown);
+                  return (
+                <table className="w-full text-sm" aria-label="리더보드">
                   <thead>
                     <tr className="border-b bg-gray-50 text-left">
                       <th className="px-4 py-3 font-semibold">순위</th>
                       <th className="px-4 py-3 font-semibold">팀</th>
                       <th className="px-4 py-3 font-semibold">점수</th>
-                      {leaderboard.entries[0]?.scoreBreakdown && (
+                      {hasBreakdown && (
                         <>
                           <th className="px-4 py-3 font-semibold">참가자</th>
                           <th className="px-4 py-3 font-semibold">심사위원</th>
@@ -418,7 +421,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                                 e.rank === 1
                                   ? "bg-yellow-100 text-yellow-800"
                                   : e.rank === 2
-                                  ? "bg-gray-100 text-gray-700"
+                                  ? "bg-gray-200 text-gray-700"
                                   : e.rank === 3
                                   ? "bg-orange-100 text-orange-700"
                                   : "text-gray-500"
@@ -431,10 +434,10 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                           <td className="px-4 py-3 font-semibold text-blue-600">
                             {e.score === 0 ? "미제출" : e.score}
                           </td>
-                          {e.scoreBreakdown && (
+                          {hasBreakdown && (
                             <>
-                              <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown.participant}</td>
-                              <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown.judge}</td>
+                              <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.participant ?? "-"}</td>
+                              <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.judge ?? "-"}</td>
                             </>
                           )}
                           <td className="px-4 py-3 text-gray-500 text-xs">{formatDateTime(e.submittedAt)}</td>
@@ -442,6 +445,8 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                       ))}
                   </tbody>
                 </table>
+                  );
+                })()}
               </div>
             )}
           </div>

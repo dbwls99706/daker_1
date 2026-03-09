@@ -72,11 +72,12 @@ function HackathonsContent() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+        <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="상태 필터">
           {(["all", "ongoing", "upcoming", "ended"] as StatusFilter[]).map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
+              aria-pressed={statusFilter === s}
               className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
                 statusFilter === s ? "bg-white text-blue-700 shadow-sm" : "text-gray-600 hover:text-gray-900"
               }`}

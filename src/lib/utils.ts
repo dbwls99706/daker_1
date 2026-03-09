@@ -57,6 +57,19 @@ export function statusColor(status: string): string {
   }
 }
 
+export function sanitizeUrl(url: string): string {
+  if (!url || url === "#") return "#";
+  try {
+    const parsed = new URL(url);
+    if (["http:", "https:", "mailto:"].includes(parsed.protocol)) {
+      return parsed.href;
+    }
+    return "#";
+  } catch {
+    return "#";
+  }
+}
+
 export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
