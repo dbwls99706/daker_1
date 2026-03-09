@@ -20,21 +20,21 @@ export interface HackathonDetail {
   slug: string;
   title: string;
   sections: {
-    overview: {
+    overview?: {
       summary: string;
       teamPolicy: {
         allowSolo: boolean;
         maxTeamSize: number;
       };
     };
-    info: {
+    info?: {
       notice: string[];
       links: {
         rules: string;
         faq: string;
       };
     };
-    eval: {
+    eval?: {
       metricName: string;
       description: string;
       scoreSource?: string;
@@ -47,18 +47,18 @@ export interface HackathonDetail {
         maxSubmissionsPerDay: number;
       };
     };
-    schedule: {
+    schedule?: {
       timezone: string;
       milestones: { name: string; at: string }[];
     };
-    prize: {
+    prize?: {
       items: { place: string; amountKRW: number }[];
     };
-    teams: {
+    teams?: {
       campEnabled: boolean;
       listUrl: string;
     };
-    submit: {
+    submit?: {
       allowedArtifactTypes: string[];
       submissionUrl: string;
       guide: string[];
@@ -68,7 +68,7 @@ export interface HackathonDetail {
         format: string;
       }[];
     };
-    leaderboard: {
+    leaderboard?: {
       publicLeaderboardUrl: string;
       note: string;
     };

@@ -264,7 +264,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             <h2 className="text-lg font-bold">일정</h2>
             {sec.schedule?.milestones?.length ? (
             <div className="relative space-y-0">
-              {sec.schedule.milestones.map((m, i) => {
+              {sec.schedule!.milestones.map((m, i) => {
                 const isPast = new Date(m.at) < new Date();
                 return (
                   <div key={i} className="flex gap-4 pb-6">
@@ -274,7 +274,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                           isPast ? "border-blue-600 bg-blue-600" : "border-gray-300 bg-white"
                         }`}
                       />
-                      {i < sec.schedule.milestones.length - 1 && (
+                      {i < sec.schedule!.milestones.length - 1 && (
                         <div className={`w-0.5 flex-1 ${isPast ? "bg-blue-200" : "bg-gray-200"}`} />
                       )}
                     </div>
@@ -416,6 +416,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
         {activeTab === "submit" && (
           sec.submit ? (
             <SubmitTab
+              key={submission?.id || submissions[0]?.id || "new"}
               sections={sec.submit}
               hackathonSlug={slug}
               existingSubmission={submission || submissions[0] || null}
@@ -582,9 +583,10 @@ function SubmitTab({
         {hasSteps
           ? sections.submissionItems!.map((step) => (
               <div key={step.key} className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">{step.title}</label>
+                <label htmlFor={`submit-${step.key}`} className="block text-sm font-semibold text-gray-700">{step.title}</label>
                 {step.format === "text_or_url" ? (
                   <textarea
+                    id={`submit-${step.key}`}
                     value={items.find((i) => i.key === step.key)?.value || ""}
                     onChange={(e) => updateItem(step.key, e.target.value)}
                     rows={3}
@@ -594,6 +596,7 @@ function SubmitTab({
                   />
                 ) : (
                   <input
+                    id={`submit-${step.key}`}
                     type="url"
                     value={items.find((i) => i.key === step.key)?.value || ""}
                     onChange={(e) => updateItem(step.key, e.target.value)}
@@ -606,8 +609,9 @@ function SubmitTab({
             ))
           : keys.map((k) => (
               <div key={k} className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700 capitalize">{k} 파일</label>
+                <label htmlFor={`submit-${k}`} className="block text-sm font-semibold text-gray-700 capitalize">{k} 파일</label>
                 <input
+                  id={`submit-${k}`}
                   type="text"
                   value={items.find((i) => i.key === k)?.value || ""}
                   onChange={(e) => updateItem(k, e.target.value)}

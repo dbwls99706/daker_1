@@ -17,6 +17,32 @@
   ],
   "extraLeaderboards": [
     {
+      "hackathonSlug": "monthly-vibe-coding-2026-02",
+      "updatedAt": "2026-03-05T10:00:00+09:00",
+      "entries": [
+        {
+          "rank": 1,
+          "teamName": "VibeFlow",
+          "score": 91.0,
+          "submittedAt": "2026-03-02T15:30:00+09:00",
+          "scoreBreakdown": {
+            "participant": 88,
+            "judge": 93
+          }
+        },
+        {
+          "rank": 2,
+          "teamName": "AIWorkbench",
+          "score": 85.4,
+          "submittedAt": "2026-03-03T09:10:00+09:00",
+          "scoreBreakdown": {
+            "participant": 82,
+            "judge": 87
+          }
+        }
+      ]
+    },
+    {
       "hackathonSlug": "daker-handover-2026-03",
       "updatedAt": "2026-04-17T10:00:00+09:00",
       "entries": [
