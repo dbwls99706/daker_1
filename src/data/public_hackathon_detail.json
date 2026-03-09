@@ -269,6 +269,22 @@
             }
           ]
         },
+        "prize": {
+          "items": [
+            {
+              "place": "1st",
+              "amountKRW": 500000
+            },
+            {
+              "place": "2nd",
+              "amountKRW": 300000
+            },
+            {
+              "place": "3rd",
+              "amountKRW": 200000
+            }
+          ]
+        },
         "teams": {
           "campEnabled": true,
           "listUrl": "/camp?hackathon=daker-handover-2026-03"

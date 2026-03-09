@@ -142,7 +142,7 @@ function HackathonsContent() {
                     alt={h.title}
                     className="h-full w-full object-cover"
                     loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }}
+                    onError={(e) => { const p = (e.target as HTMLImageElement).parentElement; if (p) p.style.display = "none"; }}
                   />
                 </div>
               )}
