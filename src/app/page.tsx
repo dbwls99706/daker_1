@@ -5,6 +5,7 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { getDday, formatDate } from "@/lib/utils";
 
 export default function HomePage() {
@@ -84,7 +85,7 @@ export default function HomePage() {
                     alt={h.title}
                     className="h-full w-full object-cover"
                     loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }}
                   />
                 </div>
               )}
@@ -120,6 +121,9 @@ export default function HomePage() {
             전체보기 →
           </Link>
         </div>
+        {teams.filter((t) => t.isOpen).length === 0 ? (
+          <EmptyState title="모집중인 팀이 없습니다" description="캠프에서 첫 팀을 만들어보세요!" />
+        ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {teams
             .filter((t) => t.isOpen)
@@ -150,6 +154,7 @@ export default function HomePage() {
               </Link>
             ))}
         </div>
+        )}
       </section>
 
       {/* Leaderboard Preview */}
@@ -160,9 +165,13 @@ export default function HomePage() {
             전체보기 →
           </Link>
         </div>
+        {leaderboards.flatMap((lb) => lb.entries).length === 0 ? (
+          <EmptyState title="랭킹 데이터 없음" description="아직 제출된 결과가 없습니다." />
+        ) : (
+        <>
         <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
-          <table className="w-full min-w-[480px] text-sm">
+          <table className="w-full min-w-[480px] text-sm" aria-label="최근 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th className="px-4 py-3 font-semibold text-gray-600">순위</th>
@@ -195,6 +204,8 @@ export default function HomePage() {
             </tbody>
           </table>
         </div>
+        </>
+        )}
       </section>
     </div>
   );

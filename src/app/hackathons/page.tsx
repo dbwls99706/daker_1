@@ -90,6 +90,7 @@ function HackathonsContent() {
           value={tagFilter}
           onChange={(e) => setTagFilter(e.target.value)}
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          aria-label="태그 필터"
         >
           <option value="">태그 전체</option>
           {allTags.map((t) => (
@@ -103,6 +104,7 @@ function HackathonsContent() {
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          aria-label="정렬 기준"
         >
           <option value="latest">최신순</option>
           <option value="deadline">마감임박순</option>
@@ -114,6 +116,7 @@ function HackathonsContent() {
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="키워드 검색..."
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          aria-label="키워드 검색"
         />
       </div>
 
@@ -138,7 +141,7 @@ function HackathonsContent() {
                     alt={h.title}
                     className="h-full w-full object-cover"
                     loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }}
                   />
                 </div>
               )}

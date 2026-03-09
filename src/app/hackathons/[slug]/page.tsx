@@ -165,11 +165,15 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1">
+      <div className="flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1" role="tablist" aria-label="해커톤 상세 탭">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
+            role="tab"
+            aria-selected={activeTab === tab.key}
+            aria-controls={`tabpanel-${tab.key}`}
+            id={`tab-${tab.key}`}
             className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition ${
               activeTab === tab.key
                 ? "bg-white text-blue-700 shadow-sm"
@@ -182,7 +186,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       </div>
 
       {/* Tab Content */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm" role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}>
         {activeTab === "overview" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">개요</h2>
@@ -509,8 +513,9 @@ function SubmitTab({
       <div className="space-y-4">
         {/* Team Name */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700">팀명 / 닉네임 *</label>
+          <label htmlFor="submit-team-name" className="block text-sm font-semibold text-gray-700">팀명 / 닉네임 *</label>
           <input
+            id="submit-team-name"
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
@@ -560,8 +565,9 @@ function SubmitTab({
             ))}
 
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-gray-700">메모 (선택)</label>
+          <label htmlFor="submit-memo" className="block text-sm font-semibold text-gray-700">메모 (선택)</label>
           <textarea
+            id="submit-memo"
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             rows={2}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
@@ -24,6 +24,11 @@ function CampContent() {
   const [contactUrl, setContactUrl] = useState("");
   const [lookingFor, setLookingFor] = useState("");
   const [selectedHackathon, setSelectedHackathon] = useState(hackathonFilter);
+
+  // Sync selectedHackathon when URL filter changes
+  useEffect(() => {
+    setSelectedHackathon(hackathonFilter);
+  }, [hackathonFilter]);
 
   const teams = useMemo(() => {
     if (!ready) return [];
@@ -110,8 +115,9 @@ function CampContent() {
           <h2 className="text-lg font-bold">새 팀 모집글</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">팀명 *</label>
+              <label htmlFor="camp-team-name" className="block text-sm font-semibold text-gray-700 mb-1">팀명 *</label>
               <input
+                id="camp-team-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -120,8 +126,9 @@ function CampContent() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">해커톤 연결</label>
+              <label htmlFor="camp-hackathon" className="block text-sm font-semibold text-gray-700 mb-1">해커톤 연결</label>
               <select
+                id="camp-hackathon"
                 value={selectedHackathon}
                 onChange={(e) => setSelectedHackathon(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
@@ -136,8 +143,9 @@ function CampContent() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">소개 *</label>
+            <label htmlFor="camp-intro" className="block text-sm font-semibold text-gray-700 mb-1">소개 *</label>
             <textarea
+              id="camp-intro"
               value={intro}
               onChange={(e) => setIntro(e.target.value)}
               rows={2}
@@ -147,8 +155,9 @@ function CampContent() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">모집 포지션</label>
+              <label htmlFor="camp-positions" className="block text-sm font-semibold text-gray-700 mb-1">모집 포지션</label>
               <input
+                id="camp-positions"
                 type="text"
                 value={lookingFor}
                 onChange={(e) => setLookingFor(e.target.value)}
@@ -157,8 +166,9 @@ function CampContent() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">연락 링크</label>
+              <label htmlFor="camp-contact" className="block text-sm font-semibold text-gray-700 mb-1">연락 링크</label>
               <input
+                id="camp-contact"
                 type="url"
                 value={contactUrl}
                 onChange={(e) => setContactUrl(e.target.value)}
@@ -167,6 +177,9 @@ function CampContent() {
               />
             </div>
           </div>
+          {(!name.trim() || !intro.trim()) && (name || intro) && (
+            <p className="text-xs text-red-500">팀명과 소개를 모두 입력해야 생성할 수 있습니다.</p>
+          )}
           <button
             onClick={handleCreate}
             disabled={!name.trim() || !intro.trim()}

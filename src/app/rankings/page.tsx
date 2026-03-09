@@ -6,7 +6,7 @@ import { getAllLeaderboards, getHackathons } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
-type PeriodFilter = "all" | "7d" | "30d";
+type PeriodFilter = "all" | "monthly" | "yearly";
 
 export default function RankingsPage() {
   const ready = useSeedData();
@@ -26,13 +26,17 @@ export default function RankingsPage() {
       }))
     );
 
-    // Period filter
+    // Period filter (전체/월별/연도별)
     let filtered = allEntries;
     if (period !== "all") {
       const now = new Date();
-      const days = period === "7d" ? 7 : 30;
-      const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-      filtered = allEntries.filter((e) => new Date(e.submittedAt) >= cutoff);
+      filtered = allEntries.filter((e) => {
+        const d = new Date(e.submittedAt);
+        if (period === "monthly") {
+          return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+        }
+        return d.getFullYear() === now.getFullYear();
+      });
     }
 
     // Aggregate scores per team
@@ -72,8 +76,8 @@ export default function RankingsPage() {
           {(
             [
               { key: "all", label: "전체" },
-              { key: "30d", label: "최근 30일" },
-              { key: "7d", label: "최근 7일" },
+              { key: "monthly", label: "월별" },
+              { key: "yearly", label: "연도별" },
             ] as { key: PeriodFilter; label: string }[]
           ).map((f) => (
             <button
@@ -97,7 +101,7 @@ export default function RankingsPage() {
         <>
         <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full min-w-[560px] text-sm">
+          <table className="w-full min-w-[560px] text-sm" aria-label="글로벌 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th className="px-4 py-3 font-semibold text-gray-600 w-16">순위</th>
