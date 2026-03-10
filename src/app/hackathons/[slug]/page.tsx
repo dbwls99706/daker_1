@@ -7,7 +7,6 @@ import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmiss
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, isValidUrl, getTimeRemaining } from "@/lib/utils";
@@ -41,12 +40,22 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     if (ready) addRecentlyViewed(slug);
   }, [ready, slug]);
 
+  const detail = useMemo(() => (ready ? getHackathonDetail(slug) : null), [ready, slug]);
+  const hackathon = useMemo(() => {
+    if (!ready) return null;
+    return getHackathons().find((h) => h.slug === slug) || null;
+  }, [ready, slug]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const { teams, leaderboard, submissions } = useMemo(() => ({
+    teams: ready ? getTeams(slug) : [],
+    leaderboard: ready ? getLeaderboard(slug) : null,
+    submissions: ready ? getSubmissions(slug) : [],
+  }), [ready, slug, dataVersion]);
+
   if (!ready) {
     return <SkeletonPage />;
   }
-
-  const detail = getHackathonDetail(slug);
-  const hackathon = getHackathons().find((h) => h.slug === slug);
 
   if (!hackathon) {
     return (
@@ -85,13 +94,6 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   }
 
   const sec = detail.sections;
-  // dataVersion in dependency triggers re-read after save/submit
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const { teams, leaderboard, submissions } = useMemo(() => ({
-    teams: getTeams(slug),
-    leaderboard: getLeaderboard(slug),
-    submissions: getSubmissions(slug),
-  }), [slug, dataVersion]);
 
   function handleSaveSubmission(items: { key: string; value: string }[], memo: string, teamName: string) {
     const existing = submissions[0];

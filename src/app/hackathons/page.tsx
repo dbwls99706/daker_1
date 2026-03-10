@@ -8,7 +8,6 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getBookmarks, toggleBookmark } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
@@ -307,7 +306,7 @@ function HackathonsContent() {
 
 export default function HackathonsPage() {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense fallback={<SkeletonPage />}>
       <HackathonsContent />
     </Suspense>
   );

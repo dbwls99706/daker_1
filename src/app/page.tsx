@@ -32,10 +32,12 @@ export default function HomePage() {
   const submissions = useMemo(() => (ready ? getSubmissions() : []), [ready]);
   const recentSlugs = useMemo(() => (ready ? getRecentlyViewed() : []), [ready]);
 
-  const ongoingCount = hackathons.filter((h) => h.status === "ongoing").length;
-  const openTeamCount = teams.filter((t) => t.isOpen).length;
-  const totalEntries = leaderboards.reduce((sum, lb) => sum + lb.entries.length, 0);
-  const submittedCount = submissions.filter((s) => s.status === "submitted").length;
+  const { ongoingCount, openTeamCount, totalEntries, submittedCount } = useMemo(() => ({
+    ongoingCount: hackathons.filter((h) => h.status === "ongoing").length,
+    openTeamCount: teams.filter((t) => t.isOpen).length,
+    totalEntries: leaderboards.reduce((sum, lb) => sum + lb.entries.length, 0),
+    submittedCount: submissions.filter((s) => s.status === "submitted").length,
+  }), [hackathons, teams, leaderboards, submissions]);
 
   if (!ready) {
     return <SkeletonPage />;

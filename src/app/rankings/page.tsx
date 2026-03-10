@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getAllLeaderboards, getHackathons } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 
 type PeriodFilter = "all" | "monthly" | "yearly";
 type SortField = "rank" | "teamName" | "totalScore" | "count";
@@ -108,7 +108,7 @@ export default function RankingsPage() {
   }, [ready, period, hackathonFilter, hackathons, sortField, sortDir]);
 
   if (!ready) {
-    return <LoadingSpinner />;
+    return <SkeletonPage />;
   }
 
   const sortIcon = (field: SortField) => {

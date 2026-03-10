@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Modal } from "@/components/ui/Modal";
 import { Toast } from "@/components/ui/Toast";
 import { generateId, sanitizeUrl, isValidUrl, formatDate } from "@/lib/utils";
@@ -92,7 +92,7 @@ function CampContent() {
   }, [teams, teamSearch, campSort]);
 
   if (!ready) {
-    return <LoadingSpinner />;
+    return <SkeletonPage />;
   }
 
   return (
@@ -389,7 +389,7 @@ function CampContent() {
 
 export default function CampPage() {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense fallback={<SkeletonPage />}>
       <CampContent />
     </Suspense>
   );
