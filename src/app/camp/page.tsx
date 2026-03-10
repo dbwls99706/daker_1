@@ -79,6 +79,18 @@ function CampContent() {
     setRefreshKey((n) => n + 1);
   }
 
+  const filteredTeams = useMemo(() => {
+    return teams.filter((t) => {
+      if (!teamSearch.trim()) return true;
+      const q = teamSearch.trim().toLowerCase();
+      return t.name.toLowerCase().includes(q) || t.lookingFor.some((r) => r.toLowerCase().includes(q)) || t.intro.toLowerCase().includes(q);
+    }).sort((a, b) => {
+      if (campSort === "name") return a.name.localeCompare(b.name);
+      if (campSort === "members") return b.memberCount - a.memberCount;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [teams, teamSearch, campSort]);
+
   if (!ready) {
     return <LoadingSpinner />;
   }
@@ -142,11 +154,6 @@ function CampContent() {
           <option value="name">팀명순</option>
           <option value="members">인원순</option>
         </select>
-        <p className="text-sm text-gray-500">총 {teams.filter((t) => {
-          if (!teamSearch.trim()) return true;
-          const q = teamSearch.trim().toLowerCase();
-          return t.name.toLowerCase().includes(q) || t.lookingFor.some((r) => r.toLowerCase().includes(q)) || t.intro.toLowerCase().includes(q);
-        }).length}개의 팀</p>
       </div>
 
       {showCreate && (
@@ -233,7 +240,7 @@ function CampContent() {
           )}
           <button
             onClick={handleCreate}
-            disabled={!name.trim() || !intro.trim()}
+            disabled={!name.trim() || !intro.trim() || !!contactError}
             className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             생성하기
@@ -241,16 +248,9 @@ function CampContent() {
         </div>
       )}
 
+      <p className="text-sm text-gray-500">총 {filteredTeams.length}개의 팀</p>
+
       {(() => {
-        const filteredTeams = teams.filter((t) => {
-          if (!teamSearch.trim()) return true;
-          const q = teamSearch.trim().toLowerCase();
-          return t.name.toLowerCase().includes(q) || t.lookingFor.some((r) => r.toLowerCase().includes(q)) || t.intro.toLowerCase().includes(q);
-        }).sort((a, b) => {
-          if (campSort === "name") return a.name.localeCompare(b.name);
-          if (campSort === "members") return b.memberCount - a.memberCount;
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
         if (filteredTeams.length === 0) return (
           <EmptyState
             title="등록된 팀이 없습니다"

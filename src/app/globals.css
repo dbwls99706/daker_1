@@ -80,7 +80,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
   .animate-slide-up,
-  .animate-slide-down {
+  .animate-slide-down,
+  .animate-tab-fade {
     animation: none !important;
   }
   .animate-spin {
@@ -234,6 +235,15 @@ body {
 /* White/60 override for deadline alerts */
 .dark .bg-white\/60 { background-color: rgba(30, 41, 59, 0.6) !important; }
 .dark .text-orange-800 { color: #fdba74 !important; }
+
+/* Tab content fade-in */
+@keyframes tab-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-tab-fade {
+  animation: tab-fade 0.2s ease-out;
+}
 
 /* Mobile menu slide-down */
 @keyframes slide-down {

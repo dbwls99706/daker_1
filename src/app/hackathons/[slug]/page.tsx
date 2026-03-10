@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, use } from "react";
+import { useState, useCallback, useEffect, useMemo, use } from "react";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard, addRecentlyViewed } from "@/lib/storage";
@@ -84,11 +84,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   }
 
   const sec = detail.sections;
-  const teams = getTeams(slug);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _v = dataVersion; // trigger re-read on data change
-  const leaderboard = getLeaderboard(slug);
-  const submissions = getSubmissions(slug);
+  // dataVersion in dependency triggers re-read after save/submit
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const { teams, leaderboard, submissions } = useMemo(() => ({
+    teams: getTeams(slug),
+    leaderboard: getLeaderboard(slug),
+    submissions: getSubmissions(slug),
+  }), [slug, dataVersion]);
 
   function handleSaveSubmission(items: { key: string; value: string }[], memo: string, teamName: string) {
     const existing = submissions[0];
@@ -170,17 +172,18 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 navigator.clipboard.writeText(url).then(() => setToastMsg("링크가 복사되었습니다!"));
               }
             }}
-            className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition"
+            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition flex items-center gap-1"
             aria-label="링크 복사"
           >
-            🔗 공유
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+            공유
           </button>
         </div>
         {hackathon.status !== "ended" && (
           <div className="mt-3 max-w-md">
             <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-              <span>진행률</span>
-              <span>{getTimeRemaining(hackathon.period.submissionDeadlineAt)}%</span>
+              <span>마감까지</span>
+              <span>{100 - getTimeRemaining(hackathon.period.submissionDeadlineAt)}% 남음</span>
             </div>
             <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
               <div
@@ -258,7 +261,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       </div>
 
       {/* Tab Content */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm" role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}>
+      <div key={activeTab} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-tab-fade" role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}>
         {activeTab === "overview" && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold">개요</h2>

@@ -14,20 +14,21 @@ import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
 export default function HomePage() {
   const ready = useSeedData();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [, refresh] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleBookmark = useCallback((slug: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const added = toggleBookmark(slug);
     setToastMsg(added ? "북마크에 추가되었습니다" : "북마크에서 제거되었습니다");
-    refresh((n) => n + 1);
+    setRefreshKey((n) => n + 1);
   }, []);
 
   const hackathons = useMemo(() => (ready ? getHackathons() : []), [ready]);
   const teams = useMemo(() => (ready ? getTeams() : []), [ready]);
   const leaderboards = useMemo(() => (ready ? getAllLeaderboards() : []), [ready]);
-  const bookmarks = ready ? getBookmarks() : [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const bookmarks = useMemo(() => (ready ? getBookmarks() : []), [ready, refreshKey]);
   const submissions = useMemo(() => (ready ? getSubmissions() : []), [ready]);
 
   const ongoingCount = hackathons.filter((h) => h.status === "ongoing").length;

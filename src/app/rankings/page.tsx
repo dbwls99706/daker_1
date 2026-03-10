@@ -31,6 +31,7 @@ export default function RankingsPage() {
       setSortField(field);
       setSortDir(field === "totalScore" ? "desc" : "asc");
     }
+    setPage(1);
   }
 
   const rankings = useMemo(() => {
@@ -122,6 +123,7 @@ export default function RankingsPage() {
           <h1 className="text-2xl font-bold">글로벌 랭킹</h1>
           {rankings.length > 0 && (
             <button
+              aria-label="랭킹 데이터를 CSV 파일로 다운로드"
               onClick={() => {
                 const csv = [
                   "순위,팀명,총점수,참가횟수,참가해커톤",
@@ -199,7 +201,7 @@ export default function RankingsPage() {
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16">
-                  <button onClick={() => toggleSort("rank")} className="hover:text-blue-600 transition">
+                  <button onClick={() => toggleSort("rank")} className="hover:text-blue-600 transition" aria-label={`순위 정렬 ${sortField === "rank" ? (sortDir === "asc" ? "오름차순" : "내림차순") : ""}`}>
                     순위{sortIcon("rank")}
                   </button>
                 </th>
