@@ -190,14 +190,25 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             </div>
           </div>
         )}
-        {submissions.length > 0 && (
-          <div className="mt-3 flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
-            <span className="text-sm text-gray-600">
-              {submissions[0].status === "submitted" ? "제출 완료" : "임시 저장됨"}
-            </span>
+        {/* Mini Stats */}
+        <div className="mt-4 flex flex-wrap gap-3">
+          <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-1.5 text-sm">
+            <span className="text-gray-500">팀</span>
+            <span className="font-semibold text-gray-900">{teams.length}개</span>
           </div>
-        )}
+          <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-1.5 text-sm">
+            <span className="text-gray-500">리더보드</span>
+            <span className="font-semibold text-gray-900">{leaderboard?.entries.length || 0}팀</span>
+          </div>
+          {submissions.length > 0 && (
+            <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-1.5 text-sm">
+              <div className={`h-2.5 w-2.5 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
+              <span className="font-semibold text-gray-900">
+                {submissions[0].status === "submitted" ? "제출 완료" : "임시 저장됨"}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Tabs */}
