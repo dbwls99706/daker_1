@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Modal } from "@/components/ui/Modal";
 import { Toast } from "@/components/ui/Toast";
-import { generateId, sanitizeUrl, isValidUrl } from "@/lib/utils";
+import { generateId, sanitizeUrl, isValidUrl, formatDate } from "@/lib/utils";
 import type { Team } from "@/types";
 
 function CampContent() {
@@ -23,6 +23,7 @@ function CampContent() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const [teamSearch, setTeamSearch] = useState("");
+  const [campSort, setCampSort] = useState<"newest" | "name" | "members">("newest");
 
   const [name, setName] = useState("");
   const [intro, setIntro] = useState("");
@@ -131,6 +132,16 @@ function CampContent() {
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           aria-label="팀 검색"
         />
+        <select
+          value={campSort}
+          onChange={(e) => setCampSort(e.target.value as "newest" | "name" | "members")}
+          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          aria-label="정렬"
+        >
+          <option value="newest">최신순</option>
+          <option value="name">팀명순</option>
+          <option value="members">인원순</option>
+        </select>
         <p className="text-sm text-gray-500">총 {teams.filter((t) => {
           if (!teamSearch.trim()) return true;
           const q = teamSearch.trim().toLowerCase();
@@ -235,6 +246,10 @@ function CampContent() {
           if (!teamSearch.trim()) return true;
           const q = teamSearch.trim().toLowerCase();
           return t.name.toLowerCase().includes(q) || t.lookingFor.some((r) => r.toLowerCase().includes(q)) || t.intro.toLowerCase().includes(q);
+        }).sort((a, b) => {
+          if (campSort === "name") return a.name.localeCompare(b.name);
+          if (campSort === "members") return b.memberCount - a.memberCount;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
         if (filteredTeams.length === 0) return (
           <EmptyState
@@ -284,7 +299,10 @@ function CampContent() {
                 ))}
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-400">
-                <span>{t.memberCount}명 참여중</span>
+                <div className="flex items-center gap-2">
+                  <span>{t.memberCount}명 참여중</span>
+                  <span>· {formatDate(t.createdAt)}</span>
+                </div>
                 <div className="flex items-center gap-2">
                   {t.isOpen ? (
                     <>
