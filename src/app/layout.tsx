@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "BatonHub - 해커톤 통합 대시보드",
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </ErrorBoundary>
         </main>
         <Footer />
+        <ScrollToTop />
       </body>
     </html>
   );

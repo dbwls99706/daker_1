@@ -193,10 +193,12 @@ function CampContent() {
                 type="url"
                 value={contactUrl}
                 onChange={(e) => { setContactUrl(e.target.value); setContactError(""); }}
+                aria-describedby={contactError ? "camp-contact-error" : undefined}
+                aria-invalid={!!contactError}
                 className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${contactError ? "border-red-400" : "border-gray-300"}`}
                 placeholder="https://open.kakao.com/o/..."
               />
-              {contactError && <p className="text-xs text-red-500 mt-0.5">{contactError}</p>}
+              {contactError && <p id="camp-contact-error" className="text-xs text-red-500 mt-0.5" role="alert">{contactError}</p>}
             </div>
           </div>
           {(!name.trim() || !intro.trim()) && (name || intro) && (

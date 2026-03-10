@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useCallback, useMemo } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark } from "@/lib/storage";
@@ -123,6 +124,38 @@ export default function HomePage() {
         ))}
       </section>
 
+      {/* Participation Chart */}
+      {leaderboards.length > 0 && (
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-slide-up">
+          <h2 className="mb-4 text-lg font-bold">해커톤별 참가 현황</h2>
+          <div className="space-y-3">
+            {leaderboards.map((lb) => {
+              const title = hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug;
+              const maxEntries = Math.max(...leaderboards.map((l) => l.entries.length), 1);
+              const pct = Math.round((lb.entries.length / maxEntries) * 100);
+              return (
+                <div key={lb.hackathonSlug}>
+                  <div className="mb-1 flex items-center justify-between text-sm">
+                    <span className="font-medium text-gray-700 truncate max-w-[200px]">{title}</span>
+                    <span className="text-gray-500">{lb.entries.length}팀</span>
+                  </div>
+                  <div className="h-6 w-full rounded-full bg-gray-100 overflow-hidden">
+                    <div
+                      className="h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-700 flex items-center justify-end pr-2"
+                      style={{ width: `${Math.max(pct, 8)}%` }}
+                    >
+                      {pct > 20 && (
+                        <span className="text-xs font-semibold text-white">{lb.entries.length}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Quick Nav Cards */}
       <section className="grid gap-4 sm:grid-cols-3">
         {[
@@ -210,13 +243,13 @@ export default function HomePage() {
               style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
             >
               {h.thumbnailUrl && (
-                <div className="mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
-                  <img
+                <div className="relative mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
+                  <Image
                     src={h.thumbnailUrl}
                     alt={h.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => { const p = (e.target as HTMLImageElement).parentElement; if (p) p.style.display = "none"; }}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               )}

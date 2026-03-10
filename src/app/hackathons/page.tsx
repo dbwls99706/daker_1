@@ -2,12 +2,14 @@
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getBookmarks, toggleBookmark } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
 
@@ -85,7 +87,7 @@ function HackathonsContent() {
   }
 
   if (!ready) {
-    return <LoadingSpinner />;
+    return <SkeletonPage />;
   }
 
   return (
@@ -182,13 +184,13 @@ function HackathonsContent() {
               style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
               {h.thumbnailUrl && (
-                <div className="mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
-                  <img
+                <div className="relative mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
+                  <Image
                     src={h.thumbnailUrl}
                     alt={h.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => { const p = (e.target as HTMLImageElement).parentElement; if (p) p.style.display = "none"; }}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               )}

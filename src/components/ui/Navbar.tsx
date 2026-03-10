@@ -49,6 +49,22 @@ export function Navbar() {
     }
   }, [searchOpen]);
 
+  // Ctrl+K / Cmd+K keyboard shortcut to open search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+      if (e.key === "Escape" && searchOpen) {
+        setSearchOpen(false);
+        setSearchQuery("");
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [searchOpen]);
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -114,12 +130,15 @@ export function Navbar() {
           ) : (
             <button
               onClick={() => setSearchOpen(true)}
-              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              aria-label="검색 열기"
+              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              aria-label="검색 열기 (Ctrl+K)"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[10px] font-medium text-gray-400">
+                <span>⌘</span>K
+              </kbd>
             </button>
           )}
 

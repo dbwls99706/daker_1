@@ -701,11 +701,13 @@ function SubmitTab({
                       value={items.find((i) => i.key === step.key)?.value || ""}
                       onChange={(e) => updateItem(step.key, e.target.value)}
                       disabled={isSubmitted}
+                      aria-describedby={urlErrors[step.key] ? `submit-error-${step.key}` : undefined}
+                      aria-invalid={!!urlErrors[step.key]}
                       className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 ${urlErrors[step.key] ? "border-red-400" : "border-gray-300"}`}
                       placeholder="https://..."
                     />
                     {urlErrors[step.key] && (
-                      <p className="text-xs text-red-500">{urlErrors[step.key]}</p>
+                      <p id={`submit-error-${step.key}`} className="text-xs text-red-500" role="alert">{urlErrors[step.key]}</p>
                     )}
                   </>
                 )}
