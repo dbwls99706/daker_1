@@ -118,7 +118,31 @@ export default function RankingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">글로벌 랭킹</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">글로벌 랭킹</h1>
+          {rankings.length > 0 && (
+            <button
+              onClick={() => {
+                const csv = [
+                  "순위,팀명,총점수,참가횟수,참가해커톤",
+                  ...rankings.map((r) =>
+                    `${r.rank},"${r.teamName}",${r.totalScore},${r.count},"${r.hackathons.join("; ")}"`
+                  ),
+                ].join("\n");
+                const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "rankings.csv";
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition"
+            >
+              CSV 내보내기
+            </button>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="기간 필터">
             {(
