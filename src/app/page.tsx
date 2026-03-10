@@ -44,7 +44,7 @@ export default function HomePage() {
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-8 py-16 text-white animate-slide-up">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-10 sm:px-8 sm:py-16 text-white animate-slide-up">
         <div className="relative z-10">
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-blue-200">해커톤 통합 플랫폼</p>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">BatonHub</h1>
@@ -89,14 +89,14 @@ export default function HomePage() {
                 <h2 className="font-bold text-orange-800">마감 임박 해커톤!</h2>
                 <div className="mt-2 space-y-1">
                   {urgent.map((h) => (
-                    <a
+                    <Link
                       key={h.slug}
                       href={`/hackathons/${h.slug}`}
                       className="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 text-sm transition hover:bg-white"
                     >
                       <span className="font-medium text-gray-900">{h.title}</span>
                       <span className="font-bold text-orange-600">{getDday(h.period.submissionDeadlineAt)}</span>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>

@@ -181,7 +181,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="border-t border-gray-200 bg-white px-4 py-3 sm:hidden">
+        <div className="border-t border-gray-200 bg-white px-4 py-3 sm:hidden animate-slide-down">
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => {
               const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
