@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, isValidUrl, getTimeRemaining } from "@/lib/utils";
 import type { Submission } from "@/types";
@@ -41,7 +42,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   }, [ready, slug]);
 
   if (!ready) {
-    return <LoadingSpinner />;
+    return <SkeletonPage />;
   }
 
   const detail = getHackathonDetail(slug);

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 const footerLinks = [
@@ -7,6 +9,14 @@ const footerLinks = [
 ];
 
 export function Footer() {
+  function handleReset() {
+    if (confirm("모든 데이터를 초기화합니다. 저장된 북마크, 제출물, 팀 데이터가 삭제됩니다. 계속하시겠습니까?")) {
+      const keys = ["batonhub_hackathons", "batonhub_details", "batonhub_leaderboards", "batonhub_teams", "batonhub_submissions", "batonhub_bookmarks", "batonhub_recent", "batonhub_seeded"];
+      keys.forEach((k) => localStorage.removeItem(k));
+      window.location.reload();
+    }
+  }
+
   return (
     <footer className="mt-16 border-t border-gray-200 bg-white" role="contentinfo">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -15,7 +25,7 @@ export function Footer() {
             <Link href="/" className="text-lg font-bold text-blue-600">BatonHub</Link>
             <p className="mt-1 text-xs text-gray-500">해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지</p>
           </div>
-          <nav className="flex gap-4" aria-label="푸터 내비게이션">
+          <nav className="flex gap-4 items-center" aria-label="푸터 내비게이션">
             {footerLinks.map((link) => (
               <Link
                 key={link.href}
@@ -25,6 +35,13 @@ export function Footer() {
                 {link.label}
               </Link>
             ))}
+            <button
+              onClick={handleReset}
+              className="text-xs text-gray-400 hover:text-red-500 transition"
+              aria-label="데이터 초기화"
+            >
+              데이터 초기화
+            </button>
           </nav>
           <div className="text-center sm:text-right">
             <p className="text-xs text-gray-400">
@@ -32,6 +49,9 @@ export function Footer() {
             </p>
             <p className="mt-1 text-xs text-gray-400">
               &copy; 2026 BatonHub. Built with Next.js + Tailwind CSS
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              <kbd className="rounded border border-gray-300 bg-gray-50 px-1 py-0.5 text-[10px] font-medium">?</kbd> 키보드 단축키 도움말
             </p>
           </div>
         </div>

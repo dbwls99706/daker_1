@@ -26,7 +26,7 @@ function HackathonsContent() {
   const [sort, setSort] = useState<SortKey>("latest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [, refresh] = useState(0);
+  const [refreshKey, refresh] = useState(0);
 
   useEffect(() => {
     if (urlKeyword) setKeyword(urlKeyword);
@@ -76,7 +76,8 @@ function HackathonsContent() {
     return Array.from(tags);
   }, [ready]);
 
-  const bookmarks = getBookmarks();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const bookmarks = useMemo(() => getBookmarks(), [ready, refreshKey]);
 
   const hasActiveFilter = statusFilter !== "all" || tagFilter !== "" || keyword.trim() !== "" || sort !== "latest";
 
@@ -158,7 +159,7 @@ function HackathonsContent() {
 
       {/* Result count + view toggle */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">총 {hackathons.length}개의 해커톤</p>
+        <p className="text-sm text-gray-500" aria-live="polite">총 {hackathons.length}개의 해커톤</p>
         <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="보기 모드">
           <button
             onClick={() => setViewMode("grid")}

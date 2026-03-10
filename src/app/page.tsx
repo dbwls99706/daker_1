@@ -6,8 +6,8 @@ import { useState, useCallback, useMemo } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark, getRecentlyViewed } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
 
@@ -30,6 +30,7 @@ export default function HomePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bookmarks = useMemo(() => (ready ? getBookmarks() : []), [ready, refreshKey]);
   const submissions = useMemo(() => (ready ? getSubmissions() : []), [ready]);
+  const recentSlugs = useMemo(() => (ready ? getRecentlyViewed() : []), [ready]);
 
   const ongoingCount = hackathons.filter((h) => h.status === "ongoing").length;
   const openTeamCount = teams.filter((t) => t.isOpen).length;
@@ -37,7 +38,7 @@ export default function HomePage() {
   const submittedCount = submissions.filter((s) => s.status === "submitted").length;
 
   if (!ready) {
-    return <LoadingSpinner />;
+    return <SkeletonPage />;
   }
 
   return (
@@ -229,7 +230,6 @@ export default function HomePage() {
 
       {/* Recently Viewed */}
       {(() => {
-        const recentSlugs = getRecentlyViewed();
         const recentHackathons = recentSlugs
           .map((s) => hackathons.find((h) => h.slug === s))
           .filter(Boolean);

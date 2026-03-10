@@ -182,7 +182,7 @@ export default function RankingsPage() {
         </div>
       </div>
 
-      <div className="flex gap-4 text-sm text-gray-500">
+      <div className="flex gap-4 text-sm text-gray-500" aria-live="polite">
         <span>총 {rankings.length}개 팀</span>
         {period === "monthly" && <span>({new Date().getMonth() + 1}월 기준)</span>}
         {period === "yearly" && <span>({new Date().getFullYear()}년 기준)</span>}

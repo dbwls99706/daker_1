@@ -248,7 +248,7 @@ function CampContent() {
         </div>
       )}
 
-      <p className="text-sm text-gray-500">총 {filteredTeams.length}개의 팀</p>
+      <p className="text-sm text-gray-500" aria-live="polite">총 {filteredTeams.length}개의 팀</p>
 
       {(() => {
         if (filteredTeams.length === 0) return (
