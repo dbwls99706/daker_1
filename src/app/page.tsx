@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useCallback, useMemo } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
-import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark } from "@/lib/storage";
+import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark, getRecentlyViewed } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -225,6 +225,39 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Recently Viewed */}
+      {(() => {
+        const recentSlugs = getRecentlyViewed();
+        const recentHackathons = recentSlugs
+          .map((s) => hackathons.find((h) => h.slug === s))
+          .filter(Boolean);
+        if (recentHackathons.length === 0) return null;
+        return (
+          <section>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <span className="text-blue-500" aria-hidden="true">🕐</span> 최근 본 해커톤
+              </h2>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {recentHackathons.map((h) => (
+                <Link
+                  key={h!.slug}
+                  href={`/hackathons/${h!.slug}`}
+                  className="group flex-shrink-0 w-56 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
+                >
+                  <StatusBadge status={h!.status} />
+                  <h3 className="mt-2 text-sm font-bold text-gray-900 group-hover:text-blue-600 line-clamp-2">
+                    {h!.title}
+                  </h3>
+                  <p className="mt-1 text-xs text-gray-500">{formatDate(h!.period.submissionDeadlineAt)} 마감</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Hackathon Preview */}
       <section>

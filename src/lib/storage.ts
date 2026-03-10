@@ -181,3 +181,18 @@ export function toggleBookmark(slug: string): boolean {
 export function isBookmarked(slug: string): boolean {
   return getBookmarks().includes(slug);
 }
+
+// Recently Viewed
+const RECENT_KEY = "batonhub_recent";
+const MAX_RECENT = 5;
+
+export function addRecentlyViewed(slug: string) {
+  const recent = getItem<string[]>(RECENT_KEY, []);
+  const filtered = recent.filter((s) => s !== slug);
+  filtered.unshift(slug);
+  setItem(RECENT_KEY, filtered.slice(0, MAX_RECENT));
+}
+
+export function getRecentlyViewed(): string[] {
+  return getItem<string[]>(RECENT_KEY, []);
+}

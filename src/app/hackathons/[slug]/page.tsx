@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useCallback, use } from "react";
+import { useState, useCallback, useEffect, use } from "react";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
-import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard } from "@/lib/storage";
+import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard, addRecentlyViewed } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
@@ -35,6 +35,10 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   const refreshData = useCallback(() => {
     setDataVersion((n) => n + 1);
   }, []);
+
+  useEffect(() => {
+    if (ready) addRecentlyViewed(slug);
+  }, [ready, slug]);
 
   if (!ready) {
     return <LoadingSpinner />;

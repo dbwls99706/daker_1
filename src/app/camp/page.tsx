@@ -22,6 +22,8 @@ function CampContent() {
   const [deleteTarget, setDeleteTarget] = useState<{ teamCode: string; name: string } | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
+  const [teamSearch, setTeamSearch] = useState("");
+
   const [name, setName] = useState("");
   const [intro, setIntro] = useState("");
   const [contactUrl, setContactUrl] = useState("");
@@ -120,7 +122,21 @@ function CampContent() {
         ))}
       </div>
 
-      <p className="text-sm text-gray-500">총 {teams.length}개의 팀</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="text"
+          value={teamSearch}
+          onChange={(e) => setTeamSearch(e.target.value)}
+          placeholder="팀명 또는 포지션 검색..."
+          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          aria-label="팀 검색"
+        />
+        <p className="text-sm text-gray-500">총 {teams.filter((t) => {
+          if (!teamSearch.trim()) return true;
+          const q = teamSearch.trim().toLowerCase();
+          return t.name.toLowerCase().includes(q) || t.lookingFor.some((r) => r.toLowerCase().includes(q)) || t.intro.toLowerCase().includes(q);
+        }).length}개의 팀</p>
+      </div>
 
       {showCreate && (
         <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-6 space-y-4 animate-slide-up">
@@ -214,22 +230,28 @@ function CampContent() {
         </div>
       )}
 
-      {teams.length === 0 ? (
-        <EmptyState
-          title="등록된 팀이 없습니다"
-          description="첫 팀을 만들어보세요!"
-          action={
-            <button
-              onClick={() => setShowCreate(true)}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              팀 만들기
-            </button>
-          }
-        />
-      ) : (
+      {(() => {
+        const filteredTeams = teams.filter((t) => {
+          if (!teamSearch.trim()) return true;
+          const q = teamSearch.trim().toLowerCase();
+          return t.name.toLowerCase().includes(q) || t.lookingFor.some((r) => r.toLowerCase().includes(q)) || t.intro.toLowerCase().includes(q);
+        });
+        if (filteredTeams.length === 0) return (
+          <EmptyState
+            title="등록된 팀이 없습니다"
+            description={teamSearch.trim() ? "검색 조건에 맞는 팀이 없습니다." : "첫 팀을 만들어보세요!"}
+            action={
+              teamSearch.trim() ? (
+                <button onClick={() => setTeamSearch("")} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">검색 초기화</button>
+              ) : (
+                <button onClick={() => setShowCreate(true)} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">팀 만들기</button>
+              )
+            }
+          />
+        );
+        return (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {teams.map((t, i) => (
+          {filteredTeams.map((t, i) => (
             <div
               key={t.teamCode}
               className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
@@ -308,7 +330,8 @@ function CampContent() {
             </div>
           ))}
         </div>
-      )}
+        );
+      })()}
 
       <Modal
         open={!!deleteTarget}

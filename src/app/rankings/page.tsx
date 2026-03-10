@@ -16,6 +16,8 @@ export default function RankingsPage() {
   const [hackathonFilter, setHackathonFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<SortField>("rank");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const hackathons = useMemo(() => {
     if (!ready) return [];
@@ -128,7 +130,7 @@ export default function RankingsPage() {
             ).map((f) => (
               <button
                 key={f.key}
-                onClick={() => setPeriod(f.key)}
+                onClick={() => { setPeriod(f.key); setPage(1); }}
                 aria-pressed={period === f.key}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
                   period === f.key
@@ -142,7 +144,7 @@ export default function RankingsPage() {
           </div>
           <select
             value={hackathonFilter}
-            onChange={(e) => setHackathonFilter(e.target.value)}
+            onChange={(e) => { setHackathonFilter(e.target.value); setPage(1); }}
             className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
             aria-label="해커톤 필터"
           >
@@ -196,7 +198,7 @@ export default function RankingsPage() {
               </tr>
             </thead>
             <tbody>
-              {rankings.map((r) => (
+              {rankings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((r) => (
                 <tr key={r.teamName} className="border-b last:border-0 hover:bg-gray-50 transition">
                   <td className="px-4 py-3">
                     <span
@@ -232,6 +234,27 @@ export default function RankingsPage() {
             </tbody>
           </table>
         </div>
+        {rankings.length > PAGE_SIZE && (
+          <div className="flex items-center justify-center gap-2 pt-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition"
+            >
+              이전
+            </button>
+            <span className="text-sm text-gray-600">
+              {page} / {Math.ceil(rankings.length / PAGE_SIZE)}
+            </span>
+            <button
+              onClick={() => setPage((p) => Math.min(Math.ceil(rankings.length / PAGE_SIZE), p + 1))}
+              disabled={page >= Math.ceil(rankings.length / PAGE_SIZE)}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition"
+            >
+              다음
+            </button>
+          </div>
+        )}
         </>
       )}
     </div>
