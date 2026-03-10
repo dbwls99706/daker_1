@@ -217,6 +217,23 @@ body {
 .dark .border-purple-100 { border-color: #2e1065 !important; }
 .dark .border-orange-100 { border-color: #431407 !important; }
 
+/* Skeleton loader dark mode */
+.dark .animate-pulse.bg-gray-200 { background-color: #334155 !important; }
+
+/* Disabled button dark */
+.dark .disabled\:opacity-50:disabled { opacity: 0.4; }
+
+/* Kbd tag for shortcuts */
+.dark kbd { background-color: #1e293b !important; border-color: #475569 !important; color: #94a3b8 !important; }
+
+/* Yellow bookmark section dark */
+.dark .border-yellow-200 { border-color: #854d0e !important; }
+.dark .bg-yellow-50 { background-color: #422006 !important; }
+
+/* White/60 override for deadline alerts */
+.dark .bg-white\/60 { background-color: rgba(30, 41, 59, 0.6) !important; }
+.dark .text-orange-800 { color: #fdba74 !important; }
+
 /* Focus visible for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--color-primary);

@@ -163,6 +163,18 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               {getDday(hackathon.period.submissionDeadlineAt)}
             </span>
           )}
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => setToastMsg("링크가 복사되었습니다!"));
+              }
+            }}
+            className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 transition"
+            aria-label="링크 복사"
+          >
+            🔗 공유
+          </button>
         </div>
         {hackathon.status !== "ended" && (
           <div className="mt-3 max-w-md">
@@ -221,6 +233,12 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             }`}
           >
             {tab.label}
+            {tab.key === "teams" && teams.length > 0 && (
+              <span className="ml-1 rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">{teams.length}</span>
+            )}
+            {tab.key === "leaderboard" && leaderboard && leaderboard.entries.length > 0 && (
+              <span className="ml-1 rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">{leaderboard.entries.length}</span>
+            )}
             {tab.key === "submit" && submissions.length > 0 && (
               <span className={`ml-1.5 inline-flex h-2 w-2 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
             )}
