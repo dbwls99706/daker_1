@@ -5,6 +5,7 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getAllLeaderboards, getHackathons } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
+import { BarChart } from "@/components/features/BarChart";
 
 type PeriodFilter = "all" | "monthly" | "yearly";
 type SortField = "rank" | "teamName" | "totalScore" | "count";
@@ -223,6 +224,20 @@ export default function RankingsPage() {
         <EmptyState title="랭킹 데이터 없음" description="해당 조건에 제출된 결과가 없습니다." />
       ) : (
         <>
+        {/* Score Distribution Chart */}
+        {rankings.length >= 2 && (
+          <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-slide-up">
+            <BarChart
+              title="상위 팀 점수 분포"
+              data={rankings.slice(0, 8).map((r, i) => ({
+                label: r.teamName.length > 8 ? r.teamName.slice(0, 8) + ".." : r.teamName,
+                value: r.totalScore,
+                color: i === 0 ? "#eab308" : i === 1 ? "#9ca3af" : i === 2 ? "#f97316" : "#3b82f6",
+              }))}
+            />
+          </section>
+        )}
+
         {/* Podium for top 3 */}
         {rankings.length >= 3 && (
           <section className="hidden sm:flex items-end justify-center gap-4 py-6 animate-slide-up" aria-label="상위 3팀 포디움">

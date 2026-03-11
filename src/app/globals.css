@@ -334,6 +334,25 @@ body {
   outline-offset: 2px;
 }
 
+/* Dark countdown digits */
+.dark .dark-countdown-digit {
+  background: linear-gradient(to bottom, #1e293b, #0f172a) !important;
+}
+
+/* Dark purple overrides for team matcher */
+.dark .border-purple-200 { border-color: #581c87 !important; }
+.dark .bg-purple-50 { background-color: #2e1065 !important; }
+.dark .text-purple-700 { color: #c4b5fd !important; }
+.dark .text-purple-900 { color: #ede9fe !important; }
+.dark .border-purple-500 { border-color: #a855f7 !important; }
+.dark .bg-purple-600 { background-color: #9333ea !important; }
+.dark .hover\:bg-purple-100:hover { background-color: #3b0764 !important; }
+.dark .hover\:bg-purple-700:hover { background-color: #7e22ce !important; }
+
+/* Notification panel dark mode */
+.dark .border-gray-50 { border-color: #1e293b !important; }
+.dark .bg-blue-50\/30 { background-color: rgba(23, 37, 84, 0.3) !important; }
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

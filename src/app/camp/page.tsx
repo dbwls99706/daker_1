@@ -11,6 +11,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Toast } from "@/components/ui/Toast";
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { generateId, isValidUrl, formatDate } from "@/lib/utils";
+import { TeamMatcher } from "@/components/features/TeamMatcher";
 import type { Team } from "@/types";
 
 function CampContent() {
@@ -252,6 +253,9 @@ function CampContent() {
           </button>
         </div>
       )}
+
+      {/* Team Matcher */}
+      <TeamMatcher teams={teams} hackathonSlug={hackathonFilter || undefined} />
 
       <p className="text-sm text-gray-500" aria-live="polite">총 {filteredTeams.length}개의 팀</p>
 

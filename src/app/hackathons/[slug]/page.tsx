@@ -12,6 +12,7 @@ import { Toast } from "@/components/ui/Toast";
 import { SubmitTab } from "@/components/features/SubmitTab";
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, getTimeRemaining } from "@/lib/utils";
+import { CountdownTimer } from "@/components/features/CountdownTimer";
 import type { Submission } from "@/types";
 
 const TABS = [
@@ -206,6 +207,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             </div>
           </div>
         )}
+        {/* Countdown Timer */}
+        {hackathon.status !== "ended" && (
+          <div className="mt-4">
+            <CountdownTimer targetIso={hackathon.period.submissionDeadlineAt} label="제출 마감까지" />
+          </div>
+        )}
+
         {/* Mini Stats */}
         <div className="mt-4 flex flex-wrap gap-3">
           <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-1.5 text-sm">

@@ -11,6 +11,8 @@ import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
+import { CountdownTimer } from "@/components/features/CountdownTimer";
+import { DonutChart } from "@/components/features/DonutChart";
 
 function AnimatedStat({ value, label, color, bg, border, delay }: { value: number; label: string; color: string; bg: string; border: string; delay: number }) {
   const animated = useCountUp(value);
@@ -170,6 +172,64 @@ export default function HomePage() {
         ].map((stat, i) => (
           <AnimatedStat key={stat.label} {...stat} delay={i * 80} />
         ))}
+      </section>
+
+      {/* Countdown Timers for Active Hackathons */}
+      {(() => {
+        const active = hackathons.filter((h) => h.status === "ongoing" || h.status === "upcoming");
+        if (active.length === 0) return null;
+        return (
+          <section className="space-y-4 animate-slide-up">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <svg className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              실시간 마감 카운트다운
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {active.map((h) => (
+                <Link key={h.slug} href={`/hackathons/${h.slug}`} className="block hover:scale-[1.01] transition-transform">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={h.status} />
+                      <span className="text-sm font-medium text-gray-700 truncate">{h.title}</span>
+                    </div>
+                    <CountdownTimer targetIso={h.period.submissionDeadlineAt} label="제출 마감까지" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* Statistics Overview */}
+      <section className="grid gap-4 sm:grid-cols-2 animate-slide-up">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-bold">해커톤 현황</h2>
+          <DonutChart
+            segments={[
+              { label: "진행중", value: hackathons.filter((h) => h.status === "ongoing").length, color: "#22c55e" },
+              { label: "예정", value: hackathons.filter((h) => h.status === "upcoming").length, color: "#3b82f6" },
+              { label: "종료", value: hackathons.filter((h) => h.status === "ended").length, color: "#9ca3af" },
+            ]}
+            title="해커톤"
+            size={140}
+            thickness={22}
+          />
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-bold">팀 모집 현황</h2>
+          <DonutChart
+            segments={[
+              { label: "모집중", value: teams.filter((t) => t.isOpen).length, color: "#22c55e" },
+              { label: "모집마감", value: teams.filter((t) => !t.isOpen).length, color: "#9ca3af" },
+            ]}
+            title="팀"
+            size={140}
+            thickness={22}
+          />
+        </div>
       </section>
 
       {/* Participation Chart */}

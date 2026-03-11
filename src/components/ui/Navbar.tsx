@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { NotificationCenter } from "@/components/features/NotificationCenter";
 
 const navLinks = [
   { href: "/", label: "홈" },
@@ -139,6 +140,9 @@ export function Navbar() {
               </kbd>
             </button>
           )}
+
+          {/* Notifications */}
+          <NotificationCenter />
 
           {/* Dark Mode Toggle */}
           <button

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Modal } from "@/components/ui/Modal";
+import { DragDropZone } from "@/components/features/DragDropZone";
 import { formatDateTime, isValidUrl } from "@/lib/utils";
 import type { Submission } from "@/types";
 
@@ -210,6 +211,15 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
                     )}
                   </>
                 )}
+                {step.format === "pdf_url" && (
+                  <DragDropZone
+                    accept=".pdf"
+                    label="PDF 파일을 드래그하거나 클릭하여 업로드"
+                    onFileSelect={(name) => updateItem(step.key, name)}
+                    currentValue={items.find((i) => i.key === step.key)?.value}
+                    disabled={isSubmitted}
+                  />
+                )}
               </div>
             ))
           : keys.map((k) => (
@@ -224,6 +234,15 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
                   placeholder={`${k} 파일 경로 또는 URL`}
                 />
+                {k === "pdf" && (
+                  <DragDropZone
+                    accept=".pdf"
+                    label="PDF 파일 (최대 10MB)"
+                    onFileSelect={(name) => updateItem(k, name)}
+                    currentValue={items.find((i) => i.key === k)?.value}
+                    disabled={isSubmitted}
+                  />
+                )}
               </div>
             ))}
 
