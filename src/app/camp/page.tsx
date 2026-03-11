@@ -36,6 +36,7 @@ function CampContent() {
 
   useEffect(() => {
     setSelectedHackathon(hackathonFilter);
+    setCampPage(1);
   }, [hackathonFilter]);
 
   const teams = useMemo(() => {
@@ -267,8 +268,10 @@ function CampContent() {
             }
           />
         );
-        const totalPages = Math.ceil(filteredTeams.length / CAMP_PAGE_SIZE);
-        const pagedTeams = filteredTeams.slice((campPage - 1) * CAMP_PAGE_SIZE, campPage * CAMP_PAGE_SIZE);
+        const totalPages = Math.max(1, Math.ceil(filteredTeams.length / CAMP_PAGE_SIZE));
+        const safePage = Math.min(campPage, totalPages);
+        if (safePage !== campPage) setCampPage(safePage);
+        const pagedTeams = filteredTeams.slice((safePage - 1) * CAMP_PAGE_SIZE, safePage * CAMP_PAGE_SIZE);
         return (
         <>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -279,7 +282,7 @@ function CampContent() {
               style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-gray-900">{t.name}</h3>
+                <h3 className="font-bold text-gray-900 truncate max-w-[180px]" title={t.name}>{t.name}</h3>
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                     t.isOpen ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"

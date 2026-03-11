@@ -25,6 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
         <script
           dangerouslySetInnerHTML={{
             __html: `try{if(localStorage.getItem("batonhub_dark")==="true")document.documentElement.classList.add("dark")}catch(e){}`,

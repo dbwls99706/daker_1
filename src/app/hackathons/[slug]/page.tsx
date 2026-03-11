@@ -97,7 +97,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   const sec = detail.sections;
 
   function handleSaveSubmission(items: { key: string; value: string }[], memo: string, teamName: string) {
-    const existing = submissions[0];
+    const existing = submissions.length > 0 ? submissions[0] : null;
     const sub: Submission = {
       id: existing?.id || generateId(),
       hackathonSlug: slug,
@@ -113,7 +113,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   }
 
   function handleSubmit(items: { key: string; value: string }[], memo: string, teamName: string) {
-    const existing = submissions[0];
+    const existing = submissions.length > 0 ? submissions[0] : null;
     const finalTeamName = teamName.trim();
     const sub: Submission = {
       id: existing?.id || generateId(),
@@ -127,6 +127,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     };
     saveSubmission(sub);
 
+    // Read leaderboard fresh to minimize race condition window
     const lb = getLeaderboard(slug) || {
       hackathonSlug: slug,
       updatedAt: new Date().toISOString(),
@@ -134,12 +135,19 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     };
     const existingEntry = lb.entries.find((e) => e.teamName === finalTeamName);
     if (!existingEntry) {
+      // Assign rank based on score ordering (unscored entries go last)
+      const unscoredRank = lb.entries.filter((e) => e.score > 0).length + lb.entries.filter((e) => e.score === 0).length + 1;
       lb.entries.push({
-        rank: lb.entries.length + 1,
+        rank: unscoredRank,
         teamName: finalTeamName,
         score: 0,
         submittedAt: new Date().toISOString(),
       });
+      lb.updatedAt = new Date().toISOString();
+      updateLeaderboard(lb);
+    } else {
+      // Update submission time for resubmission
+      existingEntry.submittedAt = new Date().toISOString();
       lb.updatedAt = new Date().toISOString();
       updateLeaderboard(lb);
     }

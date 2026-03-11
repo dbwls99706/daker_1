@@ -63,12 +63,13 @@ export function statusColor(status: string): string {
   }
 }
 
-/** Sanitize a URL to prevent XSS. Only allows http(s) and mailto protocols. */
+/** Sanitize a URL to prevent XSS and open redirects. Only allows http(s) and mailto protocols. */
 export function sanitizeUrl(url: string): string {
   if (!url || url === "#") return "#";
   const trimmed = url.trim();
-  // Block dangerous URI schemes before URL parsing
-  if (/^(javascript|data|vbscript):/i.test(trimmed)) return "#";
+  // Block dangerous URI schemes before URL parsing (case-insensitive, whitespace-stripped)
+  const normalized = trimmed.replace(/[\s\u200B\u200C\u200D\uFEFF]/g, "");
+  if (/^(javascript|data|vbscript|blob):/i.test(normalized)) return "#";
   try {
     const parsed = new URL(trimmed);
     if (["http:", "https:", "mailto:"].includes(parsed.protocol)) {
@@ -78,6 +79,11 @@ export function sanitizeUrl(url: string): string {
   } catch {
     return "#";
   }
+}
+
+/** Sanitize text input to prevent script injection in rendered content */
+export function sanitizeText(text: string, maxLength = 500): string {
+  return text.slice(0, maxLength).replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 export function isValidUrl(url: string): boolean {

@@ -79,12 +79,26 @@ function getItem<T>(key: string, fallback: T): T {
   }
 }
 
-function setItem(key: string, value: unknown) {
-  if (typeof window === "undefined") return;
+function setItem(key: string, value: unknown): boolean {
+  if (typeof window === "undefined") return false;
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch (e) {
-    console.error("Failed to write to localStorage:", e);
+    // Handle quota exceeded: try clearing non-essential data first
+    if (e instanceof DOMException && (e.code === 22 || e.name === "QuotaExceededError")) {
+      try {
+        // Remove recently viewed (least important) and retry
+        localStorage.removeItem("batonhub_recent");
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch {
+        console.error("localStorage quota exceeded even after cleanup:", e);
+      }
+    } else {
+      console.error("Failed to write to localStorage:", e);
+    }
+    return false;
   }
 }
 
@@ -125,8 +139,15 @@ export function getTeams(hackathonSlug?: string): Team[] {
 }
 
 export function addTeam(team: Team) {
+  // Enforce length limits on user input
+  const sanitized: Team = {
+    ...team,
+    name: team.name.slice(0, 30),
+    intro: team.intro.slice(0, 200),
+    lookingFor: team.lookingFor.map((r) => r.slice(0, 30)).slice(0, 10),
+  };
   const all = getItem<Team[]>(KEYS.teams, []);
-  all.push(team);
+  all.push(sanitized);
   setItem(KEYS.teams, all);
 }
 

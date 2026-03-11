@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { formatDateTime, isValidUrl } from "@/lib/utils";
 import type { Submission } from "@/types";
@@ -18,6 +18,7 @@ interface SubmitTabProps {
 
 const MAX_TEAM_NAME = 50;
 const MAX_MEMO = 500;
+const DRAFT_KEY = "batonhub_submit_draft";
 
 export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: SubmitTabProps) {
   const hasSteps = sections.submissionItems && sections.submissionItems.length > 0;
@@ -34,7 +35,43 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
   const [memo, setMemo] = useState(existingSubmission?.memo || "");
   const [teamName, setTeamName] = useState(existingSubmission?.teamName || "");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showResubmit, setShowResubmit] = useState(false);
   const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load draft from localStorage on mount (only if no existing submission)
+  useEffect(() => {
+    if (existingSubmission) return;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft.items) setItems(draft.items);
+        if (draft.memo) setMemo(draft.memo);
+        if (draft.teamName) setTeamName(draft.teamName);
+      }
+    } catch { /* ignore corrupt drafts */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-save draft with debounce
+  const saveDraft = useCallback(() => {
+    if (existingSubmission?.status === "submitted") return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ items, memo, teamName }));
+    } catch { /* quota exceeded - ignore */ }
+  }, [items, memo, teamName, existingSubmission]);
+
+  useEffect(() => {
+    if (draftTimerRef.current) clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = setTimeout(saveDraft, 1000);
+    return () => { if (draftTimerRef.current) clearTimeout(draftTimerRef.current); };
+  }, [saveDraft]);
+
+  // Clear draft after successful save/submit
+  function clearDraft() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+  }
 
   function updateItem(key: string, value: string) {
     setItems((prev) => prev.map((i) => (i.key === key ? { ...i, value } : i)));
@@ -96,15 +133,7 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
               <span className="text-sm font-semibold text-green-800">제출이 완료되었습니다</span>
             </div>
             <button
-              onClick={() => {
-                if (confirm("제출을 철회하고 수정 모드로 전환합니다. 계속하시겠습니까?")) {
-                  onSave(
-                    existingSubmission!.items,
-                    existingSubmission!.memo,
-                    existingSubmission!.teamName
-                  );
-                }
-              }}
+              onClick={() => setShowResubmit(true)}
               className="rounded-lg border border-orange-300 px-3 py-1.5 text-xs font-medium text-orange-700 hover:bg-orange-50 transition"
             >
               수정하기 (재제출)
@@ -221,7 +250,7 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
           )}
           <div className="flex gap-3">
             <button
-              onClick={() => { if (validateUrls()) onSave(items, memo, teamName); }}
+              onClick={() => { if (validateUrls()) { clearDraft(); onSave(items, memo, teamName); } }}
               className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
             >
               임시 저장
@@ -237,6 +266,7 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
         </div>
       )}
 
+      {/* Submit confirmation modal */}
       <Modal
         open={showConfirm}
         onClose={() => setShowConfirm(false)}
@@ -252,6 +282,7 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
             <button
               onClick={() => {
                 setShowConfirm(false);
+                clearDraft();
                 onSubmit(items, memo, teamName);
               }}
               className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -271,6 +302,38 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
             {memo && <p className="mt-1"><span className="font-semibold">메모:</span> {memo.length > 50 ? memo.slice(0, 50) + "..." : memo}</p>}
           </div>
         </div>
+      </Modal>
+
+      {/* Resubmit confirmation modal */}
+      <Modal
+        open={showResubmit}
+        onClose={() => setShowResubmit(false)}
+        title="제출을 철회하시겠습니까?"
+        actions={
+          <>
+            <button
+              onClick={() => setShowResubmit(false)}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              onClick={() => {
+                setShowResubmit(false);
+                onSave(
+                  existingSubmission!.items,
+                  existingSubmission!.memo,
+                  existingSubmission!.teamName
+                );
+              }}
+              className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+            >
+              수정 모드로 전환
+            </button>
+          </>
+        }
+      >
+        <p>제출을 철회하고 수정 모드로 전환합니다. 수정 후 다시 제출해야 합니다.</p>
       </Modal>
     </div>
   );
