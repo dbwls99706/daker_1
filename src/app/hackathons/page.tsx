@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
-import { SafeImage } from "@/components/ui/SafeImage";
+import { HackathonThumbnail } from "@/components/ui/HackathonThumbnail";
 import { useSearchParams } from "next/navigation";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getBookmarks, toggleBookmark } from "@/lib/storage";
@@ -210,17 +210,14 @@ function HackathonsContent() {
               }`}
               style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
-              {h.thumbnailUrl && (
-                <div className="relative mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
-                  <SafeImage
-                    src={h.thumbnailUrl}
-                    alt={h.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-              )}
+              <div className="mb-3 overflow-hidden rounded-lg aspect-video">
+                <HackathonThumbnail
+                  slug={h.slug}
+                  title={h.title}
+                  status={h.status}
+                  className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StatusBadge status={h.status} />
@@ -278,11 +275,9 @@ function HackathonsContent() {
               }`}
               style={{ animationDelay: `${i * 40}ms`, animationFillMode: "both" }}
             >
-              {h.thumbnailUrl && (
-                <div className="relative hidden sm:block h-16 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                  <SafeImage src={h.thumbnailUrl} alt={h.title} fill sizes="112px" className="object-cover" />
-                </div>
-              )}
+              <div className="hidden sm:block h-16 w-28 flex-shrink-0 overflow-hidden rounded-lg">
+                <HackathonThumbnail slug={h.slug} title="" status={h.status} className="h-full w-full" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <StatusBadge status={h.status} />

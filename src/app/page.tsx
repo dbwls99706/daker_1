@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SafeImage } from "@/components/ui/SafeImage";
+import { HackathonThumbnail } from "@/components/ui/HackathonThumbnail";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark, getRecentlyViewed } from "@/lib/storage";
@@ -322,17 +322,14 @@ export default function HomePage() {
               className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
               style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
             >
-              {h.thumbnailUrl && (
-                <div className="relative mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
-                  <SafeImage
-                    src={h.thumbnailUrl}
-                    alt={h.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-              )}
+              <div className="mb-3 overflow-hidden rounded-lg aspect-video">
+                <HackathonThumbnail
+                  slug={h.slug}
+                  title={h.title}
+                  status={h.status}
+                  className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StatusBadge status={h.status} />
