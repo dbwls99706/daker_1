@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { Modal } from "@/components/ui/Modal";
 
 const footerLinks = [
   { href: "/hackathons", label: "해커톤" },
@@ -9,12 +11,12 @@ const footerLinks = [
 ];
 
 export function Footer() {
+  const [showReset, setShowReset] = useState(false);
+
   function handleReset() {
-    if (confirm("모든 데이터를 초기화합니다. 저장된 북마크, 제출물, 팀 데이터가 삭제됩니다. 계속하시겠습니까?")) {
-      const keys = ["batonhub_hackathons", "batonhub_details", "batonhub_leaderboards", "batonhub_teams", "batonhub_submissions", "batonhub_bookmarks", "batonhub_recent", "batonhub_seeded"];
-      keys.forEach((k) => localStorage.removeItem(k));
-      window.location.reload();
-    }
+    const keys = ["batonhub_hackathons", "batonhub_details", "batonhub_leaderboards", "batonhub_teams", "batonhub_submissions", "batonhub_bookmarks", "batonhub_recent", "batonhub_seeded"];
+    keys.forEach((k) => localStorage.removeItem(k));
+    window.location.reload();
   }
 
   return (
@@ -36,7 +38,7 @@ export function Footer() {
               </Link>
             ))}
             <button
-              onClick={handleReset}
+              onClick={() => setShowReset(true)}
               className="text-xs text-gray-400 hover:text-red-500 transition"
               aria-label="데이터 초기화"
             >
@@ -56,6 +58,31 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      <Modal
+        open={showReset}
+        onClose={() => setShowReset(false)}
+        title="데이터 초기화"
+        actions={
+          <>
+            <button
+              onClick={() => setShowReset(false)}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              onClick={handleReset}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            >
+              초기화
+            </button>
+          </>
+        }
+      >
+        <p>모든 데이터를 초기화합니다. 저장된 북마크, 제출물, 팀 데이터가 삭제됩니다.</p>
+        <p className="mt-2 text-sm text-gray-500">페이지가 새로고침되며 시드 데이터가 다시 로드됩니다.</p>
+      </Modal>
     </footer>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { useSearchParams } from "next/navigation";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getBookmarks, toggleBookmark } from "@/lib/storage";
@@ -212,7 +212,7 @@ function HackathonsContent() {
             >
               {h.thumbnailUrl && (
                 <div className="relative mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
-                  <Image
+                  <SafeImage
                     src={h.thumbnailUrl}
                     alt={h.title}
                     fill
@@ -280,7 +280,7 @@ function HackathonsContent() {
             >
               {h.thumbnailUrl && (
                 <div className="relative hidden sm:block h-16 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                  <Image src={h.thumbnailUrl} alt={h.title} fill sizes="112px" className="object-cover" />
+                  <SafeImage src={h.thumbnailUrl} alt={h.title} fill sizes="112px" className="object-cover" />
                 </div>
               )}
               <div className="flex-1 min-w-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark, getRecentlyViewed } from "@/lib/storage";
@@ -324,7 +324,7 @@ export default function HomePage() {
             >
               {h.thumbnailUrl && (
                 <div className="relative mb-3 overflow-hidden rounded-lg bg-gray-100 aspect-video">
-                  <Image
+                  <SafeImage
                     src={h.thumbnailUrl}
                     alt={h.title}
                     fill

@@ -17,14 +17,13 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [dark, setDark] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return document.documentElement.classList.contains("dark");
-  });
+  const [dark, setDark] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const [isMac, setIsMac] = useState(false);
 
+  // Sync dark mode state from DOM after hydration (avoids SSR mismatch)
   useEffect(() => {
+    setDark(document.documentElement.classList.contains("dark"));
     setIsMac(navigator.platform?.toUpperCase().includes("MAC") || navigator.userAgent?.includes("Mac"));
   }, []);
 

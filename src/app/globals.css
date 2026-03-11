@@ -148,7 +148,7 @@ body {
 .dark .text-gray-700 { color: #cbd5e1 !important; }
 .dark .text-gray-600 { color: var(--text-secondary) !important; }
 .dark .text-gray-500 { color: var(--text-muted) !important; }
-.dark .text-gray-400 { color: #64748b !important; }
+.dark .text-gray-400 { color: #94a3b8 !important; }
 
 /* Blue — WCAG AA contrast verified */
 .dark .bg-blue-50 { background-color: #172554 !important; }
