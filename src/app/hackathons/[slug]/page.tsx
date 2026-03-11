@@ -188,7 +188,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               <span>마감까지</span>
               <span>{100 - getTimeRemaining(hackathon.period.submissionDeadlineAt)}% 남음</span>
             </div>
-            <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden" role="progressbar" aria-valuenow={getTimeRemaining(hackathon.period.submissionDeadlineAt)} aria-valuemin={0} aria-valuemax={100} aria-label={`마감 진행률 ${getTimeRemaining(hackathon.period.submissionDeadlineAt)}%`}>
               <div
                 className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
                 style={{ width: `${getTimeRemaining(hackathon.period.submissionDeadlineAt)}%` }}
@@ -218,8 +218,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       </div>
 
       {/* Tabs */}
+      <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스와이프하여 탭 이동 →</p>
       <div
-        className="flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1"
+        className="relative flex gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1 tab-scroll-hint"
         role="tablist"
         aria-label="해커톤 상세 탭"
         onKeyDown={(e) => {
@@ -716,6 +717,9 @@ function SubmitTab({
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
             placeholder="리더보드에 표시될 팀명을 입력하세요"
           />
+          {!isSubmitted && (
+            <p className="text-xs text-gray-400 text-right mt-0.5">{teamName.length}/50</p>
+          )}
         </div>
 
         {hasSteps

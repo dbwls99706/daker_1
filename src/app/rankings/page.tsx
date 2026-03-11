@@ -195,27 +195,51 @@ export default function RankingsPage() {
         <EmptyState title="랭킹 데이터 없음" description="해당 조건에 제출된 결과가 없습니다." />
       ) : (
         <>
+        {/* Podium for top 3 */}
+        {rankings.length >= 3 && (
+          <section className="hidden sm:flex items-end justify-center gap-4 py-6 animate-slide-up" aria-label="상위 3팀 포디움">
+            {[rankings[1], rankings[0], rankings[2]].map((r, i) => {
+              const heights = ["h-28", "h-36", "h-24"];
+              const medals = ["🥈", "🥇", "🥉"];
+              const bgColors = ["bg-gray-100 border-gray-300", "bg-yellow-50 border-yellow-300", "bg-orange-50 border-orange-200"];
+              const textSizes = ["text-lg", "text-2xl", "text-lg"];
+              return (
+                <div key={r.teamName} className="flex flex-col items-center gap-2 w-40">
+                  <span className="text-3xl" aria-hidden="true">{medals[i]}</span>
+                  <span className={`font-bold text-gray-900 ${textSizes[i]} truncate max-w-full text-center`}>{r.teamName}</span>
+                  <span className="text-sm font-semibold text-blue-600">
+                    {Number.isInteger(r.totalScore) ? r.totalScore : r.totalScore.toFixed(2)}점
+                  </span>
+                  <div className={`${heights[i]} w-full rounded-t-xl border-2 ${bgColors[i]} flex items-center justify-center transition-all`}>
+                    <span className="text-2xl font-extrabold text-gray-400">{r.rank}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        )}
+
         <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full min-w-[560px] text-sm" aria-label="글로벌 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16">
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16" aria-sort={sortField === "rank" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
                   <button onClick={() => toggleSort("rank")} className="hover:text-blue-600 transition" aria-label={`순위 정렬 ${sortField === "rank" ? (sortDir === "asc" ? "오름차순" : "내림차순") : ""}`}>
                     순위{sortIcon("rank")}
                   </button>
                 </th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600" aria-sort={sortField === "teamName" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
                   <button onClick={() => toggleSort("teamName")} className="hover:text-blue-600 transition">
                     팀{sortIcon("teamName")}
                   </button>
                 </th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600" aria-sort={sortField === "totalScore" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
                   <button onClick={() => toggleSort("totalScore")} className="hover:text-blue-600 transition">
                     총 점수{sortIcon("totalScore")}
                   </button>
                 </th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">
+                <th scope="col" className="px-4 py-3 font-semibold text-gray-600" aria-sort={sortField === "count" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
                   <button onClick={() => toggleSort("count")} className="hover:text-blue-600 transition">
                     참가 횟수{sortIcon("count")}
                   </button>

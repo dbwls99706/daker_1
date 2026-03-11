@@ -201,7 +201,13 @@ function HackathonsContent() {
             <Link
               key={h.slug}
               href={`/hackathons/${h.slug}`}
-              className="group flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 animate-slide-up"
+              className={`group flex flex-col rounded-xl border bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up border-l-4 ${
+                h.status === "ongoing"
+                  ? "border-l-green-500 border-gray-200 hover:border-green-200"
+                  : h.status === "upcoming"
+                  ? "border-l-blue-500 border-gray-200 hover:border-blue-200"
+                  : "border-l-gray-300 border-gray-200 hover:border-gray-300"
+              }`}
               style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
               {h.thumbnailUrl && (
@@ -263,7 +269,13 @@ function HackathonsContent() {
             <Link
               key={h.slug}
               href={`/hackathons/${h.slug}`}
-              className="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md hover:border-blue-200 animate-slide-up"
+              className={`group flex items-center gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:shadow-md animate-slide-up border-l-4 ${
+                h.status === "ongoing"
+                  ? "border-l-green-500 border-gray-200 hover:border-green-200"
+                  : h.status === "upcoming"
+                  ? "border-l-blue-500 border-gray-200 hover:border-blue-200"
+                  : "border-l-gray-300 border-gray-200 hover:border-gray-300"
+              }`}
               style={{ animationDelay: `${i * 40}ms`, animationFillMode: "both" }}
             >
               {h.thumbnailUrl && (

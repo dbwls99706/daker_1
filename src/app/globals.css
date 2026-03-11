@@ -120,6 +120,14 @@ body {
 .overflow-x-auto::-webkit-scrollbar { height: 0; }
 .overflow-x-auto { scrollbar-width: none; }
 
+/* Tab scroll fade hint for mobile */
+@media (max-width: 639px) {
+  .tab-scroll-hint {
+    mask-image: linear-gradient(to right, transparent 0, black 8px, black calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 8px, black calc(100% - 24px), transparent 100%);
+  }
+}
+
 /* ==================== DARK MODE OVERRIDES ==================== */
 
 /* Backgrounds */

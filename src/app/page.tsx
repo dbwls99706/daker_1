@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark, getRecentlyViewed } from "@/lib/storage";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -10,11 +10,32 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
+import { useCountUp } from "@/hooks/useCountUp";
+
+function AnimatedStat({ value, label, color, bg, border, delay }: { value: number; label: string; color: string; bg: string; border: string; delay: number }) {
+  const animated = useCountUp(value);
+  return (
+    <div
+      className={`rounded-xl border ${border} ${bg} p-5 text-center shadow-sm transition hover:shadow-md animate-slide-up`}
+      style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
+    >
+      <div className={`text-3xl font-extrabold ${color}`}>{animated}</div>
+      <div className="mt-1 text-sm text-gray-600">{label}</div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const ready = useSeedData();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (ready && !localStorage.getItem("batonhub_onboarded")) {
+      setShowOnboarding(true);
+    }
+  }, [ready]);
 
   const handleBookmark = useCallback((slug: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -46,6 +67,36 @@ export default function HomePage() {
   return (
     <div className="space-y-10">
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
+
+      {/* Onboarding Banner */}
+      {showOnboarding && (
+        <section className="rounded-xl border border-blue-200 bg-blue-50 p-5 animate-slide-up">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl flex-shrink-0" aria-hidden="true">👋</span>
+              <div>
+                <h2 className="font-bold text-blue-900">BatonHub에 오신 것을 환영합니다!</h2>
+                <p className="mt-1 text-sm text-blue-700">해커톤 탐색, 팀 빌딩, 제출, 순위 확인을 한곳에서 할 수 있습니다.</p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-full bg-white/80 px-3 py-1 text-blue-700 font-medium">1. 해커톤 둘러보기</span>
+                  <span className="rounded-full bg-white/80 px-3 py-1 text-blue-700 font-medium">2. 팀 찾기 / 생성</span>
+                  <span className="rounded-full bg-white/80 px-3 py-1 text-blue-700 font-medium">3. 결과 제출</span>
+                  <span className="rounded-full bg-white/80 px-3 py-1 text-blue-700 font-medium">4. 랭킹 확인</span>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => { setShowOnboarding(false); localStorage.setItem("batonhub_onboarded", "true"); }}
+              className="flex-shrink-0 rounded-lg p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600 transition"
+              aria-label="온보딩 닫기"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Hero */}
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-10 sm:px-8 sm:py-16 text-white animate-slide-up">
@@ -117,14 +168,7 @@ export default function HomePage() {
           { value: openTeamCount, label: "모집중인 팀", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
           { value: submittedCount, label: "제출 완료", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-100" },
         ].map((stat, i) => (
-          <div
-            key={stat.label}
-            className={`rounded-xl border ${stat.border} ${stat.bg} p-5 text-center shadow-sm transition hover:shadow-md animate-slide-up`}
-            style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
-          >
-            <div className={`text-3xl font-extrabold ${stat.color}`}>{stat.value}</div>
-            <div className="mt-1 text-sm text-gray-600">{stat.label}</div>
-          </div>
+          <AnimatedStat key={stat.label} {...stat} delay={i * 80} />
         ))}
       </section>
 
@@ -143,7 +187,7 @@ export default function HomePage() {
                     <span className="font-medium text-gray-700 truncate max-w-[200px]">{title}</span>
                     <span className="text-gray-500">{lb.entries.length}팀</span>
                   </div>
-                  <div className="h-6 w-full rounded-full bg-gray-100 overflow-hidden">
+                  <div className="h-6 w-full rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${title} 참가 현황 ${pct}%`}>
                     <div
                       className="h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-700 flex items-center justify-end pr-2"
                       style={{ width: `${Math.max(pct, 8)}%` }}
@@ -312,7 +356,7 @@ export default function HomePage() {
                 {formatDate(h.period.submissionDeadlineAt)} 마감
               </p>
               {h.status !== "ended" && (
-                <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+                <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden" role="progressbar" aria-valuenow={getTimeRemaining(h.period.submissionDeadlineAt)} aria-valuemin={0} aria-valuemax={100} aria-label={`마감 진행률 ${getTimeRemaining(h.period.submissionDeadlineAt)}%`}>
                   <div
                     className="h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
                     style={{ width: `${getTimeRemaining(h.period.submissionDeadlineAt)}%` }}

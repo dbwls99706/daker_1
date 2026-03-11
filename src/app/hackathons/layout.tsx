@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "해커톤 목록 | BatonHub",
+  title: "해커톤 목록",
   description: "진행중, 예정, 종료된 해커톤을 탐색하고 필터링하세요.",
 };
 

@@ -7,8 +7,18 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { KeyboardShortcuts } from "@/components/ui/KeyboardShortcuts";
 
 export const metadata: Metadata = {
-  title: "BatonHub - 해커톤 통합 대시보드",
+  title: {
+    default: "BatonHub - 해커톤 통합 대시보드",
+    template: "%s | BatonHub",
+  },
   description: "해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지 한곳에서 완결하는 해커톤 통합 대시보드",
+  keywords: ["해커톤", "DACON", "팀 빌딩", "대시보드", "BatonHub"],
+  openGraph: {
+    title: "BatonHub - 해커톤 통합 대시보드",
+    description: "해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지 한곳에서 완결하는 해커톤 통합 대시보드",
+    type: "website",
+    locale: "ko_KR",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

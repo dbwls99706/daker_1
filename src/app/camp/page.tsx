@@ -174,6 +174,7 @@ function CampContent() {
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="팀 이름 (최대 30자)"
               />
+              <p className="text-xs text-gray-400 text-right mt-0.5">{name.length}/30</p>
             </div>
             <div>
               <label htmlFor="camp-hackathon" className="block text-sm font-semibold text-gray-700 mb-1">해커톤 연결</label>
