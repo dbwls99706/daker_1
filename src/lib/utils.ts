@@ -86,6 +86,17 @@ export function sanitizeText(text: string, maxLength = 500): string {
   return text.slice(0, maxLength).replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/** Check if a URL points to an external domain */
+export function isExternalUrl(url: string): boolean {
+  if (!url || url === "#") return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export function isValidUrl(url: string): boolean {
   if (!url) return true; // empty is ok for optional fields
   try {

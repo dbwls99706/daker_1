@@ -10,6 +10,7 @@ import { Modal } from "@/components/ui/Modal";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { SubmitTab } from "@/components/features/SubmitTab";
+import { ExternalLink } from "@/components/ui/ExternalLink";
 import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, getTimeRemaining } from "@/lib/utils";
 import type { Submission } from "@/types";
 
@@ -411,22 +412,18 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                   ))}
                 </div>
                 <div className="flex gap-3 pt-2">
-                  <a
-                    href={sanitizeUrl(sec.info.links.rules)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <ExternalLink
+                    href={sec.info.links.rules}
                     className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
                   >
-                    규정 보기 ↗
-                  </a>
-                  <a
-                    href={sanitizeUrl(sec.info.links.faq)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    규정 보기
+                  </ExternalLink>
+                  <ExternalLink
+                    href={sec.info.links.faq}
                     className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
                   >
-                    FAQ ↗
-                  </a>
+                    FAQ
+                  </ExternalLink>
                 </div>
               </>
             ) : (
@@ -473,14 +470,12 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                     <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
                       <span>{t.memberCount}명</span>
                       {t.isOpen && (
-                        <a
-                          href={sanitizeUrl(t.contact.url)}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <ExternalLink
+                          href={t.contact.url}
                           className="text-blue-600 hover:underline"
                         >
                           연락하기
-                        </a>
+                        </ExternalLink>
                       )}
                     </div>
                   </div>
@@ -605,10 +600,10 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                                       </span>
                                     )}
                                     {e.artifacts.webUrl && (
-                                      <a href={sanitizeUrl(e.artifacts.webUrl)} target="_blank" rel="noopener noreferrer" className="rounded bg-green-50 px-2 py-0.5 text-xs text-green-700 hover:underline">웹</a>
+                                      <ExternalLink href={e.artifacts.webUrl} className="rounded bg-green-50 px-2 py-0.5 text-xs text-green-700 hover:underline">웹</ExternalLink>
                                     )}
                                     {e.artifacts.pdfUrl && (
-                                      <a href={sanitizeUrl(e.artifacts.pdfUrl)} target="_blank" rel="noopener noreferrer" className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-700 hover:underline">PDF</a>
+                                      <ExternalLink href={e.artifacts.pdfUrl} className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-700 hover:underline">PDF</ExternalLink>
                                     )}
                                   </div>
                                 ) : (

@@ -9,7 +9,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Modal } from "@/components/ui/Modal";
 import { Toast } from "@/components/ui/Toast";
-import { generateId, sanitizeUrl, isValidUrl, formatDate } from "@/lib/utils";
+import { ExternalLink } from "@/components/ui/ExternalLink";
+import { generateId, isValidUrl, formatDate } from "@/lib/utils";
 import type { Team } from "@/types";
 
 function CampContent() {
@@ -325,14 +326,12 @@ function CampContent() {
                       >
                         모집마감
                       </button>
-                      <a
-                        href={sanitizeUrl(t.contact.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <ExternalLink
+                        href={t.contact.url}
                         className="font-medium text-blue-600 hover:underline"
                       >
                         연락하기
-                      </a>
+                      </ExternalLink>
                     </>
                   ) : (
                     <button
