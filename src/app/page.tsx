@@ -278,7 +278,7 @@ export default function HomePage() {
       {(() => {
         const recentHackathons = recentSlugs
           .map((s) => hackathons.find((h) => h.slug === s))
-          .filter(Boolean);
+          .filter((h): h is NonNullable<typeof h> => Boolean(h));
         if (recentHackathons.length === 0) return null;
         return (
           <section>
@@ -290,15 +290,15 @@ export default function HomePage() {
             <div className="flex gap-3 overflow-x-auto pb-2">
               {recentHackathons.map((h) => (
                 <Link
-                  key={h!.slug}
-                  href={`/hackathons/${h!.slug}`}
+                  key={h.slug}
+                  href={`/hackathons/${h.slug}`}
                   className="group flex-shrink-0 w-56 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
                 >
-                  <StatusBadge status={h!.status} />
+                  <StatusBadge status={h.status} />
                   <h3 className="mt-2 text-sm font-bold text-gray-900 group-hover:text-blue-600 line-clamp-2">
-                    {h!.title}
+                    {h.title}
                   </h3>
-                  <p className="mt-1 text-xs text-gray-500">{formatDate(h!.period.submissionDeadlineAt)} 마감</p>
+                  <p className="mt-1 text-xs text-gray-500">{formatDate(h.period.submissionDeadlineAt)} 마감</p>
                 </Link>
               ))}
             </div>

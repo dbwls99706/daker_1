@@ -24,6 +24,8 @@ function CampContent() {
 
   const [teamSearch, setTeamSearch] = useState("");
   const [campSort, setCampSort] = useState<"newest" | "name" | "members">("newest");
+  const [campPage, setCampPage] = useState(1);
+  const CAMP_PAGE_SIZE = 9;
 
   const [name, setName] = useState("");
   const [intro, setIntro] = useState("");
@@ -139,14 +141,14 @@ function CampContent() {
         <input
           type="text"
           value={teamSearch}
-          onChange={(e) => setTeamSearch(e.target.value)}
+          onChange={(e) => { setTeamSearch(e.target.value); setCampPage(1); }}
           placeholder="팀명 또는 포지션 검색..."
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           aria-label="팀 검색"
         />
         <select
           value={campSort}
-          onChange={(e) => setCampSort(e.target.value as "newest" | "name" | "members")}
+          onChange={(e) => { setCampSort(e.target.value as "newest" | "name" | "members"); setCampPage(1); }}
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
           aria-label="정렬"
         >
@@ -265,9 +267,12 @@ function CampContent() {
             }
           />
         );
+        const totalPages = Math.ceil(filteredTeams.length / CAMP_PAGE_SIZE);
+        const pagedTeams = filteredTeams.slice((campPage - 1) * CAMP_PAGE_SIZE, campPage * CAMP_PAGE_SIZE);
         return (
+        <>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredTeams.map((t, i) => (
+          {pagedTeams.map((t, i) => (
             <div
               key={t.teamCode}
               className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
@@ -349,6 +354,28 @@ function CampContent() {
             </div>
           ))}
         </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-4">
+            <button
+              onClick={() => setCampPage((p) => Math.max(1, p - 1))}
+              disabled={campPage <= 1}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              이전
+            </button>
+            <span className="text-sm text-gray-600">
+              {campPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCampPage((p) => Math.min(totalPages, p + 1))}
+              disabled={campPage >= totalPages}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              다음
+            </button>
+          </div>
+        )}
+        </>
         );
       })()}
 

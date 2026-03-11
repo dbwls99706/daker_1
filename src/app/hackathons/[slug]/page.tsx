@@ -540,6 +540,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 <div className="hidden sm:block overflow-x-auto">
                   {(() => {
                     const hasBreakdown = leaderboard.entries.some((e) => e.scoreBreakdown);
+                    const hasArtifacts = leaderboard.entries.some((e) => e.artifacts);
                     return (
                   <table className="w-full text-sm" aria-label="리더보드">
                     <thead>
@@ -552,6 +553,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                             <th scope="col" className="px-4 py-3 font-semibold">참가자</th>
                             <th scope="col" className="px-4 py-3 font-semibold">심사위원</th>
                           </>
+                        )}
+                        {hasArtifacts && (
+                          <th scope="col" className="px-4 py-3 font-semibold">제출물</th>
                         )}
                         <th scope="col" className="px-4 py-3 font-semibold">제출일</th>
                       </tr>
@@ -582,6 +586,27 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                                 <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.participant ?? "-"}</td>
                                 <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.judge ?? "-"}</td>
                               </>
+                            )}
+                            {hasArtifacts && (
+                              <td className="px-4 py-3">
+                                {e.artifacts ? (
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {e.artifacts.planTitle && (
+                                      <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700" title={e.artifacts.planTitle}>
+                                        {e.artifacts.planTitle.length > 15 ? e.artifacts.planTitle.slice(0, 15) + "..." : e.artifacts.planTitle}
+                                      </span>
+                                    )}
+                                    {e.artifacts.webUrl && (
+                                      <a href={sanitizeUrl(e.artifacts.webUrl)} target="_blank" rel="noopener noreferrer" className="rounded bg-green-50 px-2 py-0.5 text-xs text-green-700 hover:underline">웹</a>
+                                    )}
+                                    {e.artifacts.pdfUrl && (
+                                      <a href={sanitizeUrl(e.artifacts.pdfUrl)} target="_blank" rel="noopener noreferrer" className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-700 hover:underline">PDF</a>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
                             )}
                             <td className="px-4 py-3 text-gray-500 text-xs">{formatDateTime(e.submittedAt)}</td>
                           </tr>
