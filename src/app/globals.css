@@ -150,16 +150,16 @@ body {
 .dark .text-gray-500 { color: var(--text-muted) !important; }
 .dark .text-gray-400 { color: #64748b !important; }
 
-/* Blue */
-.dark .bg-blue-50 { background-color: #1e3a5f !important; }
-.dark .bg-blue-50\/50 { background-color: rgba(30, 58, 95, 0.5) !important; }
+/* Blue — WCAG AA contrast verified */
+.dark .bg-blue-50 { background-color: #172554 !important; }
+.dark .bg-blue-50\/50 { background-color: rgba(23, 37, 84, 0.5) !important; }
 .dark .bg-blue-600 { background-color: #2563eb !important; }
 .dark .text-blue-600 { color: #60a5fa !important; }
 .dark .text-blue-700 { color: #93c5fd !important; }
-.dark .text-blue-800 { color: #93c5fd !important; }
-.dark .text-blue-900 { color: #bfdbfe !important; }
+.dark .text-blue-800 { color: #bfdbfe !important; }
+.dark .text-blue-900 { color: #dbeafe !important; }
 .dark .border-blue-200 { border-color: #1e3a5f !important; }
-.dark .border-blue-300 { border-color: #2563eb !important; }
+.dark .border-blue-300 { border-color: #3b82f6 !important; }
 
 /* Green */
 .dark .bg-green-50 { background-color: #064e3b !important; }
@@ -170,16 +170,16 @@ body {
 .dark .border-green-200 { border-color: #065f46 !important; }
 .dark .border-green-300 { border-color: #065f46 !important; }
 
-/* Yellow/Orange */
-.dark .bg-yellow-50 { background-color: #422006 !important; }
-.dark .bg-yellow-100 { background-color: #422006 !important; }
-.dark .text-yellow-800 { color: #fde68a !important; }
-.dark .border-yellow-300 { border-color: #ca8a04 !important; }
-.dark .bg-orange-50 { background-color: #431407 !important; }
-.dark .bg-orange-100 { background-color: #431407 !important; }
-.dark .text-orange-500 { color: #fb923c !important; }
-.dark .text-orange-600 { color: #f97316 !important; }
-.dark .text-orange-700 { color: #fb923c !important; }
+/* Yellow/Orange — WCAG AA contrast verified */
+.dark .bg-yellow-50 { background-color: #362005 !important; }
+.dark .bg-yellow-100 { background-color: #3d2506 !important; }
+.dark .text-yellow-800 { color: #fef08a !important; }
+.dark .border-yellow-300 { border-color: #d4a017 !important; }
+.dark .bg-orange-50 { background-color: #351407 !important; }
+.dark .bg-orange-100 { background-color: #3b1608 !important; }
+.dark .text-orange-500 { color: #fdba74 !important; }
+.dark .text-orange-600 { color: #fb923c !important; }
+.dark .text-orange-700 { color: #fdba74 !important; }
 .dark .border-orange-200 { border-color: #c2410c !important; }
 
 /* Red */

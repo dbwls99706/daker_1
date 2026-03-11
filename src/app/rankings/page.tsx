@@ -10,6 +10,29 @@ type PeriodFilter = "all" | "monthly" | "yearly";
 type SortField = "rank" | "teamName" | "totalScore" | "count";
 type SortDir = "asc" | "desc";
 
+interface RankedTeam {
+  teamName: string;
+  totalScore: number;
+  count: number;
+  hackathons: string[];
+  rank: number;
+}
+
+/** Assign competition-style tie ranks (1, 1, 3, 4, 4, 6...) */
+function assignTieRanks(sorted: Omit<RankedTeam, "rank">[]): RankedTeam[] {
+  const result: RankedTeam[] = [];
+  let currentRank = 1;
+  for (let i = 0; i < sorted.length; i++) {
+    if (i > 0 && sorted[i].totalScore < sorted[i - 1].totalScore) {
+      currentRank = i + 1;
+    }
+    result.push({ ...sorted[i], rank: currentRank });
+  }
+  return result;
+}
+
+const PAGE_SIZE = 10;
+
 export default function RankingsPage() {
   const ready = useSeedData();
   const [period, setPeriod] = useState<PeriodFilter>("all");
@@ -17,7 +40,6 @@ export default function RankingsPage() {
   const [sortField, setSortField] = useState<SortField>("rank");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
 
   const hackathons = useMemo(() => {
     if (!ready) return [];
@@ -64,6 +86,7 @@ export default function RankingsPage() {
       });
     }
 
+    // Aggregate scores by team
     const teamScores = new Map<string, { teamName: string; totalScore: number; count: number; hackathons: string[] }>();
     for (const entry of filtered) {
       const existing = teamScores.get(entry.teamName);
@@ -83,14 +106,16 @@ export default function RankingsPage() {
       }
     }
 
-    const ranked = Array.from(teamScores.values())
+    // Sort by score desc, then name asc, then assign tie ranks
+    const sorted = Array.from(teamScores.values())
       .sort((a, b) => {
         if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
         return a.teamName.localeCompare(b.teamName);
-      })
-      .map((t, i) => ({ ...t, rank: i + 1 }));
+      });
 
-    // Apply user sort
+    const ranked = assignTieRanks(sorted);
+
+    // Apply user sort (if different from default)
     if (sortField !== "rank" || sortDir !== "asc") {
       ranked.sort((a, b) => {
         let cmp = 0;
@@ -115,6 +140,9 @@ export default function RankingsPage() {
     if (sortField !== field) return " ↕";
     return sortDir === "asc" ? " ↑" : " ↓";
   };
+
+  const totalPages = Math.ceil(rankings.length / PAGE_SIZE);
+  const paginatedRankings = rankings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -219,9 +247,58 @@ export default function RankingsPage() {
           </section>
         )}
 
-        <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full min-w-[560px] text-sm" aria-label="글로벌 랭킹">
+        {/* Mobile card layout */}
+        <div className="sm:hidden space-y-3">
+          {paginatedRankings.map((r) => (
+            <div
+              key={r.teamName}
+              className={`rounded-xl border p-4 bg-white shadow-sm ${
+                r.rank === 1 ? "border-yellow-300 bg-yellow-50" :
+                r.rank === 2 ? "border-gray-300 bg-gray-50" :
+                r.rank === 3 ? "border-orange-200 bg-orange-50" :
+                "border-gray-200"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${
+                      r.rank === 1 ? "bg-yellow-100 text-yellow-800" :
+                      r.rank === 2 ? "bg-gray-200 text-gray-700" :
+                      r.rank === 3 ? "bg-orange-100 text-orange-700" :
+                      "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {r.rank}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-gray-900">{r.teamName}</p>
+                    <p className="text-xs text-gray-500">{r.count}회 참가</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-blue-600">
+                    {Number.isInteger(r.totalScore) ? r.totalScore : r.totalScore.toFixed(4)}
+                  </p>
+                  <p className="text-xs text-gray-400">점</p>
+                </div>
+              </div>
+              {r.hackathons.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {r.hackathons.map((h) => (
+                    <span key={h} className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                      {h.length > 20 ? h.slice(0, 20) + "..." : h}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+          <table className="w-full text-sm" aria-label="글로벌 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16" aria-sort={sortField === "rank" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
@@ -248,7 +325,7 @@ export default function RankingsPage() {
               </tr>
             </thead>
             <tbody>
-              {rankings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((r) => (
+              {paginatedRankings.map((r) => (
                 <tr key={r.teamName} className="border-b last:border-0 hover:bg-gray-50 transition">
                   <td className="px-4 py-3">
                     <span
@@ -284,6 +361,8 @@ export default function RankingsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
         {rankings.length > PAGE_SIZE && (
           <div className="flex items-center justify-center gap-2 pt-2">
             <button
@@ -294,11 +373,11 @@ export default function RankingsPage() {
               이전
             </button>
             <span className="text-sm text-gray-600">
-              {page} / {Math.ceil(rankings.length / PAGE_SIZE)}
+              {page} / {totalPages}
             </span>
             <button
-              onClick={() => setPage((p) => Math.min(Math.ceil(rankings.length / PAGE_SIZE), p + 1))}
-              disabled={page >= Math.ceil(rankings.length / PAGE_SIZE)}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
               className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition"
             >
               다음

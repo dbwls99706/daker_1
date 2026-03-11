@@ -309,11 +309,9 @@ function CampContent() {
                     <>
                       <button
                         onClick={() => {
-                          if (confirm("모집을 마감하시겠습니까?")) {
-                            updateTeam(t.teamCode, { isOpen: false });
-                            setToastMsg("모집이 마감되었습니다.");
-                            setRefreshKey((n) => n + 1);
-                          }
+                          updateTeam(t.teamCode, { isOpen: false });
+                          setToastMsg("모집이 마감되었습니다.");
+                          setRefreshKey((n) => n + 1);
                         }}
                         className="font-medium text-orange-500 hover:text-orange-700"
                       >

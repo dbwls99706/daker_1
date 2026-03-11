@@ -9,7 +9,8 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal } from "@/components/ui/Modal";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
-import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, isValidUrl, getTimeRemaining } from "@/lib/utils";
+import { SubmitTab } from "@/components/features/SubmitTab";
+import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, getTimeRemaining } from "@/lib/utils";
 import type { Submission } from "@/types";
 
 const TABS = [
@@ -507,344 +508,94 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             {!leaderboard || leaderboard.entries.length === 0 ? (
               <EmptyState title="리더보드 데이터 없음" description="아직 제출된 결과가 없습니다." />
             ) : (
-              <div className="overflow-x-auto">
-                <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
-                {(() => {
-                  const hasBreakdown = leaderboard.entries.some((e) => e.scoreBreakdown);
-                  return (
-                <table className="w-full text-sm" aria-label="리더보드">
-                  <thead>
-                    <tr className="border-b bg-gray-50 text-left">
-                      <th scope="col" className="px-4 py-3 font-semibold">순위</th>
-                      <th scope="col" className="px-4 py-3 font-semibold">팀</th>
-                      <th scope="col" className="px-4 py-3 font-semibold">점수</th>
-                      {hasBreakdown && (
-                        <>
-                          <th scope="col" className="px-4 py-3 font-semibold">참가자</th>
-                          <th scope="col" className="px-4 py-3 font-semibold">심사위원</th>
-                        </>
-                      )}
-                      <th scope="col" className="px-4 py-3 font-semibold">제출일</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...leaderboard.entries]
-                      .sort((a, b) => a.rank - b.rank)
-                      .map((e) => (
-                        <tr key={e.teamName} className="border-b last:border-0 hover:bg-gray-50 transition">
-                          <td className="px-4 py-3">
-                            <span
-                              className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                                e.rank === 1
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : e.rank === 2
-                                  ? "bg-gray-200 text-gray-700"
-                                  : e.rank === 3
-                                  ? "bg-orange-100 text-orange-700"
-                                  : "text-gray-500"
-                              }`}
-                            >
-                              {e.rank}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 font-medium">{e.teamName}</td>
-                          <td className="px-4 py-3 font-semibold text-blue-600">
-                            {e.score === 0 ? (
-                              <span className="text-gray-400 font-normal">채점 대기</span>
-                            ) : (
-                              e.score
-                            )}
-                          </td>
-                          {hasBreakdown && (
-                            <>
-                              <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.participant ?? "-"}</td>
-                              <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.judge ?? "-"}</td>
-                            </>
+              <>
+                {/* Mobile card layout */}
+                <div className="sm:hidden space-y-3">
+                  {[...leaderboard.entries]
+                    .sort((a, b) => a.rank - b.rank)
+                    .map((e) => (
+                      <div key={e.teamName} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4">
+                        <span className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold flex-shrink-0 ${
+                          e.rank === 1 ? "bg-yellow-100 text-yellow-800" :
+                          e.rank === 2 ? "bg-gray-200 text-gray-700" :
+                          e.rank === 3 ? "bg-orange-100 text-orange-700" :
+                          "bg-gray-100 text-gray-500"
+                        }`}>{e.rank}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate">{e.teamName}</p>
+                          <p className="text-xs text-gray-500">{formatDateTime(e.submittedAt)}</p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          {e.score === 0 ? (
+                            <span className="text-sm text-gray-400">채점 대기</span>
+                          ) : (
+                            <span className="text-lg font-bold text-blue-600">{e.score}</span>
                           )}
-                          <td className="px-4 py-3 text-gray-500 text-xs">{formatDateTime(e.submittedAt)}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-                  );
-                })()}
-              </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden sm:block overflow-x-auto">
+                  {(() => {
+                    const hasBreakdown = leaderboard.entries.some((e) => e.scoreBreakdown);
+                    return (
+                  <table className="w-full text-sm" aria-label="리더보드">
+                    <thead>
+                      <tr className="border-b bg-gray-50 text-left">
+                        <th scope="col" className="px-4 py-3 font-semibold">순위</th>
+                        <th scope="col" className="px-4 py-3 font-semibold">팀</th>
+                        <th scope="col" className="px-4 py-3 font-semibold">점수</th>
+                        {hasBreakdown && (
+                          <>
+                            <th scope="col" className="px-4 py-3 font-semibold">참가자</th>
+                            <th scope="col" className="px-4 py-3 font-semibold">심사위원</th>
+                          </>
+                        )}
+                        <th scope="col" className="px-4 py-3 font-semibold">제출일</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...leaderboard.entries]
+                        .sort((a, b) => a.rank - b.rank)
+                        .map((e) => (
+                          <tr key={e.teamName} className="border-b last:border-0 hover:bg-gray-50 transition">
+                            <td className="px-4 py-3">
+                              <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                                e.rank === 1 ? "bg-yellow-100 text-yellow-800" :
+                                e.rank === 2 ? "bg-gray-200 text-gray-700" :
+                                e.rank === 3 ? "bg-orange-100 text-orange-700" :
+                                "text-gray-500"
+                              }`}>{e.rank}</span>
+                            </td>
+                            <td className="px-4 py-3 font-medium">{e.teamName}</td>
+                            <td className="px-4 py-3 font-semibold text-blue-600">
+                              {e.score === 0 ? (
+                                <span className="text-gray-400 font-normal">채점 대기</span>
+                              ) : (
+                                e.score
+                              )}
+                            </td>
+                            {hasBreakdown && (
+                              <>
+                                <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.participant ?? "-"}</td>
+                                <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.judge ?? "-"}</td>
+                              </>
+                            )}
+                            <td className="px-4 py-3 text-gray-500 text-xs">{formatDateTime(e.submittedAt)}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                    );
+                  })()}
+                </div>
+              </>
             )}
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-// Submit Tab Component
-function SubmitTab({
-  sections,
-  existingSubmission,
-  onSave,
-  onSubmit,
-}: {
-  sections: {
-    allowedArtifactTypes: string[];
-    guide: string[];
-    submissionItems?: { key: string; title: string; format: string }[];
-  };
-  existingSubmission: Submission | null;
-  onSave: (items: { key: string; value: string }[], memo: string, teamName: string) => void;
-  onSubmit: (items: { key: string; value: string }[], memo: string, teamName: string) => void;
-}) {
-  const hasSteps = sections.submissionItems && sections.submissionItems.length > 0;
-  const keys = hasSteps
-    ? sections.submissionItems!.map((s) => s.key)
-    : sections.allowedArtifactTypes.map((t) => t);
-
-  const initialItems = keys.map((k) => ({
-    key: k,
-    value: existingSubmission?.items.find((i) => i.key === k)?.value || "",
-  }));
-
-  const [items, setItems] = useState(initialItems);
-  const [memo, setMemo] = useState(existingSubmission?.memo || "");
-  const [teamName, setTeamName] = useState(existingSubmission?.teamName || "");
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
-
-  function updateItem(key: string, value: string) {
-    setItems((prev) => prev.map((i) => (i.key === key ? { ...i, value } : i)));
-    if (urlErrors[key]) {
-      setUrlErrors((prev) => {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
-    }
-  }
-
-  function validateUrls(): boolean {
-    const errors: Record<string, string> = {};
-    if (hasSteps) {
-      for (const step of sections.submissionItems!) {
-        if (step.format === "url" || step.format === "pdf_url") {
-          const val = items.find((i) => i.key === step.key)?.value || "";
-          if (val && !isValidUrl(val)) {
-            errors[step.key] = "올바른 URL 형식이 아닙니다 (https://...)";
-          }
-        }
-      }
-    }
-    setUrlErrors(errors);
-    return Object.keys(errors).length === 0;
-  }
-
-  const isSubmitted = existingSubmission?.status === "submitted";
-
-  const filledCount = items.filter((i) => i.value.trim()).length;
-  const totalItems = items.length + 1;
-  const filledTotal = filledCount + (teamName.trim() ? 1 : 0);
-  const completionPercent = Math.round((filledTotal / totalItems) * 100);
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold">제출</h2>
-        {!isSubmitted && (
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-500">작성</span>
-            <div className="h-2 w-24 rounded-full bg-gray-200">
-              <div
-                className={`h-2 rounded-full transition-all ${completionPercent === 100 ? "bg-green-500" : "bg-blue-500"}`}
-                style={{ width: `${completionPercent}%` }}
-              />
-            </div>
-            <span className="font-semibold text-gray-700">{completionPercent}%</span>
-          </div>
-        )}
-      </div>
-
-      {isSubmitted && (
-        <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-green-500" />
-              <span className="text-sm font-semibold text-green-800">제출이 완료되었습니다</span>
-            </div>
-            <button
-              onClick={() => {
-                if (confirm("제출을 철회하고 수정 모드로 전환합니다. 계속하시겠습니까?")) {
-                  onSave(
-                    existingSubmission!.items,
-                    existingSubmission!.memo,
-                    existingSubmission!.teamName
-                  );
-                }
-              }}
-              className="rounded-lg border border-orange-300 px-3 py-1.5 text-xs font-medium text-orange-700 hover:bg-orange-50 transition"
-            >
-              수정하기 (재제출)
-            </button>
-          </div>
-          <p className="mt-1 text-xs text-green-700">
-            제출일시: {formatDateTime(existingSubmission!.submittedAt!)} | 팀명: {existingSubmission!.teamName}
-          </p>
-        </div>
-      )}
-
-      <div className="rounded-lg bg-gray-50 p-4">
-        <h3 className="mb-2 font-semibold text-gray-700">제출 가이드</h3>
-        <ul className="space-y-1">
-          {sections.guide.map((g, i) => (
-            <li key={i} className="flex gap-2 text-sm text-gray-600">
-              <span className="text-blue-500">{i + 1}.</span>
-              {g}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <label htmlFor="submit-team-name" className="block text-sm font-semibold text-gray-700">
-            팀명 / 닉네임 <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="submit-team-name"
-            type="text"
-            value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-            disabled={isSubmitted}
-            aria-required="true"
-            maxLength={50}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-            placeholder="리더보드에 표시될 팀명을 입력하세요"
-          />
-          {!isSubmitted && (
-            <p className="text-xs text-gray-400 text-right mt-0.5">{teamName.length}/50</p>
-          )}
-        </div>
-
-        {hasSteps
-          ? sections.submissionItems!.map((step) => (
-              <div key={step.key} className="space-y-2">
-                <label htmlFor={`submit-${step.key}`} className="block text-sm font-semibold text-gray-700">{step.title}</label>
-                {step.format === "text_or_url" ? (
-                  <textarea
-                    id={`submit-${step.key}`}
-                    value={items.find((i) => i.key === step.key)?.value || ""}
-                    onChange={(e) => updateItem(step.key, e.target.value)}
-                    rows={3}
-                    disabled={isSubmitted}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-                    placeholder="텍스트 또는 URL을 입력하세요"
-                  />
-                ) : (
-                  <>
-                    <input
-                      id={`submit-${step.key}`}
-                      type="url"
-                      value={items.find((i) => i.key === step.key)?.value || ""}
-                      onChange={(e) => updateItem(step.key, e.target.value)}
-                      disabled={isSubmitted}
-                      aria-describedby={urlErrors[step.key] ? `submit-error-${step.key}` : undefined}
-                      aria-invalid={!!urlErrors[step.key]}
-                      className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 ${urlErrors[step.key] ? "border-red-400" : "border-gray-300"}`}
-                      placeholder="https://..."
-                    />
-                    {urlErrors[step.key] && (
-                      <p id={`submit-error-${step.key}`} className="text-xs text-red-500" role="alert">{urlErrors[step.key]}</p>
-                    )}
-                  </>
-                )}
-              </div>
-            ))
-          : keys.map((k) => (
-              <div key={k} className="space-y-2">
-                <label htmlFor={`submit-${k}`} className="block text-sm font-semibold text-gray-700 capitalize">{k} 파일</label>
-                <input
-                  id={`submit-${k}`}
-                  type="text"
-                  value={items.find((i) => i.key === k)?.value || ""}
-                  onChange={(e) => updateItem(k, e.target.value)}
-                  disabled={isSubmitted}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-                  placeholder={`${k} 파일 경로 또는 URL`}
-                />
-              </div>
-            ))}
-
-        <div className="space-y-2">
-          <label htmlFor="submit-memo" className="block text-sm font-semibold text-gray-700">메모 (선택)</label>
-          <textarea
-            id="submit-memo"
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
-            rows={2}
-            disabled={isSubmitted}
-            maxLength={500}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-            placeholder="심사위원에게 전달할 메모 (최대 500자)"
-          />
-          <p className="text-xs text-gray-400 text-right">{memo.length}/500</p>
-        </div>
-      </div>
-
-      {!isSubmitted && (
-        <div className="space-y-2 pt-2">
-          {!teamName.trim() && (
-            <p className="text-xs text-red-500">팀명을 입력해야 제출할 수 있습니다.</p>
-          )}
-          <div className="flex gap-3">
-            <button
-              onClick={() => { if (validateUrls()) onSave(items, memo, teamName); }}
-              className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
-            >
-              임시 저장
-            </button>
-            <button
-              onClick={() => { if (validateUrls()) setShowConfirm(true); }}
-              disabled={!teamName.trim()}
-              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              제출 완료
-            </button>
-          </div>
-        </div>
-      )}
-
-      <Modal
-        open={showConfirm}
-        onClose={() => setShowConfirm(false)}
-        title="제출을 확정하시겠습니까?"
-        actions={
-          <>
-            <button
-              onClick={() => setShowConfirm(false)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
-            >
-              취소
-            </button>
-            <button
-              onClick={() => {
-                setShowConfirm(false);
-                onSubmit(items, memo, teamName);
-              }}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              확인, 제출합니다
-            </button>
-          </>
-        }
-      >
-        <div className="space-y-3">
-          <p className="text-red-600 font-medium">제출 후에는 수정이 불가합니다.</p>
-          <div className="rounded-lg bg-gray-50 p-3 text-sm">
-            <p><span className="font-semibold">팀명:</span> {teamName}</p>
-            {items.filter((i) => i.value).map((i) => (
-              <p key={i.key} className="mt-1"><span className="font-semibold">{i.key}:</span> {i.value.length > 50 ? i.value.slice(0, 50) + "..." : i.value}</p>
-            ))}
-            {memo && <p className="mt-1"><span className="font-semibold">메모:</span> {memo.length > 50 ? memo.slice(0, 50) + "..." : memo}</p>}
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

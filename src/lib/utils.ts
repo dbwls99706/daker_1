@@ -63,10 +63,14 @@ export function statusColor(status: string): string {
   }
 }
 
+/** Sanitize a URL to prevent XSS. Only allows http(s) and mailto protocols. */
 export function sanitizeUrl(url: string): string {
   if (!url || url === "#") return "#";
+  const trimmed = url.trim();
+  // Block dangerous URI schemes before URL parsing
+  if (/^(javascript|data|vbscript):/i.test(trimmed)) return "#";
   try {
-    const parsed = new URL(url);
+    const parsed = new URL(trimmed);
     if (["http:", "https:", "mailto:"].includes(parsed.protocol)) {
       return parsed.href;
     }

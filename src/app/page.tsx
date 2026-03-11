@@ -431,57 +431,73 @@ export default function HomePage() {
         {leaderboards.flatMap((lb) => lb.entries).length === 0 ? (
           <EmptyState title="랭킹 데이터 없음" description="아직 제출된 결과가 없습니다." />
         ) : (
-        <>
-        <p className="text-xs text-gray-400 sm:hidden mb-1">← 좌우로 스크롤하세요 →</p>
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full min-w-[480px] text-sm" aria-label="최근 랭킹">
-            <thead>
-              <tr className="border-b bg-gray-50 text-left">
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">순위</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">팀</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">점수</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-gray-600">해커톤</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...leaderboards
-                .flatMap((lb) =>
-                  lb.entries.map((e) => ({
-                    ...e,
-                    hackathonSlug: lb.hackathonSlug,
-                    hackathonTitle: hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug,
-                  }))
-                )]
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 5)
-                .map((entry, i) => (
-                  <tr key={`${entry.hackathonSlug}-${entry.teamName}`} className="border-b last:border-0 hover:bg-gray-50 transition">
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                          i === 0
-                            ? "bg-yellow-100 text-yellow-800"
-                            : i === 1
-                            ? "bg-gray-200 text-gray-700"
-                            : i === 2
-                            ? "bg-orange-100 text-orange-700"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {i + 1}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 font-medium">{entry.teamName}</td>
-                    <td className="px-4 py-3 text-blue-600 font-semibold">{entry.score}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">
-                      {entry.hackathonTitle.length > 20 ? entry.hackathonTitle.slice(0, 20) + "..." : entry.hackathonTitle}
-                    </td>
+        (() => {
+          const topEntries = [...leaderboards
+            .flatMap((lb) =>
+              lb.entries.map((e) => ({
+                ...e,
+                hackathonSlug: lb.hackathonSlug,
+                hackathonTitle: hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug,
+              }))
+            )]
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5);
+
+          return (
+            <>
+            {/* Mobile card layout */}
+            <div className="sm:hidden space-y-3">
+              {topEntries.map((entry, i) => (
+                <div key={`${entry.hackathonSlug}-${entry.teamName}`} className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                  <span className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold flex-shrink-0 ${
+                    i === 0 ? "bg-yellow-100 text-yellow-800" :
+                    i === 1 ? "bg-gray-200 text-gray-700" :
+                    i === 2 ? "bg-orange-100 text-orange-700" :
+                    "bg-gray-100 text-gray-500"
+                  }`}>{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate">{entry.teamName}</p>
+                    <p className="text-xs text-gray-500 truncate">{entry.hackathonTitle}</p>
+                  </div>
+                  <span className="text-blue-600 font-bold flex-shrink-0">{entry.score}</span>
+                </div>
+              ))}
+            </div>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+              <table className="w-full text-sm" aria-label="최근 랭킹">
+                <thead>
+                  <tr className="border-b bg-gray-50 text-left">
+                    <th scope="col" className="px-4 py-3 font-semibold text-gray-600">순위</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-gray-600">팀</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-gray-600">점수</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-gray-600">해커톤</th>
                   </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-        </>
+                </thead>
+                <tbody>
+                  {topEntries.map((entry, i) => (
+                    <tr key={`${entry.hackathonSlug}-${entry.teamName}`} className="border-b last:border-0 hover:bg-gray-50 transition">
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                          i === 0 ? "bg-yellow-100 text-yellow-800" :
+                          i === 1 ? "bg-gray-200 text-gray-700" :
+                          i === 2 ? "bg-orange-100 text-orange-700" :
+                          "text-gray-500"
+                        }`}>{i + 1}</span>
+                      </td>
+                      <td className="px-4 py-3 font-medium">{entry.teamName}</td>
+                      <td className="px-4 py-3 text-blue-600 font-semibold">{entry.score}</td>
+                      <td className="px-4 py-3 text-gray-500 text-xs">
+                        {entry.hackathonTitle.length > 20 ? entry.hackathonTitle.slice(0, 20) + "..." : entry.hackathonTitle}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            </>
+          );
+        })()
         )}
       </section>
     </div>
