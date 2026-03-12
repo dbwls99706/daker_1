@@ -278,15 +278,24 @@ body {
 .dark .focus\:border-blue-500:focus { border-color: #3b82f6 !important; }
 .dark .ring-blue-500 { --tw-ring-color: #3b82f6 !important; }
 
-/* Dark mode gradient overrides — use direct background since Tailwind v4 CSS vars differ */
+/* Dark mode gradient overrides — override background-image directly (Tailwind v4 uses background-image for gradients) */
 .dark .hero-gradient {
-  background: linear-gradient(to bottom right, #312e81, #1e1b4b, #0f0a2e) !important;
+  --tw-gradient-from: #312e81 !important;
+  --tw-gradient-to: #0f0a2e !important;
+  background-image: linear-gradient(to bottom right, #312e81, #1e1b4b, #0f0a2e) !important;
+  background-color: #1e1b4b !important;
 }
 .dark .progress-gradient {
-  background: linear-gradient(to right, #6366f1, #a855f7) !important;
+  --tw-gradient-from: #6366f1 !important;
+  --tw-gradient-to: #a855f7 !important;
+  background-image: linear-gradient(to right, #6366f1, #a855f7) !important;
+  background-color: #6366f1 !important;
 }
 .dark .progress-gradient-sm {
-  background: linear-gradient(to right, #6366f1, #8b5cf6) !important;
+  --tw-gradient-from: #6366f1 !important;
+  --tw-gradient-to: #8b5cf6 !important;
+  background-image: linear-gradient(to right, #6366f1, #8b5cf6) !important;
+  background-color: #6366f1 !important;
 }
 
 /* Skeleton loader dark mode */
