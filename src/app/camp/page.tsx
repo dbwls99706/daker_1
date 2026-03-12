@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
-import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam, addMyTeam, isMyTeam, removeMyTeam, joinTeam, hasJoinedTeam } from "@/lib/storage";
+import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam, addMyTeam, isMyTeam, removeMyTeam, joinTeam, hasJoinedTeam, leaveTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Modal } from "@/components/ui/Modal";
@@ -22,6 +22,7 @@ function CampContent() {
   const [showCreate, setShowCreate] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<{ teamCode: string; name: string } | null>(null);
+  const [joinTarget, setJoinTarget] = useState<{ teamCode: string; name: string } | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const [teamSearch, setTeamSearch] = useState("");
@@ -354,17 +355,20 @@ function CampContent() {
                   ) : t.isOpen ? (
                     <>
                       {hasJoinedTeam(t.teamCode) ? (
-                        <span className="font-medium text-green-600">참여중</span>
-                      ) : (
                         <button
                           onClick={() => {
-                            if (joinTeam(t.teamCode)) {
-                              setToastMsg(`${t.name} 팀에 참여했습니다!`);
+                            if (leaveTeam(t.teamCode)) {
+                              setToastMsg("팀에서 탈퇴했습니다.");
                               setRefreshKey((n) => n + 1);
-                            } else {
-                              setToastMsg("이미 참여한 팀입니다.");
                             }
                           }}
+                          className="font-medium text-orange-500 hover:text-orange-700"
+                        >
+                          탈퇴
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setJoinTarget({ teamCode: t.teamCode, name: t.name })}
                           className="font-medium text-blue-600 hover:text-blue-800"
                         >
                           참여하기
@@ -440,6 +444,41 @@ function CampContent() {
         }
       >
         <p>&ldquo;{deleteTarget?.name}&rdquo; 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+      </Modal>
+
+      <Modal
+        open={!!joinTarget}
+        onClose={() => setJoinTarget(null)}
+        title="팀 참여"
+        actions={
+          <>
+            <button
+              onClick={() => setJoinTarget(null)}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              onClick={() => {
+                if (joinTarget) {
+                  if (joinTeam(joinTarget.teamCode)) {
+                    setToastMsg(`${joinTarget.name} 팀에 참여했습니다!`);
+                    setRefreshKey((n) => n + 1);
+                  } else {
+                    setToastMsg("이미 참여한 팀입니다.");
+                  }
+                  setJoinTarget(null);
+                }
+              }}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              참여하기
+            </button>
+          </>
+        }
+      >
+        <p>&ldquo;{joinTarget?.name}&rdquo; 팀에 참여하시겠습니까?</p>
+        <p className="mt-1 text-sm text-gray-500">참여 후에는 팀 카드에서 탈퇴할 수 있습니다.</p>
       </Modal>
     </div>
   );

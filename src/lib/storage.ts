@@ -265,3 +265,18 @@ export function joinTeam(teamCode: string): boolean {
 export function hasJoinedTeam(teamCode: string): boolean {
   return getItem<string[]>("batonhub_joined_teams", []).includes(teamCode);
 }
+
+export function leaveTeam(teamCode: string): boolean {
+  const joined = getItem<string[]>("batonhub_joined_teams", []);
+  if (!joined.includes(teamCode)) return false;
+
+  const all = getItem<Team[]>(KEYS.teams, []);
+  const idx = all.findIndex((t) => t.teamCode === teamCode);
+  if (idx < 0) return false;
+
+  all[idx] = { ...all[idx], memberCount: Math.max(1, all[idx].memberCount - 1) };
+  setItem(KEYS.teams, all);
+
+  setItem("batonhub_joined_teams", joined.filter((c) => c !== teamCode));
+  return true;
+}
