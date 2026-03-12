@@ -298,6 +298,17 @@ body {
   background-color: #6366f1 !important;
 }
 
+/* Toast dark mode — invert to light bg so it stands out against dark background */
+.dark .bg-gray-900 { background-color: #f4f4f5 !important; color: #18181b !important; }
+
+/* Missing border-left dark overrides for hackathon status cards */
+.dark .border-l-gray-300 { border-left-color: #3f3f46 !important; }
+.dark .border-l-green-500 { border-left-color: #22c55e !important; }
+.dark .border-l-blue-500 { border-left-color: #3b82f6 !important; }
+
+/* Loading spinner border */
+.dark .border-t-blue-600 { border-top-color: #3b82f6 !important; }
+
 /* Skeleton loader dark mode */
 .dark .animate-pulse.bg-gray-200 { background-color: #27272a !important; }
 
