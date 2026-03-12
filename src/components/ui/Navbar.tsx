@@ -126,7 +126,7 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                className="ml-1 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100"
+                className="ml-1 cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 transition"
                 aria-label="검색 닫기"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -137,7 +137,7 @@ export function Navbar() {
           ) : (
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              className="cursor-pointer flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
               aria-label="검색 열기 (Ctrl+K)"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -155,7 +155,7 @@ export function Navbar() {
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleDark}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
             aria-label={dark ? "라이트 모드로 전환" : "다크 모드로 전환"}
           >
             {dark ? (
@@ -172,7 +172,7 @@ export function Navbar() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 sm:hidden"
+            className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 transition sm:hidden"
             aria-label={mobileOpen ? "메뉴 닫기" : "메뉴 열기"}
             aria-expanded={mobileOpen}
           >

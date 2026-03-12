@@ -282,6 +282,18 @@ body {
 .dark .bg-blue-700 { background-color: #1d4ed8 !important; }
 .dark .bg-indigo-400 { background-color: #818cf8 !important; }
 
+/* Input hover — subtle border darken for interactive feel */
+input:not(:focus):hover,
+textarea:not(:focus):hover,
+select:not(:focus):hover {
+  border-color: #9ca3af;
+}
+.dark input:not(:focus):hover,
+.dark textarea:not(:focus):hover,
+.dark select:not(:focus):hover {
+  border-color: #52525b !important;
+}
+
 /* Focus states */
 .dark .focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6 !important; }
 .dark .focus\:border-blue-500:focus { border-color: #3b82f6 !important; }

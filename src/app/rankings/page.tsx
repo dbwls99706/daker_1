@@ -295,7 +295,7 @@ export default function RankingsPage() {
                   <p className="text-lg font-bold text-blue-600">
                     {Number.isInteger(r.totalScore) ? r.totalScore : r.totalScore.toFixed(4)}
                   </p>
-                  <p className="text-xs text-gray-400">점</p>
+                  <p className="text-xs text-gray-500">점</p>
                 </div>
               </div>
               {r.hackathons.length > 0 && (

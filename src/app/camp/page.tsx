@@ -111,7 +111,7 @@ function CampContent() {
         <h1 className="text-2xl font-bold">팀원 모집</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition"
         >
           {showCreate ? "취소" : "팀 모집글 생성"}
         </button>
@@ -250,7 +250,7 @@ function CampContent() {
           <button
             onClick={handleCreate}
             disabled={!name.trim() || !intro.trim() || !!contactError}
-            className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="cursor-pointer rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             생성하기
           </button>
@@ -269,9 +269,9 @@ function CampContent() {
             description={teamSearch.trim() ? "검색 조건에 맞는 팀이 없습니다." : "첫 팀을 만들어보세요!"}
             action={
               teamSearch.trim() ? (
-                <button onClick={() => setTeamSearch("")} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">검색 초기화</button>
+                <button onClick={() => setTeamSearch("")} className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">검색 초기화</button>
               ) : (
-                <button onClick={() => setShowCreate(true)} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">팀 만들기</button>
+                <button onClick={() => setShowCreate(true)} className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">팀 만들기</button>
               )
             }
           />
@@ -315,7 +315,7 @@ function CampContent() {
                   </span>
                 ))}
               </div>
-              <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-400">
+              <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
                 <div className="flex items-center gap-2">
                   <span>{t.memberCount}명 참여중</span>
                   <span>· {formatDate(t.createdAt)}</span>
@@ -418,7 +418,7 @@ function CampContent() {
           <>
             <button
               onClick={() => setDeleteTarget(null)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
             >
               취소
             </button>
@@ -432,7 +432,7 @@ function CampContent() {
                   setToastMsg("팀이 삭제되었습니다.");
                 }
               }}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              className="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition"
             >
               삭제
             </button>
@@ -450,7 +450,7 @@ function CampContent() {
           <>
             <button
               onClick={() => setJoinTarget(null)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
             >
               취소
             </button>
@@ -466,7 +466,7 @@ function CampContent() {
                   setJoinTarget(null);
                 }
               }}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
             >
               참여하기
             </button>
@@ -485,7 +485,7 @@ function CampContent() {
           <>
             <button
               onClick={() => setLeaveTarget(null)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
             >
               취소
             </button>
@@ -499,7 +499,7 @@ function CampContent() {
                   setLeaveTarget(null);
                 }
               }}
-              className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+              className="cursor-pointer rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 transition"
             >
               탈퇴하기
             </button>
