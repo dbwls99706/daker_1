@@ -14,13 +14,13 @@
 }
 
 .dark {
-  --bg-base: #0f172a;
-  --bg-surface: #1e293b;
-  --bg-muted: #334155;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --border-color: #334155;
+  --bg-base: #09090b;
+  --bg-surface: #18181b;
+  --bg-muted: #27272a;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --border-color: #27272a;
 }
 
 body {
@@ -130,35 +130,35 @@ body {
 
 /* ==================== DARK MODE OVERRIDES ==================== */
 
-/* Backgrounds */
+/* Backgrounds — zinc (neutral gray, no blue tint) */
 .dark .bg-white { background-color: var(--bg-surface) !important; }
-.dark .bg-white\/80 { background-color: rgba(15, 23, 42, 0.8) !important; }
+.dark .bg-white\/80 { background-color: rgba(9, 9, 11, 0.8) !important; }
 .dark .bg-gray-50 { background-color: var(--bg-muted) !important; }
-.dark .bg-gray-100 { background-color: #1e293b !important; }
-.dark .bg-gray-200 { background-color: #334155 !important; }
+.dark .bg-gray-100 { background-color: #18181b !important; }
+.dark .bg-gray-200 { background-color: #27272a !important; }
 
 /* Borders */
-.dark .border-gray-100 { border-color: #1e293b !important; }
+.dark .border-gray-100 { border-color: #18181b !important; }
 .dark .border-gray-200 { border-color: var(--border-color) !important; }
-.dark .border-gray-300 { border-color: #475569 !important; }
-.dark .border-dashed { border-color: #475569 !important; }
+.dark .border-gray-300 { border-color: #3f3f46 !important; }
+.dark .border-dashed { border-color: #3f3f46 !important; }
 
 /* Text */
 .dark .text-gray-900 { color: var(--text-primary) !important; }
-.dark .text-gray-700 { color: #cbd5e1 !important; }
+.dark .text-gray-700 { color: #d4d4d8 !important; }
 .dark .text-gray-600 { color: var(--text-secondary) !important; }
 .dark .text-gray-500 { color: var(--text-muted) !important; }
-.dark .text-gray-400 { color: #94a3b8 !important; }
+.dark .text-gray-400 { color: #a1a1aa !important; }
 
-/* Blue — WCAG AA contrast verified */
-.dark .bg-blue-50 { background-color: #172554 !important; }
-.dark .bg-blue-50\/50 { background-color: rgba(23, 37, 84, 0.5) !important; }
-.dark .bg-blue-600 { background-color: #2563eb !important; }
+/* Blue — CTA pops against neutral dark bg, WCAG AA verified */
+.dark .bg-blue-50 { background-color: #1e1b4b !important; }
+.dark .bg-blue-50\/50 { background-color: rgba(30, 27, 75, 0.5) !important; }
+.dark .bg-blue-600 { background-color: #3b82f6 !important; }
 .dark .text-blue-600 { color: #93c5fd !important; }
 .dark .text-blue-700 { color: #bfdbfe !important; }
 .dark .text-blue-800 { color: #dbeafe !important; }
 .dark .text-blue-900 { color: #eff6ff !important; }
-.dark .border-blue-200 { border-color: #1e3a5f !important; }
+.dark .border-blue-200 { border-color: #312e81 !important; }
 .dark .border-blue-300 { border-color: #3b82f6 !important; }
 
 /* Green */
@@ -191,7 +191,7 @@ body {
 .dark .border-purple-300 { border-color: #7c3aed !important; }
 
 /* Nav */
-.dark nav { background-color: rgba(15, 23, 42, 0.8) !important; border-color: var(--border-color) !important; }
+.dark nav { background-color: rgba(9, 9, 11, 0.85) !important; border-color: var(--border-color) !important; }
 
 /* Footer */
 .dark footer { background-color: var(--bg-surface) !important; border-color: var(--border-color) !important; }
@@ -199,7 +199,7 @@ body {
 /* Inputs */
 .dark input, .dark textarea, .dark select {
   background-color: var(--bg-surface) !important;
-  border-color: #475569 !important;
+  border-color: #3f3f46 !important;
   color: var(--text-primary) !important;
 }
 .dark input::placeholder, .dark textarea::placeholder {
@@ -214,22 +214,22 @@ body {
 
 /* Hover states */
 .dark .hover\:bg-gray-50:hover { background-color: var(--bg-muted) !important; }
-.dark .hover\:bg-gray-100:hover { background-color: #1e293b !important; }
+.dark .hover\:bg-gray-100:hover { background-color: #18181b !important; }
 .dark .hover\:bg-white:hover { background-color: var(--bg-surface) !important; }
-.dark .hover\:bg-blue-50:hover { background-color: #172554 !important; }
-.dark .hover\:bg-blue-100:hover { background-color: #1e3a5f !important; }
+.dark .hover\:bg-blue-50:hover { background-color: #1e1b4b !important; }
+.dark .hover\:bg-blue-100:hover { background-color: #312e81 !important; }
 .dark .hover\:bg-blue-700:hover { background-color: #1d4ed8 !important; }
 .dark .hover\:bg-orange-50:hover { background-color: #351407 !important; }
 .dark .hover\:bg-red-700:hover { background-color: #b91c1c !important; }
 .dark .hover\:bg-orange-700:hover { background-color: #c2410c !important; }
 .dark .hover\:bg-white\/10:hover { background-color: rgba(255,255,255,0.1) !important; }
-.dark .hover\:border-gray-400:hover { border-color: #64748b !important; }
-.dark .hover\:border-blue-200:hover { border-color: #1e3a5f !important; }
+.dark .hover\:border-gray-400:hover { border-color: #52525b !important; }
+.dark .hover\:border-blue-200:hover { border-color: #312e81 !important; }
 .dark .hover\:border-blue-300:hover { border-color: #3b82f6 !important; }
 .dark .hover\:border-green-200:hover { border-color: #065f46 !important; }
 .dark .hover\:border-green-300:hover { border-color: #10b981 !important; }
 .dark .hover\:border-purple-300:hover { border-color: #7c3aed !important; }
-.dark .hover\:text-gray-700:hover { color: #cbd5e1 !important; }
+.dark .hover\:text-gray-700:hover { color: #d4d4d8 !important; }
 .dark .hover\:text-gray-900:hover { color: var(--text-primary) !important; }
 .dark .hover\:text-blue-600:hover { color: #93c5fd !important; }
 .dark .hover\:text-blue-800:hover { color: #dbeafe !important; }
@@ -246,17 +246,17 @@ body {
 .dark .group:hover .group-hover\:scale-105 { transform: scale(1.05); }
 
 /* Dark mode color badges */
-.dark .bg-blue-100 { background-color: #1e3a5f !important; }
+.dark .bg-blue-100 { background-color: #312e81 !important; }
 .dark .bg-purple-50 { background-color: #2e1065 !important; }
 .dark .bg-purple-100 { background-color: #2e1065 !important; }
 .dark .text-purple-600 { color: #a78bfa !important; }
-.dark .border-blue-100 { border-color: #1e3a5f !important; }
+.dark .border-blue-100 { border-color: #312e81 !important; }
 .dark .border-green-100 { border-color: #064e3b !important; }
 .dark .border-purple-100 { border-color: #2e1065 !important; }
 .dark .border-orange-100 { border-color: #431407 !important; }
 
 /* Additional text colors */
-.dark .text-gray-300 { color: #94a3b8 !important; }
+.dark .text-gray-300 { color: #a1a1aa !important; }
 .dark .text-blue-100 { color: #dbeafe !important; }
 .dark .text-blue-200 { color: #bfdbfe !important; }
 .dark .text-blue-400 { color: #60a5fa !important; }
@@ -288,20 +288,20 @@ body {
 .dark .to-indigo-800 { --tw-gradient-to: #3730a3 !important; }
 
 /* Skeleton loader dark mode */
-.dark .animate-pulse.bg-gray-200 { background-color: #334155 !important; }
+.dark .animate-pulse.bg-gray-200 { background-color: #27272a !important; }
 
 /* Disabled button dark */
 .dark .disabled\:opacity-50:disabled { opacity: 0.4; }
 
 /* Kbd tag for shortcuts */
-.dark kbd { background-color: #1e293b !important; border-color: #475569 !important; color: #94a3b8 !important; }
+.dark kbd { background-color: #18181b !important; border-color: #3f3f46 !important; color: #a1a1aa !important; }
 
 /* Yellow bookmark section dark */
 .dark .border-yellow-200 { border-color: #854d0e !important; }
 .dark .bg-yellow-50 { background-color: #422006 !important; }
 
 /* White/60 override for deadline alerts */
-.dark .bg-white\/60 { background-color: rgba(30, 41, 59, 0.6) !important; }
+.dark .bg-white\/60 { background-color: rgba(24, 24, 27, 0.6) !important; }
 .dark .text-orange-800 { color: #fdba74 !important; }
 
 /* Tab content fade-in */
@@ -336,7 +336,7 @@ body {
 
 /* Dark countdown digits */
 .dark .dark-countdown-digit {
-  background: linear-gradient(to bottom, #1e293b, #0f172a) !important;
+  background: linear-gradient(to bottom, #18181b, #09090b) !important;
 }
 
 /* Dark purple overrides for team matcher */
@@ -350,8 +350,8 @@ body {
 .dark .hover\:bg-purple-700:hover { background-color: #7e22ce !important; }
 
 /* Notification panel dark mode */
-.dark .border-gray-50 { border-color: #1e293b !important; }
-.dark .bg-blue-50\/30 { background-color: rgba(23, 37, 84, 0.3) !important; }
+.dark .border-gray-50 { border-color: #18181b !important; }
+.dark .bg-blue-50\/30 { background-color: rgba(30, 27, 75, 0.3) !important; }
 
 /* Smooth scrolling */
 html {
