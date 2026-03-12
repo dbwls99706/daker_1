@@ -206,7 +206,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             </div>
             <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden" role="progressbar" aria-valuenow={getTimeRemaining(hackathon.period.submissionDeadlineAt)} aria-valuemin={0} aria-valuemax={100} aria-label={`마감 진행률 ${getTimeRemaining(hackathon.period.submissionDeadlineAt)}%`}>
               <div
-                className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
+                className="progress-gradient h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
                 style={{ width: `${getTimeRemaining(hackathon.period.submissionDeadlineAt)}%` }}
               />
             </div>

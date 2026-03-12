@@ -190,8 +190,8 @@ body {
 /* Purple */
 .dark .border-purple-300 { border-color: #7c3aed !important; }
 
-/* Nav */
-.dark nav { background-color: rgba(9, 9, 11, 0.85) !important; border-color: var(--border-color) !important; }
+/* Nav — only the sticky top navbar, not breadcrumb <nav> elements */
+.dark nav.sticky { background-color: rgba(9, 9, 11, 0.85) !important; border-color: var(--border-color) !important; }
 
 /* Footer */
 .dark footer { background-color: var(--bg-surface) !important; border-color: var(--border-color) !important; }
@@ -278,14 +278,16 @@ body {
 .dark .focus\:border-blue-500:focus { border-color: #3b82f6 !important; }
 .dark .ring-blue-500 { --tw-ring-color: #3b82f6 !important; }
 
-/* Gradient overrides for dark mode */
-.dark .from-blue-400 { --tw-gradient-from: #60a5fa !important; }
-.dark .from-blue-500 { --tw-gradient-from: #3b82f6 !important; }
-.dark .from-blue-600 { --tw-gradient-from: #2563eb !important; }
-.dark .to-blue-600 { --tw-gradient-to: #2563eb !important; }
-.dark .to-indigo-500 { --tw-gradient-to: #6366f1 !important; }
-.dark .via-blue-700 { --tw-gradient-via: #1d4ed8 !important; }
-.dark .to-indigo-800 { --tw-gradient-to: #3730a3 !important; }
+/* Dark mode gradient overrides — use direct background since Tailwind v4 CSS vars differ */
+.dark .hero-gradient {
+  background: linear-gradient(to bottom right, #312e81, #1e1b4b, #0f0a2e) !important;
+}
+.dark .progress-gradient {
+  background: linear-gradient(to right, #6366f1, #a855f7) !important;
+}
+.dark .progress-gradient-sm {
+  background: linear-gradient(to right, #6366f1, #8b5cf6) !important;
+}
 
 /* Skeleton loader dark mode */
 .dark .animate-pulse.bg-gray-200 { background-color: #27272a !important; }

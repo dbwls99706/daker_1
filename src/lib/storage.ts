@@ -224,3 +224,44 @@ export function addRecentlyViewed(slug: string) {
 export function getRecentlyViewed(): string[] {
   return getItem<string[]>(RECENT_KEY, []);
 }
+
+// Team Ownership — track which teams the current user created
+const MY_TEAMS_KEY = "batonhub_my_teams";
+
+export function addMyTeam(teamCode: string) {
+  const mine = getItem<string[]>(MY_TEAMS_KEY, []);
+  if (!mine.includes(teamCode)) {
+    mine.push(teamCode);
+    setItem(MY_TEAMS_KEY, mine);
+  }
+}
+
+export function isMyTeam(teamCode: string): boolean {
+  return getItem<string[]>(MY_TEAMS_KEY, []).includes(teamCode);
+}
+
+export function removeMyTeam(teamCode: string) {
+  const mine = getItem<string[]>(MY_TEAMS_KEY, []).filter((c) => c !== teamCode);
+  setItem(MY_TEAMS_KEY, mine);
+}
+
+// Team membership — join a team (increment memberCount)
+export function joinTeam(teamCode: string): boolean {
+  const joined = getItem<string[]>("batonhub_joined_teams", []);
+  if (joined.includes(teamCode)) return false; // already joined
+
+  const all = getItem<Team[]>(KEYS.teams, []);
+  const idx = all.findIndex((t) => t.teamCode === teamCode);
+  if (idx < 0) return false;
+
+  all[idx] = { ...all[idx], memberCount: all[idx].memberCount + 1 };
+  setItem(KEYS.teams, all);
+
+  joined.push(teamCode);
+  setItem("batonhub_joined_teams", joined);
+  return true;
+}
+
+export function hasJoinedTeam(teamCode: string): boolean {
+  return getItem<string[]>("batonhub_joined_teams", []).includes(teamCode);
+}

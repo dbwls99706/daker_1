@@ -101,7 +101,7 @@ export default function HomePage() {
       )}
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-10 sm:px-8 sm:py-16 text-white animate-slide-up">
+      <section className="hero-gradient relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-10 sm:px-8 sm:py-16 text-white animate-slide-up">
         <div className="relative z-10">
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-blue-200">해커톤 통합 플랫폼</p>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">BatonHub</h1>
@@ -249,7 +249,7 @@ export default function HomePage() {
                   </div>
                   <div className="h-6 w-full rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${title} 참가 현황 ${pct}%`}>
                     <div
-                      className="h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-700 flex items-center justify-end pr-2"
+                      className="progress-gradient h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-700 flex items-center justify-end pr-2"
                       style={{ width: `${Math.max(pct, 8)}%` }}
                     >
                       {pct > 20 && (
@@ -322,7 +322,7 @@ export default function HomePage() {
                       </div>
                       <div className="mt-1 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
                         <div
-                          className="h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
+                          className="progress-gradient-sm h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
                           style={{ width: `${getTimeRemaining(h.period.submissionDeadlineAt)}%` }}
                         />
                       </div>
@@ -415,7 +415,7 @@ export default function HomePage() {
               {h.status !== "ended" && (
                 <div className="mt-2 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden" role="progressbar" aria-valuenow={getTimeRemaining(h.period.submissionDeadlineAt)} aria-valuemin={0} aria-valuemax={100} aria-label={`마감 진행률 ${getTimeRemaining(h.period.submissionDeadlineAt)}%`}>
                   <div
-                    className="h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
+                    className="progress-gradient-sm h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
                     style={{ width: `${getTimeRemaining(h.period.submissionDeadlineAt)}%` }}
                   />
                 </div>

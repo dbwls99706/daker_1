@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSeedData } from "@/hooks/useSeedData";
-import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam } from "@/lib/storage";
+import { getTeams, getHackathons, addTeam, updateTeam, deleteTeam, addMyTeam, isMyTeam, removeMyTeam, joinTeam, hasJoinedTeam } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Modal } from "@/components/ui/Modal";
@@ -75,6 +75,7 @@ function CampContent() {
       createdAt: new Date().toISOString(),
     };
     addTeam(team);
+    addMyTeam(team.teamCode);
     setName("");
     setIntro("");
     setContactUrl("");
@@ -318,18 +319,57 @@ function CampContent() {
                   <span>· {formatDate(t.createdAt)}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {t.isOpen ? (
+                  {isMyTeam(t.teamCode) ? (
                     <>
+                      {t.isOpen ? (
+                        <button
+                          onClick={() => {
+                            updateTeam(t.teamCode, { isOpen: false });
+                            setToastMsg("모집이 마감되었습니다.");
+                            setRefreshKey((n) => n + 1);
+                          }}
+                          className="font-medium text-orange-500 hover:text-orange-700"
+                        >
+                          모집마감
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            updateTeam(t.teamCode, { isOpen: true });
+                            setToastMsg("모집이 재개되었습니다.");
+                            setRefreshKey((n) => n + 1);
+                          }}
+                          className="font-medium text-green-600 hover:text-green-800"
+                        >
+                          모집재개
+                        </button>
+                      )}
                       <button
-                        onClick={() => {
-                          updateTeam(t.teamCode, { isOpen: false });
-                          setToastMsg("모집이 마감되었습니다.");
-                          setRefreshKey((n) => n + 1);
-                        }}
-                        className="font-medium text-orange-500 hover:text-orange-700"
+                        onClick={() => setDeleteTarget({ teamCode: t.teamCode, name: t.name })}
+                        className="font-medium text-red-400 hover:text-red-600"
                       >
-                        모집마감
+                        삭제
                       </button>
+                    </>
+                  ) : t.isOpen ? (
+                    <>
+                      {hasJoinedTeam(t.teamCode) ? (
+                        <span className="font-medium text-green-600">참여중</span>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            if (joinTeam(t.teamCode)) {
+                              setToastMsg(`${t.name} 팀에 참여했습니다!`);
+                              setRefreshKey((n) => n + 1);
+                            } else {
+                              setToastMsg("이미 참여한 팀입니다.");
+                            }
+                          }}
+                          className="font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          참여하기
+                        </button>
+                      )}
                       <ExternalLink
                         href={t.contact.url}
                         className="font-medium text-blue-600 hover:underline"
@@ -338,23 +378,8 @@ function CampContent() {
                       </ExternalLink>
                     </>
                   ) : (
-                    <button
-                      onClick={() => {
-                        updateTeam(t.teamCode, { isOpen: true });
-                        setToastMsg("모집이 재개되었습니다.");
-                        setRefreshKey((n) => n + 1);
-                      }}
-                      className="font-medium text-green-600 hover:text-green-800"
-                    >
-                      모집재개
-                    </button>
+                    <span className="text-gray-400">모집마감</span>
                   )}
-                  <button
-                    onClick={() => setDeleteTarget({ teamCode: t.teamCode, name: t.name })}
-                    className="font-medium text-red-400 hover:text-red-600"
-                  >
-                    삭제
-                  </button>
                 </div>
               </div>
             </div>
@@ -401,6 +426,7 @@ function CampContent() {
               onClick={() => {
                 if (deleteTarget) {
                   deleteTeam(deleteTarget.teamCode);
+                  removeMyTeam(deleteTarget.teamCode);
                   setRefreshKey((n) => n + 1);
                   setDeleteTarget(null);
                   setToastMsg("팀이 삭제되었습니다.");
