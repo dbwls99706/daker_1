@@ -77,10 +77,10 @@ export function Modal({ open, onClose, title, children, actions }: ModalProps) {
       }}
       role="dialog"
       aria-modal="true"
-      aria-label={title}
+      aria-labelledby="modal-title"
     >
       <div ref={modalRef} className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl animate-fade-in">
-        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+        <h2 id="modal-title" className="text-lg font-bold text-gray-900">{title}</h2>
         <div className="mt-3 text-sm text-gray-600">{children}</div>
         {actions && <div className="mt-5 flex justify-end gap-3">{actions}</div>}
       </div>

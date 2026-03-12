@@ -89,7 +89,7 @@ export default function HomePage() {
             </div>
             <button
               onClick={() => { setShowOnboarding(false); localStorage.setItem("batonhub_onboarded", "true"); }}
-              className="flex-shrink-0 rounded-lg p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600 transition"
+              className="cursor-pointer flex-shrink-0 rounded-lg p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600 transition"
               aria-label="온보딩 닫기"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -401,7 +401,7 @@ export default function HomePage() {
                 </div>
                 <button
                   onClick={(e) => handleBookmark(h.slug, e)}
-                  className={`text-lg transition-all hover:scale-110 ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+                  className={`cursor-pointer text-lg transition-all hover:scale-110 ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
                   aria-label={bookmarks.includes(h.slug) ? "북마크 제거" : "북마크 추가"}
                   aria-pressed={bookmarks.includes(h.slug)}
                 >

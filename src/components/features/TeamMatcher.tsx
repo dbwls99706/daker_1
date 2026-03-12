@@ -53,7 +53,7 @@ export function TeamMatcher({ teams, hackathonSlug }: TeamMatcherProps) {
           <button
             key={role}
             onClick={() => toggleRole(role)}
-            className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+            className={`cursor-pointer rounded-full border px-3 py-1 text-sm font-medium transition ${
               selectedRoles.includes(role)
                 ? "border-purple-500 bg-purple-600 text-white"
                 : "border-purple-300 text-purple-700 hover:bg-purple-100"
@@ -67,7 +67,7 @@ export function TeamMatcher({ teams, hackathonSlug }: TeamMatcherProps) {
       {selectedRoles.length > 0 && (
         <button
           onClick={() => setShowResults(true)}
-          className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition"
+          className="cursor-pointer rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition"
         >
           매칭 결과 보기 ({matchedTeams.length}팀)
         </button>

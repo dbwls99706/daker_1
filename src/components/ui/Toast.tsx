@@ -33,7 +33,7 @@ export function Toast({ message, onDone, duration = 2500 }: ToastProps) {
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className="fixed right-4 top-20 z-50 animate-fade-in rounded-lg bg-gray-900 px-4 py-2.5 text-sm text-white shadow-lg"
+      className="fixed right-4 top-4 sm:top-20 z-50 animate-fade-in rounded-lg bg-gray-900 px-4 py-2.5 text-sm text-white shadow-lg"
     >
       {message}
     </div>

@@ -168,7 +168,7 @@ export default function RankingsPage() {
                 a.click();
                 URL.revokeObjectURL(url);
               }}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition"
             >
               CSV 내보내기
             </button>
@@ -187,7 +187,7 @@ export default function RankingsPage() {
                 key={f.key}
                 onClick={() => { setPeriod(f.key); setPage(1); }}
                 aria-pressed={period === f.key}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition ${
                   period === f.key
                     ? "bg-white text-blue-700 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
@@ -317,22 +317,22 @@ export default function RankingsPage() {
             <thead>
               <tr className="border-b bg-gray-50 text-left">
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600 w-16" aria-sort={sortField === "rank" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("rank")} className="hover:text-blue-600 transition" aria-label={`순위 정렬 ${sortField === "rank" ? (sortDir === "asc" ? "오름차순" : "내림차순") : ""}`}>
+                  <button onClick={() => toggleSort("rank")} className="cursor-pointer hover:text-blue-600 transition" aria-label={`순위 정렬 ${sortField === "rank" ? (sortDir === "asc" ? "오름차순" : "내림차순") : ""}`}>
                     순위{sortIcon("rank")}
                   </button>
                 </th>
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600" aria-sort={sortField === "teamName" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("teamName")} className="hover:text-blue-600 transition">
+                  <button onClick={() => toggleSort("teamName")} className="cursor-pointer hover:text-blue-600 transition">
                     팀{sortIcon("teamName")}
                   </button>
                 </th>
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600" aria-sort={sortField === "totalScore" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("totalScore")} className="hover:text-blue-600 transition">
+                  <button onClick={() => toggleSort("totalScore")} className="cursor-pointer hover:text-blue-600 transition">
                     총 점수{sortIcon("totalScore")}
                   </button>
                 </th>
                 <th scope="col" className="px-4 py-3 font-semibold text-gray-600" aria-sort={sortField === "count" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("count")} className="hover:text-blue-600 transition">
+                  <button onClick={() => toggleSort("count")} className="cursor-pointer hover:text-blue-600 transition">
                     참가 횟수{sortIcon("count")}
                   </button>
                 </th>
@@ -383,7 +383,7 @@ export default function RankingsPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition"
             >
               이전
             </button>
@@ -393,7 +393,7 @@ export default function RankingsPage() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 hover:bg-gray-50 transition"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition"
             >
               다음
             </button>

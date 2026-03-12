@@ -390,7 +390,7 @@ function CampContent() {
             <button
               onClick={() => setCampPage((p) => Math.max(1, p - 1))}
               disabled={campPage <= 1}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               이전
             </button>
@@ -400,7 +400,7 @@ function CampContent() {
             <button
               onClick={() => setCampPage((p) => Math.min(totalPages, p + 1))}
               disabled={campPage >= totalPages}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               다음
             </button>
