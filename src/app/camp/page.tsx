@@ -23,6 +23,7 @@ function CampContent() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<{ teamCode: string; name: string } | null>(null);
   const [joinTarget, setJoinTarget] = useState<{ teamCode: string; name: string } | null>(null);
+  const [leaveTarget, setLeaveTarget] = useState<{ teamCode: string; name: string } | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const [teamSearch, setTeamSearch] = useState("");
@@ -329,7 +330,7 @@ function CampContent() {
                             setToastMsg("모집이 마감되었습니다.");
                             setRefreshKey((n) => n + 1);
                           }}
-                          className="font-medium text-orange-500 hover:text-orange-700"
+                          className="cursor-pointer font-medium text-orange-500 hover:text-orange-700"
                         >
                           모집마감
                         </button>
@@ -340,14 +341,14 @@ function CampContent() {
                             setToastMsg("모집이 재개되었습니다.");
                             setRefreshKey((n) => n + 1);
                           }}
-                          className="font-medium text-green-600 hover:text-green-800"
+                          className="cursor-pointer font-medium text-green-600 hover:text-green-800"
                         >
                           모집재개
                         </button>
                       )}
                       <button
                         onClick={() => setDeleteTarget({ teamCode: t.teamCode, name: t.name })}
-                        className="font-medium text-red-400 hover:text-red-600"
+                        className="cursor-pointer font-medium text-red-400 hover:text-red-600"
                       >
                         삭제
                       </button>
@@ -356,20 +357,15 @@ function CampContent() {
                     <>
                       {hasJoinedTeam(t.teamCode) ? (
                         <button
-                          onClick={() => {
-                            if (leaveTeam(t.teamCode)) {
-                              setToastMsg("팀에서 탈퇴했습니다.");
-                              setRefreshKey((n) => n + 1);
-                            }
-                          }}
-                          className="font-medium text-orange-500 hover:text-orange-700"
+                          onClick={() => setLeaveTarget({ teamCode: t.teamCode, name: t.name })}
+                          className="cursor-pointer font-medium text-orange-500 hover:text-orange-700"
                         >
                           탈퇴
                         </button>
                       ) : (
                         <button
                           onClick={() => setJoinTarget({ teamCode: t.teamCode, name: t.name })}
-                          className="font-medium text-blue-600 hover:text-blue-800"
+                          className="cursor-pointer font-medium text-blue-600 hover:text-blue-800"
                         >
                           참여하기
                         </button>
@@ -479,6 +475,38 @@ function CampContent() {
       >
         <p>&ldquo;{joinTarget?.name}&rdquo; 팀에 참여하시겠습니까?</p>
         <p className="mt-1 text-sm text-gray-500">참여 후에는 팀 카드에서 탈퇴할 수 있습니다.</p>
+      </Modal>
+
+      <Modal
+        open={!!leaveTarget}
+        onClose={() => setLeaveTarget(null)}
+        title="팀 탈퇴"
+        actions={
+          <>
+            <button
+              onClick={() => setLeaveTarget(null)}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              onClick={() => {
+                if (leaveTarget) {
+                  if (leaveTeam(leaveTarget.teamCode)) {
+                    setToastMsg(`${leaveTarget.name} 팀에서 탈퇴했습니다.`);
+                    setRefreshKey((n) => n + 1);
+                  }
+                  setLeaveTarget(null);
+                }
+              }}
+              className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+            >
+              탈퇴하기
+            </button>
+          </>
+        }
+      >
+        <p>&ldquo;{leaveTarget?.name}&rdquo; 팀에서 탈퇴하시겠습니까?</p>
       </Modal>
     </div>
   );
