@@ -41,7 +41,13 @@ body {
     sans-serif;
   background-color: var(--bg-base);
   color: var(--text-primary);
-  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark mode toggle — smooth crossfade via View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.15s;
+  animation-timing-function: ease-in-out;
 }
 
 /* Toast animation */

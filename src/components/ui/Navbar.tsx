@@ -30,9 +30,17 @@ export function Navbar() {
 
   function toggleDark() {
     const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("batonhub_dark", String(next));
+    const apply = () => {
+      setDark(next);
+      document.documentElement.classList.toggle("dark", next);
+      localStorage.setItem("batonhub_dark", String(next));
+    };
+    // Use View Transitions API for smooth crossfade (Chrome 111+), instant fallback
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(apply);
+    } else {
+      apply();
+    }
   }
 
   // Close mobile menu on route change
