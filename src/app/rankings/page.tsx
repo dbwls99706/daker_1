@@ -61,14 +61,20 @@ export default function RankingsPage() {
     if (!ready) return [];
     const leaderboards = getAllLeaderboards();
 
-    const allEntries = leaderboards.flatMap((lb) =>
-      lb.entries.map((e) => ({
+    // Normalize scores to 100-point scale per hackathon
+    // If all scores in a hackathon are ≤ 1.0, treat as 0-1 scale and multiply by 100
+    const allEntries = leaderboards.flatMap((lb) => {
+      const maxScore = lb.entries.length > 0 ? Math.max(...lb.entries.map((e) => e.score)) : 1;
+      const is01Scale = maxScore <= 1.0;
+      return lb.entries.map((e) => ({
         ...e,
+        score: is01Scale ? Math.round(e.score * 10000) / 100 : e.score, // 0.7421 → 74.21
+        rawScore: e.score,
         hackathonSlug: lb.hackathonSlug,
         hackathonTitle:
           hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug,
-      }))
-    );
+      }));
+    });
 
     let filtered = allEntries;
 

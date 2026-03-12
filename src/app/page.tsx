@@ -490,13 +490,16 @@ export default function HomePage() {
         ) : (
         (() => {
           const topEntries = [...leaderboards
-            .flatMap((lb) =>
-              lb.entries.map((e) => ({
+            .flatMap((lb) => {
+              const maxScore = lb.entries.length > 0 ? Math.max(...lb.entries.map((e) => e.score)) : 1;
+              const is01Scale = maxScore <= 1.0;
+              return lb.entries.map((e) => ({
                 ...e,
+                score: is01Scale ? Math.round(e.score * 10000) / 100 : e.score,
                 hackathonSlug: lb.hackathonSlug,
                 hackathonTitle: hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug,
-              }))
-            )]
+              }));
+            })]
             .sort((a, b) => b.score - a.score)
             .slice(0, 5);
 

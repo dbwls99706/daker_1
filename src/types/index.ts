@@ -22,6 +22,10 @@ export interface HackathonDetail {
   sections: {
     overview?: {
       summary: string;
+      description?: string;
+      tags?: string[];
+      host?: string;
+      organizer?: string;
       teamPolicy: {
         allowSolo: boolean;
         maxTeamSize: number;
