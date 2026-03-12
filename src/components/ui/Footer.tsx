@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Modal } from "@/components/ui/Modal";
 
 const footerLinks = [
@@ -12,9 +12,24 @@ const footerLinks = [
 
 export function Footer() {
   const [showReset, setShowReset] = useState(false);
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handleSecretClick() {
+    clickCountRef.current += 1;
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    if (clickCountRef.current >= 5) {
+      clickCountRef.current = 0;
+      setShowReset(true);
+    } else {
+      clickTimerRef.current = setTimeout(() => {
+        clickCountRef.current = 0;
+      }, 1500);
+    }
+  }
 
   function handleReset() {
-    const keys = ["batonhub_hackathons", "batonhub_details", "batonhub_leaderboards", "batonhub_teams", "batonhub_submissions", "batonhub_bookmarks", "batonhub_recent", "batonhub_seeded"];
+    const keys = ["batonhub_hackathons", "batonhub_details", "batonhub_leaderboards", "batonhub_teams", "batonhub_submissions", "batonhub_bookmarks", "batonhub_recent", "batonhub_seeded", "batonhub_my_teams", "batonhub_joined_teams"];
     keys.forEach((k) => localStorage.removeItem(k));
     window.location.reload();
   }
@@ -37,19 +52,15 @@ export function Footer() {
                 {link.label}
               </Link>
             ))}
-            <button
-              onClick={() => setShowReset(true)}
-              className="text-xs text-gray-400 hover:text-red-500 transition"
-              aria-label="데이터 초기화"
-            >
-              데이터 초기화
-            </button>
           </nav>
           <div className="text-center sm:text-right">
             <p className="text-xs text-gray-400">
               DACON 월간 해커톤 : 긴급 인수인계 해커톤 출품작
             </p>
-            <p className="mt-1 text-xs text-gray-400">
+            <p
+              className="mt-1 text-xs text-gray-400 select-none"
+              onClick={handleSecretClick}
+            >
               &copy; 2026 BatonHub. Built with Next.js + Tailwind CSS
             </p>
             <p className="mt-1 text-xs text-gray-400">

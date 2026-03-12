@@ -5,7 +5,7 @@ import detailJson from "@/data/public_hackathon_detail.json";
 import leaderboardJson from "@/data/public_leaderboard.json";
 import teamsJson from "@/data/public_teams.json";
 
-const SEED_VERSION = "2";
+const SEED_VERSION = "3";
 
 const KEYS = {
   hackathons: "batonhub_hackathons",
@@ -65,12 +65,16 @@ export function seedIfNeeded() {
   if (localStorage.getItem(KEYS.seeded) === SEED_VERSION) return;
 
   try {
+    // Always refresh read-only reference data
     localStorage.setItem(KEYS.hackathons, JSON.stringify(hackathonsJson));
     localStorage.setItem(KEYS.details, JSON.stringify(normalizeDetails()));
     localStorage.setItem(KEYS.leaderboards, JSON.stringify(normalizeLeaderboards()));
     localStorage.setItem(KEYS.teams, JSON.stringify(teamsJson));
-    localStorage.setItem(KEYS.submissions, JSON.stringify([]));
-    localStorage.setItem(KEYS.bookmarks, JSON.stringify([]));
+    // Only initialize user data on first seed (not on version upgrades)
+    if (!localStorage.getItem(KEYS.seeded)) {
+      localStorage.setItem(KEYS.submissions, JSON.stringify([]));
+      localStorage.setItem(KEYS.bookmarks, JSON.stringify([]));
+    }
     localStorage.setItem(KEYS.seeded, SEED_VERSION);
   } catch (e) {
     console.error("Failed to seed data:", e);
