@@ -6,12 +6,17 @@ import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard, addRecentlyViewed } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { Modal } from "@/components/ui/Modal";
 import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Toast } from "@/components/ui/Toast";
 import { SubmitTab } from "@/components/features/SubmitTab";
-import { ExternalLink } from "@/components/ui/ExternalLink";
-import { formatKRW, formatDateTime, getDday, generateId, sanitizeUrl, getTimeRemaining } from "@/lib/utils";
+import { OverviewTab } from "@/components/features/tabs/OverviewTab";
+import { EvalTab } from "@/components/features/tabs/EvalTab";
+import { ScheduleTab } from "@/components/features/tabs/ScheduleTab";
+import { PrizeTab } from "@/components/features/tabs/PrizeTab";
+import { InfoTab } from "@/components/features/tabs/InfoTab";
+import { TeamsTab } from "@/components/features/tabs/TeamsTab";
+import { LeaderboardTab } from "@/components/features/tabs/LeaderboardTab";
+import { getDday, generateId, getTimeRemaining } from "@/lib/utils";
 import { CountdownTimer } from "@/components/features/CountdownTimer";
 import type { Submission } from "@/types";
 
@@ -284,215 +289,12 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
 
       {/* Tab Content */}
       <div key={activeTab} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-tab-fade" role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}>
-        {activeTab === "overview" && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">개요</h2>
-            {sec.overview ? (
-              <>
-                <p className="text-gray-700 leading-relaxed">{sec.overview.summary}</p>
-                <div className="rounded-lg bg-blue-50 p-4">
-                  <h3 className="font-semibold text-blue-900">팀 정책</h3>
-                  <ul className="mt-2 space-y-1 text-sm text-blue-800">
-                    <li>개인 참가: {sec.overview.teamPolicy.allowSolo ? "가능" : "불가"}</li>
-                    <li>최대 팀원: {sec.overview.teamPolicy.maxTeamSize}명</li>
-                  </ul>
-                </div>
-              </>
-            ) : (
-              <EmptyState title="개요 정보 없음" description="이 해커톤의 개요 정보가 아직 등록되지 않았습니다." />
-            )}
-          </div>
-        )}
-
-        {activeTab === "eval" && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">평가</h2>
-            {sec.eval ? (
-            <>
-            <div className="rounded-lg bg-gray-50 p-4">
-              <div className="text-sm font-semibold text-gray-600">평가 지표</div>
-              <div className="mt-1 text-xl font-bold text-blue-600">{sec.eval.metricName}</div>
-            </div>
-            <p className="text-gray-700">{sec.eval.description}</p>
-            {sec.eval.scoreDisplay && (
-              <div className="space-y-2">
-                <h3 className="font-semibold">{sec.eval.scoreDisplay.label} 구성</h3>
-                <div className="flex gap-3">
-                  {sec.eval.scoreDisplay.breakdown.map((b) => (
-                    <div key={b.key} className="flex-1 rounded-lg border border-gray-200 p-4 text-center">
-                      <div className="text-2xl font-bold text-blue-600">{b.weightPercent}%</div>
-                      <div className="mt-1 text-sm text-gray-600">{b.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            {sec.eval.limits && (
-              <div className="rounded-lg bg-yellow-50 p-4 text-sm text-yellow-800">
-                <p>최대 실행 시간: {sec.eval.limits.maxRuntimeSec}초</p>
-                <p>일일 최대 제출: {sec.eval.limits.maxSubmissionsPerDay}건</p>
-              </div>
-            )}
-            </>
-            ) : (
-              <EmptyState title="평가 정보 없음" description="이 해커톤의 평가 정보가 아직 등록되지 않았습니다." />
-            )}
-          </div>
-        )}
-
-        {activeTab === "schedule" && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">일정</h2>
-            {sec.schedule?.milestones?.length ? (
-            <div className="relative space-y-0">
-              {sec.schedule!.milestones.map((m, i) => {
-                const isPast = new Date(m.at) < new Date();
-                return (
-                  <div key={i} className="flex gap-4 pb-6">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`h-3 w-3 rounded-full border-2 ${
-                          isPast ? "border-blue-600 bg-blue-600" : "border-gray-300 bg-white"
-                        }`}
-                      />
-                      {i < sec.schedule!.milestones.length - 1 && (
-                        <div className={`w-0.5 flex-1 ${isPast ? "bg-blue-200" : "bg-gray-200"}`} />
-                      )}
-                    </div>
-                    <div className="-mt-0.5">
-                      <div className={`font-semibold ${isPast ? "text-gray-400" : "text-gray-900"}`}>{m.name}</div>
-                      <div className="text-sm text-gray-500">{formatDateTime(m.at)}</div>
-                      {!isPast && getDday(m.at) !== "D-Day" && (
-                        <span className="mt-1 inline-block rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                          {getDday(m.at)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            ) : (
-              <EmptyState title="일정 정보 없음" description="이 해커톤의 일정 정보가 아직 등록되지 않았습니다." />
-            )}
-          </div>
-        )}
-
-        {activeTab === "prize" && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">상금</h2>
-            {sec.prize?.items?.length ? (
-              <div className="grid gap-3 sm:grid-cols-3">
-                {sec.prize.items.map((p, i) => (
-                  <div
-                    key={i}
-                    className={`rounded-xl border-2 p-6 text-center ${
-                      i === 0
-                        ? "border-yellow-300 bg-yellow-50"
-                        : i === 1
-                        ? "border-gray-300 bg-gray-50"
-                        : "border-orange-200 bg-orange-50"
-                    }`}
-                  >
-                    <div className="text-2xl" aria-hidden="true">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</div>
-                    <div className="mt-2 text-sm font-medium text-gray-600">{p.place}</div>
-                    <div className="mt-1 text-xl font-bold">{formatKRW(p.amountKRW)}</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyState title="상금 정보 없음" description="이 해커톤의 상금 정보가 아직 등록되지 않았습니다." />
-            )}
-          </div>
-        )}
-
-        {activeTab === "info" && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">안내</h2>
-            {sec.info ? (
-              <>
-                <div className="space-y-3">
-                  {sec.info.notice.map((n, i) => (
-                    <div key={i} className="flex gap-2 rounded-lg bg-gray-50 p-3">
-                      <span className="text-blue-500">•</span>
-                      <p className="text-sm text-gray-700">{n}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-3 pt-2">
-                  <ExternalLink
-                    href={sec.info.links.rules}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
-                  >
-                    규정 보기
-                  </ExternalLink>
-                  <ExternalLink
-                    href={sec.info.links.faq}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
-                  >
-                    FAQ
-                  </ExternalLink>
-                </div>
-              </>
-            ) : (
-              <EmptyState title="안내 정보 없음" description="이 해커톤의 안내 정보가 아직 등록되지 않았습니다." />
-            )}
-          </div>
-        )}
-
-        {activeTab === "teams" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold">팀 목록</h2>
-              <Link
-                href={`/camp?hackathon=${slug}`}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                팀 보기 / 생성
-              </Link>
-            </div>
-            {teams.length === 0 ? (
-              <EmptyState title="등록된 팀이 없습니다" description="캠프에서 첫 팀을 만들어보세요!" />
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {teams.map((t) => (
-                  <div key={t.teamCode} className="rounded-lg border border-gray-200 p-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-bold">{t.name}</h3>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                          t.isOpen ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-                        }`}
-                      >
-                        {t.isOpen ? "모집중" : "모집마감"}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm text-gray-500">{t.intro}</p>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {t.lookingFor.map((r) => (
-                        <span key={r} className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-                          {r}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
-                      <span>{t.memberCount}명</span>
-                      {t.isOpen && (
-                        <ExternalLink
-                          href={t.contact.url}
-                          className="text-blue-600 hover:underline"
-                        >
-                          연락하기
-                        </ExternalLink>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
+        {activeTab === "overview" && <OverviewTab overview={sec.overview} />}
+        {activeTab === "eval" && <EvalTab eval={sec.eval} />}
+        {activeTab === "schedule" && <ScheduleTab schedule={sec.schedule} />}
+        {activeTab === "prize" && <PrizeTab prize={sec.prize} />}
+        {activeTab === "info" && <InfoTab info={sec.info} />}
+        {activeTab === "teams" && <TeamsTab teams={teams} slug={slug} />}
         {activeTab === "submit" && (
           sec.submit ? (
             <SubmitTab
@@ -509,128 +311,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
             </div>
           )
         )}
-
-        {activeTab === "leaderboard" && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">리더보드</h2>
-            {sec.leaderboard?.note && (
-              <p className="text-sm text-gray-500">{sec.leaderboard.note}</p>
-            )}
-            {!leaderboard || leaderboard.entries.length === 0 ? (
-              <EmptyState title="리더보드 데이터 없음" description="아직 제출된 결과가 없습니다." />
-            ) : (
-              <>
-                {/* Mobile card layout */}
-                <div className="sm:hidden space-y-3">
-                  {[...leaderboard.entries]
-                    .sort((a, b) => a.rank - b.rank)
-                    .map((e) => (
-                      <div key={e.teamName} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4">
-                        <span className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold flex-shrink-0 ${
-                          e.rank === 1 ? "bg-yellow-100 text-yellow-800" :
-                          e.rank === 2 ? "bg-gray-200 text-gray-700" :
-                          e.rank === 3 ? "bg-orange-100 text-orange-700" :
-                          "bg-gray-100 text-gray-500"
-                        }`}>{e.rank}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{e.teamName}</p>
-                          <p className="text-xs text-gray-500">{formatDateTime(e.submittedAt)}</p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          {e.score === 0 ? (
-                            <span className="text-sm text-gray-400">채점 대기</span>
-                          ) : (
-                            <span className="text-lg font-bold text-blue-600">{e.score}</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-
-                {/* Desktop table */}
-                <div className="hidden sm:block overflow-x-auto">
-                  {(() => {
-                    const hasBreakdown = leaderboard.entries.some((e) => e.scoreBreakdown);
-                    const hasArtifacts = leaderboard.entries.some((e) => e.artifacts);
-                    return (
-                  <table className="w-full text-sm" aria-label="리더보드">
-                    <thead>
-                      <tr className="border-b bg-gray-50 text-left">
-                        <th scope="col" className="px-4 py-3 font-semibold">순위</th>
-                        <th scope="col" className="px-4 py-3 font-semibold">팀</th>
-                        <th scope="col" className="px-4 py-3 font-semibold">점수</th>
-                        {hasBreakdown && (
-                          <>
-                            <th scope="col" className="px-4 py-3 font-semibold">참가자</th>
-                            <th scope="col" className="px-4 py-3 font-semibold">심사위원</th>
-                          </>
-                        )}
-                        {hasArtifacts && (
-                          <th scope="col" className="px-4 py-3 font-semibold">제출물</th>
-                        )}
-                        <th scope="col" className="px-4 py-3 font-semibold">제출일</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[...leaderboard.entries]
-                        .sort((a, b) => a.rank - b.rank)
-                        .map((e) => (
-                          <tr key={e.teamName} className="border-b last:border-0 hover:bg-gray-50 transition">
-                            <td className="px-4 py-3">
-                              <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                                e.rank === 1 ? "bg-yellow-100 text-yellow-800" :
-                                e.rank === 2 ? "bg-gray-200 text-gray-700" :
-                                e.rank === 3 ? "bg-orange-100 text-orange-700" :
-                                "text-gray-500"
-                              }`}>{e.rank}</span>
-                            </td>
-                            <td className="px-4 py-3 font-medium">{e.teamName}</td>
-                            <td className="px-4 py-3 font-semibold text-blue-600">
-                              {e.score === 0 ? (
-                                <span className="text-gray-400 font-normal">채점 대기</span>
-                              ) : (
-                                e.score
-                              )}
-                            </td>
-                            {hasBreakdown && (
-                              <>
-                                <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.participant ?? "-"}</td>
-                                <td className="px-4 py-3 text-gray-600">{e.scoreBreakdown?.judge ?? "-"}</td>
-                              </>
-                            )}
-                            {hasArtifacts && (
-                              <td className="px-4 py-3">
-                                {e.artifacts ? (
-                                  <div className="flex flex-wrap gap-1.5">
-                                    {e.artifacts.planTitle && (
-                                      <span className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700" title={e.artifacts.planTitle}>
-                                        {e.artifacts.planTitle.length > 15 ? e.artifacts.planTitle.slice(0, 15) + "..." : e.artifacts.planTitle}
-                                      </span>
-                                    )}
-                                    {e.artifacts.webUrl && (
-                                      <ExternalLink href={e.artifacts.webUrl} className="rounded bg-green-50 px-2 py-0.5 text-xs text-green-700 hover:underline">웹</ExternalLink>
-                                    )}
-                                    {e.artifacts.pdfUrl && (
-                                      <ExternalLink href={e.artifacts.pdfUrl} className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-700 hover:underline">PDF</ExternalLink>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-400">-</span>
-                                )}
-                              </td>
-                            )}
-                            <td className="px-4 py-3 text-gray-500 text-xs">{formatDateTime(e.submittedAt)}</td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                    );
-                  })()}
-                </div>
-              </>
-            )}
-          </div>
-        )}
+        {activeTab === "leaderboard" && <LeaderboardTab leaderboard={leaderboard} leaderboardSection={sec.leaderboard} />}
       </div>
     </div>
   );

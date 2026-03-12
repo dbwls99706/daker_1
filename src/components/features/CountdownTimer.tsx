@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useCountdown } from "@/hooks/useCountdown";
 
 interface CountdownTimerProps {
@@ -8,7 +9,7 @@ interface CountdownTimerProps {
   compact?: boolean;
 }
 
-function Digit({ value, unit }: { value: number; unit: string }) {
+const Digit = memo(function Digit({ value, unit }: { value: number; unit: string }) {
   return (
     <div className="flex flex-col items-center">
       <div className="relative rounded-lg bg-gradient-to-b from-gray-900 to-gray-800 px-2.5 py-1.5 text-white shadow-md min-w-[2.5rem] text-center dark-countdown-digit">
@@ -18,9 +19,14 @@ function Digit({ value, unit }: { value: number; unit: string }) {
       <span className="mt-1 text-[10px] font-medium text-gray-500 uppercase tracking-wider">{unit}</span>
     </div>
   );
-}
+});
 
-export function CountdownTimer({ targetIso, label, compact }: CountdownTimerProps) {
+/**
+ * Real-time countdown timer that ticks every second.
+ * Wrapped in React.memo to prevent unnecessary re-renders from parent.
+ * The timer manages its own state via useCountdown, isolating re-renders.
+ */
+export const CountdownTimer = memo(function CountdownTimer({ targetIso, label, compact }: CountdownTimerProps) {
   const { days, hours, minutes, seconds, isExpired } = useCountdown(targetIso);
 
   if (isExpired) {
@@ -59,4 +65,4 @@ export function CountdownTimer({ targetIso, label, compact }: CountdownTimerProp
       </div>
     </div>
   );
-}
+});

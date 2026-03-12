@@ -15,39 +15,46 @@ const KEYS = {
   seeded: "batonhub_seeded",
 } as const;
 
+/** Type guard: checks that a value is a non-null object with expected string fields */
+function hasStringField(obj: unknown, key: string): obj is Record<string, unknown> {
+  return typeof obj === "object" && obj !== null && typeof (obj as Record<string, unknown>)[key] === "string";
+}
+
+function toHackathonDetail(raw: unknown): HackathonDetail | null {
+  if (!hasStringField(raw, "slug") || !hasStringField(raw, "title")) return null;
+  const obj = raw as Record<string, unknown>;
+  return {
+    slug: String(obj.slug),
+    title: String(obj.title),
+    sections: (obj.sections ?? {}) as HackathonDetail["sections"],
+  };
+}
+
 function normalizeDetails(): HackathonDetail[] {
   const raw = detailJson as Record<string, unknown>;
-  const main: HackathonDetail = {
-    slug: raw.slug as string,
-    title: raw.title as string,
-    sections: raw.sections as HackathonDetail["sections"],
-  };
-  const extras = ((raw.extraDetails as Array<Record<string, unknown>>) || []).map(
-    (d) =>
-      ({
-        slug: d.slug as string,
-        title: d.title as string,
-        sections: d.sections as HackathonDetail["sections"],
-      }) as HackathonDetail
-  );
+  const main = toHackathonDetail(raw);
+  if (!main) return [];
+  const extraArr = Array.isArray(raw.extraDetails) ? raw.extraDetails : [];
+  const extras = extraArr.map(toHackathonDetail).filter((d): d is HackathonDetail => d !== null);
   return [main, ...extras];
+}
+
+function toLeaderboardData(raw: unknown): LeaderboardData | null {
+  if (!hasStringField(raw, "hackathonSlug")) return null;
+  const obj = raw as Record<string, unknown>;
+  return {
+    hackathonSlug: String(obj.hackathonSlug),
+    updatedAt: typeof obj.updatedAt === "string" ? obj.updatedAt : new Date().toISOString(),
+    entries: Array.isArray(obj.entries) ? (obj.entries as LeaderboardData["entries"]) : [],
+  };
 }
 
 function normalizeLeaderboards(): LeaderboardData[] {
   const raw = leaderboardJson as Record<string, unknown>;
-  const main: LeaderboardData = {
-    hackathonSlug: raw.hackathonSlug as string,
-    updatedAt: raw.updatedAt as string,
-    entries: raw.entries as LeaderboardData["entries"],
-  };
-  const extras = ((raw.extraLeaderboards as Array<Record<string, unknown>>) || []).map(
-    (lb) =>
-      ({
-        hackathonSlug: lb.hackathonSlug as string,
-        updatedAt: lb.updatedAt as string,
-        entries: lb.entries as LeaderboardData["entries"],
-      }) as LeaderboardData
-  );
+  const main = toLeaderboardData(raw);
+  if (!main) return [];
+  const extraArr = Array.isArray(raw.extraLeaderboards) ? raw.extraLeaderboards : [];
+  const extras = extraArr.map(toLeaderboardData).filter((lb): lb is LeaderboardData => lb !== null);
   return [main, ...extras];
 }
 
