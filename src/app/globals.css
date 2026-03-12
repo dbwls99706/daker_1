@@ -183,9 +183,12 @@ body {
 .dark .border-orange-200 { border-color: #c2410c !important; }
 
 /* Red */
+.dark .bg-red-50 { background-color: #450a0a !important; }
 .dark .text-red-400 { color: #f87171 !important; }
 .dark .text-red-500 { color: #ef4444 !important; }
 .dark .text-red-600 { color: #dc2626 !important; }
+.dark .text-red-700 { color: #fca5a5 !important; }
+.dark .border-red-200 { border-color: #991b1b !important; }
 
 /* Purple */
 .dark .border-purple-300 { border-color: #7c3aed !important; }
