@@ -79,6 +79,7 @@ function HackathonsContent() {
   const bookmarks = useMemo(() => getBookmarks(), [ready, refreshKey]);
 
   const hasActiveFilter = statusFilter !== "all" || tagFilter !== "" || keyword.trim() !== "" || sort !== "latest";
+  const activeFilterCount = [statusFilter !== "all", tagFilter !== "", keyword.trim() !== ""].filter(Boolean).length;
 
   function clearFilters() {
     setStatusFilter("all");
@@ -92,78 +93,100 @@ function HackathonsContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-page-enter">
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
-      <h1 className="text-2xl font-bold">해커톤 목록</h1>
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">해커톤 목록</h1>
+          <p className="mt-1 text-sm text-gray-500">참여할 수 있는 해커톤을 찾아보세요</p>
+        </div>
+      </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="상태 필터">
-          {(["all", "ongoing", "upcoming", "ended"] as StatusFilter[]).map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              aria-pressed={statusFilter === s}
-              className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                statusFilter === s ? "bg-white text-blue-700 shadow-sm" : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {s === "all" ? "전체" : s === "ongoing" ? "진행중" : s === "upcoming" ? "예정" : "종료"}
-            </button>
-          ))}
-        </div>
+      <div className="sticky top-14 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-3 bg-gray-50/80 backdrop-blur-sm border-b border-gray-200/50">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="상태 필터">
+            {(["all", "ongoing", "upcoming", "ended"] as StatusFilter[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                aria-pressed={statusFilter === s}
+                className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition btn-press ${
+                  statusFilter === s ? "bg-white text-blue-700 shadow-sm" : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {s === "all" ? "전체" : s === "ongoing" ? "진행중" : s === "upcoming" ? "예정" : "종료"}
+              </button>
+            ))}
+          </div>
 
-        <select
-          value={tagFilter}
-          onChange={(e) => setTagFilter(e.target.value)}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
-          aria-label="태그 필터"
-        >
-          <option value="">태그 전체</option>
-          {allTags.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
-          aria-label="정렬 기준"
-        >
-          <option value="latest">최신순</option>
-          <option value="deadline">마감임박순</option>
-        </select>
-
-        <input
-          type="text"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="키워드 검색..."
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          aria-label="키워드 검색"
-        />
-
-        {hasActiveFilter && (
-          <button
-            onClick={clearFilters}
-            className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition"
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+            aria-label="태그 필터"
           >
-            필터 초기화
-          </button>
-        )}
+            <option value="">태그 전체</option>
+            {allTags.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+            aria-label="정렬 기준"
+          >
+            <option value="latest">최신순</option>
+            <option value="deadline">마감임박순</option>
+          </select>
+
+          <div className="relative">
+            <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="키워드 검색..."
+              className="rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+              aria-label="키워드 검색"
+            />
+          </div>
+
+          {hasActiveFilter && (
+            <button
+              onClick={clearFilters}
+              className="cursor-pointer flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition btn-press"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              필터 초기화
+              {activeFilterCount > 0 && (
+                <span className="ml-0.5 rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700">{activeFilterCount}</span>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Result count + view toggle */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500" aria-live="polite">총 {hackathons.length}개의 해커톤</p>
+        <p className="text-sm text-gray-500" aria-live="polite">
+          총 <span className="font-semibold text-gray-700">{hackathons.length}</span>개의 해커톤
+        </p>
         <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="group" aria-label="보기 모드">
           <button
             onClick={() => setViewMode("grid")}
             aria-pressed={viewMode === "grid"}
-            className={`cursor-pointer rounded-md p-2 transition ${viewMode === "grid" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+            className={`cursor-pointer rounded-md p-2 transition btn-press ${viewMode === "grid" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
             aria-label="그리드 보기"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z" /></svg>
@@ -171,7 +194,7 @@ function HackathonsContent() {
           <button
             onClick={() => setViewMode("list")}
             aria-pressed={viewMode === "list"}
-            className={`cursor-pointer rounded-md p-2 transition ${viewMode === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+            className={`cursor-pointer rounded-md p-2 transition btn-press ${viewMode === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
             aria-label="리스트 보기"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" d="M2.5 12a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" /></svg>
@@ -184,11 +207,12 @@ function HackathonsContent() {
         <EmptyState
           title="해커톤이 없습니다"
           description="조건에 맞는 해커톤이 없습니다. 필터를 변경해보세요."
+          icon="search"
           action={
             hasActiveFilter ? (
               <button
                 onClick={clearFilters}
-                className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+                className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition btn-press"
               >
                 필터 초기화
               </button>
@@ -201,7 +225,7 @@ function HackathonsContent() {
             <Link
               key={h.slug}
               href={`/hackathons/${h.slug}`}
-              className={`group flex flex-col rounded-xl border bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up border-l-4 ${
+              className={`group flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 animate-slide-up border-l-4 card-hover-glow ${
                 h.status === "ongoing"
                   ? "border-l-green-500 border-gray-200 hover:border-green-200"
                   : h.status === "upcoming"
@@ -210,7 +234,7 @@ function HackathonsContent() {
               }`}
               style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
-              <div className="mb-3 overflow-hidden rounded-lg aspect-video">
+              <div className="mb-3 overflow-hidden rounded-xl aspect-video">
                 <HackathonThumbnail
                   slug={h.slug}
                   title={h.title}
@@ -229,7 +253,7 @@ function HackathonsContent() {
                 </div>
                 <button
                   onClick={(e) => handleBookmark(h.slug, e)}
-                  className={`cursor-pointer text-lg transition-all hover:scale-110 ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+                  className={`cursor-pointer text-lg transition-all hover:scale-125 btn-press ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
                   aria-label={bookmarks.includes(h.slug) ? "북마크 제거" : "북마크 추가"}
                   aria-pressed={bookmarks.includes(h.slug)}
                 >
@@ -251,7 +275,7 @@ function HackathonsContent() {
                 )}
                 <div className="mt-2 flex flex-wrap gap-1">
                   {h.tags.map((tag) => (
-                    <span key={tag} className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                    <span key={tag} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                       {tag}
                     </span>
                   ))}
@@ -266,7 +290,7 @@ function HackathonsContent() {
             <Link
               key={h.slug}
               href={`/hackathons/${h.slug}`}
-              className={`group flex items-center gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:shadow-md animate-slide-up border-l-4 ${
+              className={`group flex items-center gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:shadow-md animate-slide-up border-l-4 card-hover-glow ${
                 h.status === "ongoing"
                   ? "border-l-green-500 border-gray-200 hover:border-green-200"
                   : h.status === "upcoming"
@@ -290,14 +314,14 @@ function HackathonsContent() {
                   <span className="text-xs text-gray-500">{formatDate(h.period.submissionDeadlineAt)} 마감</span>
                   <div className="flex gap-1">
                     {h.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">{tag}</span>
+                      <span key={tag} className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">{tag}</span>
                     ))}
                   </div>
                 </div>
               </div>
               <button
                 onClick={(e) => handleBookmark(h.slug, e)}
-                className={`cursor-pointer text-lg flex-shrink-0 transition-all hover:scale-110 ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+                className={`cursor-pointer text-lg flex-shrink-0 transition-all hover:scale-125 btn-press ${bookmarks.includes(h.slug) ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
                 aria-label={bookmarks.includes(h.slug) ? "북마크 제거" : "북마크 추가"}
                 aria-pressed={bookmarks.includes(h.slug)}
               >

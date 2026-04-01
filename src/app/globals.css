@@ -87,7 +87,12 @@ body {
   .animate-fade-in,
   .animate-slide-up,
   .animate-slide-down,
-  .animate-tab-fade {
+  .animate-tab-fade,
+  .animate-fade-in-up,
+  .animate-page-enter,
+  .animate-scale-in,
+  .animate-float,
+  .animate-pulse-glow {
     animation: none !important;
   }
   .animate-spin {
@@ -374,7 +379,111 @@ select:not(:focus):hover {
 /* Focus visible for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Page enter animation */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-page-enter {
+  animation: page-enter 0.3s ease-out;
+}
+
+/* Fade in up - for scroll-triggered animations */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+/* Scale in for modals */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+/* Float animation for empty states */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse glow for urgent items */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 0 12px 4px rgba(239, 68, 68, 0.15); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Glass morphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.dark .glass-card {
+  background: rgba(24, 24, 27, 0.8);
+}
+
+/* Interactive card hover glow */
+.card-hover-glow {
+  transition: all 0.3s ease;
+}
+.card-hover-glow:hover {
+  box-shadow: 0 4px 20px -4px rgba(37, 99, 235, 0.15), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+}
+.dark .card-hover-glow:hover {
+  box-shadow: 0 4px 20px -4px rgba(59, 130, 246, 0.2), 0 2px 8px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Button press feedback */
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Custom scrollbar */
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+.dark .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+/* Toast progress bar */
+@keyframes toast-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navbar scroll effect */
+.nav-scrolled {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+.dark .nav-scrolled {
+  background: rgba(9, 9, 11, 0.95) !important;
 }
 
 /* Dark countdown digits */
@@ -395,6 +504,9 @@ select:not(:focus):hover {
 /* Notification panel dark mode */
 .dark .border-gray-50 { border-color: #18181b !important; }
 .dark .bg-blue-50\/30 { background-color: rgba(30, 27, 75, 0.3) !important; }
+
+/* Dark empty state */
+.dark .bg-gray-50\/50 { background-color: rgba(24, 24, 27, 0.5) !important; }
 
 /* Smooth scrolling */
 html {
