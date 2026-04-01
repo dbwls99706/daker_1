@@ -524,7 +524,8 @@ function CampContent() {
                     setToastMsg(`${joinTarget.name} 팀에 참여했습니다!`);
                     setRefreshKey((n) => n + 1);
                   } else {
-                    setToastMsg("이미 참여한 팀입니다.");
+                    const team = teams.find((t) => t.teamCode === joinTarget.teamCode);
+                    setToastMsg(team && team.memberCount >= 5 ? "팀 인원이 가득 찼습니다." : "이미 참여한 팀입니다.");
                   }
                   setJoinTarget(null);
                 }

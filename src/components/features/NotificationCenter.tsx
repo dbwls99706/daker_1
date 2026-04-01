@@ -35,13 +35,6 @@ export function NotificationCenter() {
     } catch { /* ignore */ }
   }, []);
 
-  const markAllRead = useCallback(() => {
-    const allIds = notifications.map((n) => n.id);
-    setReadIds(allIds);
-    try { localStorage.setItem("batonhub_notif_read", JSON.stringify(allIds)); } catch { /* ignore */ }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Close on click outside
   useEffect(() => {
     if (!open) return;
@@ -59,7 +52,6 @@ export function NotificationCenter() {
     const notifs: Notification[] = [];
     const now = new Date();
 
-    // Deadline notifications
     try {
       const hackathons = getHackathons();
       for (const h of hackathons) {
@@ -79,7 +71,6 @@ export function NotificationCenter() {
         }
       }
 
-      // Open team notifications
       const teams = getTeams();
       const openTeams = teams.filter((t) => t.isOpen);
       if (openTeams.length > 0) {
@@ -94,7 +85,6 @@ export function NotificationCenter() {
         });
       }
 
-      // Submission status
       const submissions = getSubmissions();
       const drafts = submissions.filter((s) => s.status === "draft");
       if (drafts.length > 0) {
@@ -103,7 +93,7 @@ export function NotificationCenter() {
           type: "submit",
           title: "미완료 제출물",
           message: `${drafts.length}개의 제출물이 임시 저장 상태입니다`,
-          href: `/hackathons/${drafts[0].hackathonSlug}`,
+          href: `/hackathons/${drafts[0].hackathonSlug}?tab=submit`,
           timestamp: now.toISOString(),
           read: readIds.includes("drafts-pending"),
         });
@@ -113,13 +103,19 @@ export function NotificationCenter() {
     return notifs;
   }, [readIds]);
 
+  const markAllRead = useCallback(() => {
+    const allIds = notifications.map((n) => n.id);
+    setReadIds(allIds);
+    try { localStorage.setItem("batonhub_notif_read", JSON.stringify(allIds)); } catch { /* ignore */ }
+  }, [notifications]);
+
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => { setOpen(!open); }}
-        className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
+        className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition btn-press"
         aria-label={`알림 ${unreadCount > 0 ? `(${unreadCount}개 읽지 않음)` : ""}`}
         aria-expanded={open}
       >
@@ -127,7 +123,7 @@ export function NotificationCenter() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+          <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -140,15 +136,20 @@ export function NotificationCenter() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium btn-press"
               >
                 모두 읽음
               </button>
             )}
           </div>
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto scrollbar-thin">
             {notifications.length === 0 ? (
-              <div className="py-8 text-center text-sm text-gray-400">알림이 없습니다</div>
+              <div className="py-8 text-center">
+                <svg className="mx-auto h-8 w-8 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <p className="text-sm text-gray-400">알림이 없습니다</p>
+              </div>
             ) : (
               notifications.map((n) => {
                 const content = (
