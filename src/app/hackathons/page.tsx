@@ -260,7 +260,7 @@ function HackathonsContent() {
                   slug={h.slug}
                   title={h.title}
                   status={h.status}
-                  className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                  className="h-full w-full"
                 />
               </div>
               <div className="mb-3 flex items-center justify-between">
