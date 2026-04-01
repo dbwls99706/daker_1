@@ -38,7 +38,10 @@ export function HackathonThumbnail({ slug, title, status, className = "" }: Hack
       {/* Title overlay — generous padding to prevent clipping */}
       {title && (
         <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-          <span className="block text-[11px] sm:text-xs font-bold text-white drop-shadow-lg line-clamp-2 leading-snug break-words">
+          <span
+            className="block text-[10px] sm:text-[11px] font-semibold text-white line-clamp-2 leading-snug break-words"
+            style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
+          >
             {title}
           </span>
         </div>
