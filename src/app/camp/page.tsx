@@ -10,6 +10,7 @@ import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { Modal } from "@/components/ui/Modal";
 import { Toast } from "@/components/ui/Toast";
 import { ExternalLink } from "@/components/ui/ExternalLink";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { generateId, isValidUrl, formatDate } from "@/lib/utils";
 import { TeamMatcher } from "@/components/features/TeamMatcher";
 import type { Team } from "@/types";
@@ -104,26 +105,34 @@ function CampContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-page-enter">
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">팀원 모집</h1>
+        <div>
+          <h1 className="text-2xl font-bold">팀원 모집</h1>
+          <p className="mt-1 text-sm text-gray-500">함께할 팀원을 찾거나 팀을 만들어보세요</p>
+        </div>
         <button
           onClick={() => setShowCreate(!showCreate)}
-          className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition"
+          className={`cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium transition btn-press ${
+            showCreate
+              ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+          }`}
         >
-          {showCreate ? "취소" : "팀 모집글 생성"}
+          {showCreate ? "취소" : "+ 팀 모집글 생성"}
         </button>
       </div>
 
+      {/* Hackathon filter pills */}
       <div className="flex flex-wrap gap-2">
         <Link
           href="/camp"
-          className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition btn-press ${
             !hackathonFilter
-              ? "border-blue-600 bg-blue-50 text-blue-700"
-              : "border-gray-300 text-gray-600 hover:border-gray-400"
+              ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm"
+              : "border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50"
           }`}
         >
           전체
@@ -132,30 +141,37 @@ function CampContent() {
           <Link
             key={h.slug}
             href={`/camp?hackathon=${h.slug}`}
-            className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition flex items-center gap-1.5 btn-press ${
               hackathonFilter === h.slug
-                ? "border-blue-600 bg-blue-50 text-blue-700"
-                : "border-gray-300 text-gray-600 hover:border-gray-400"
+                ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm"
+                : "border-gray-300 text-gray-600 hover:border-gray-400 hover:bg-gray-50"
             }`}
           >
-            {h.title.length > 20 ? h.title.slice(0, 20) + "..." : h.title}
+            <StatusBadge status={h.status} />
+            <span>{h.title.length > 15 ? h.title.slice(0, 15) + "..." : h.title}</span>
           </Link>
         ))}
       </div>
 
+      {/* Search & Sort */}
       <div className="flex flex-wrap items-center gap-3">
-        <input
-          type="text"
-          value={teamSearch}
-          onChange={(e) => { setTeamSearch(e.target.value); setCampPage(1); }}
-          placeholder="팀명 또는 포지션 검색..."
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          aria-label="팀 검색"
-        />
+        <div className="relative flex-1 min-w-[200px] max-w-xs">
+          <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            value={teamSearch}
+            onChange={(e) => { setTeamSearch(e.target.value); setCampPage(1); }}
+            placeholder="팀명 또는 포지션 검색..."
+            className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+            aria-label="팀 검색"
+          />
+        </div>
         <select
           value={campSort}
           onChange={(e) => { setCampSort(e.target.value as "newest" | "name" | "members"); setCampPage(1); }}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
           aria-label="정렬"
         >
           <option value="newest">최신순</option>
@@ -164,9 +180,13 @@ function CampContent() {
         </select>
       </div>
 
+      {/* Create Form */}
       {showCreate && (
-        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-6 space-y-4 animate-slide-up">
-          <h2 className="text-lg font-bold">새 팀 모집글</h2>
+        <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6 space-y-4 animate-slide-up">
+          <h2 className="text-lg font-bold flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-sm" aria-hidden="true">✏️</span>
+            새 팀 모집글
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="camp-team-name" className="block text-sm font-semibold text-gray-700 mb-1">
@@ -179,7 +199,7 @@ function CampContent() {
                 onChange={(e) => setName(e.target.value)}
                 aria-required="true"
                 maxLength={30}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 placeholder="팀 이름 (최대 30자)"
               />
               <p className="text-xs text-gray-400 text-right mt-0.5">{name.length}/30</p>
@@ -190,7 +210,7 @@ function CampContent() {
                 id="camp-hackathon"
                 value={selectedHackathon}
                 onChange={(e) => setSelectedHackathon(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               >
                 <option value="">선택 안함</option>
                 {hackathons.map((h) => (
@@ -212,7 +232,7 @@ function CampContent() {
               rows={2}
               aria-required="true"
               maxLength={200}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               placeholder="팀 소개를 작성하세요 (최대 200자)"
             />
             <p className="text-xs text-gray-400 text-right mt-0.5">{intro.length}/200</p>
@@ -225,7 +245,7 @@ function CampContent() {
                 type="text"
                 value={lookingFor}
                 onChange={(e) => setLookingFor(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 placeholder="Frontend, Designer (쉼표로 구분)"
               />
             </div>
@@ -238,7 +258,7 @@ function CampContent() {
                 onChange={(e) => { setContactUrl(e.target.value); setContactError(""); }}
                 aria-describedby={contactError ? "camp-contact-error" : undefined}
                 aria-invalid={!!contactError}
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${contactError ? "border-red-400" : "border-gray-300"}`}
+                className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${contactError ? "border-red-400" : "border-gray-300"}`}
                 placeholder="https://open.kakao.com/o/..."
               />
               {contactError && <p id="camp-contact-error" className="text-xs text-red-500 mt-0.5" role="alert">{contactError}</p>}
@@ -250,7 +270,7 @@ function CampContent() {
           <button
             onClick={handleCreate}
             disabled={!name.trim() || !intro.trim() || !!contactError}
-            className="cursor-pointer rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="cursor-pointer rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition btn-press shadow-sm"
           >
             생성하기
           </button>
@@ -260,18 +280,21 @@ function CampContent() {
       {/* Team Matcher */}
       <TeamMatcher teams={teams} hackathonSlug={hackathonFilter || undefined} />
 
-      <p className="text-sm text-gray-500" aria-live="polite">총 {filteredTeams.length}개의 팀</p>
+      <p className="text-sm text-gray-500" aria-live="polite">
+        총 <span className="font-semibold text-gray-700">{filteredTeams.length}</span>개의 팀
+      </p>
 
       {(() => {
         if (filteredTeams.length === 0) return (
           <EmptyState
             title="등록된 팀이 없습니다"
             description={teamSearch.trim() ? "검색 조건에 맞는 팀이 없습니다." : "첫 팀을 만들어보세요!"}
+            icon="team"
             action={
               teamSearch.trim() ? (
-                <button onClick={() => setTeamSearch("")} className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">검색 초기화</button>
+                <button onClick={() => setTeamSearch("")} className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition btn-press">검색 초기화</button>
               ) : (
-                <button onClick={() => setShowCreate(true)} className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">팀 만들기</button>
+                <button onClick={() => setShowCreate(true)} className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition btn-press">팀 만들기</button>
               )
             }
           />
@@ -286,11 +309,20 @@ function CampContent() {
           {pagedTeams.map((t, i) => (
             <div
               key={t.teamCode}
-              className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up"
+              className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up card-hover-glow"
               style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
             >
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-gray-900 truncate max-w-[180px]" title={t.name}>{t.name}</h3>
+                <div className="flex items-center gap-2.5">
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-full text-white text-sm font-bold shadow-sm ${
+                    t.isOpen
+                      ? "bg-gradient-to-br from-green-400 to-emerald-500"
+                      : "bg-gradient-to-br from-gray-400 to-gray-500"
+                  }`}>
+                    {t.name.charAt(0)}
+                  </span>
+                  <h3 className="font-bold text-gray-900 truncate max-w-[140px]" title={t.name}>{t.name}</h3>
+                </div>
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                     t.isOpen ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
@@ -302,24 +334,36 @@ function CampContent() {
               {t.hackathonSlug && (
                 <Link
                   href={`/hackathons/${t.hackathonSlug}`}
-                  className="mt-1 text-xs text-blue-600 hover:underline"
+                  className="mt-1.5 inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
                 >
+                  <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+                  </svg>
                   {hackathons.find((h) => h.slug === t.hackathonSlug)?.title || t.hackathonSlug}
                 </Link>
               )}
               <p className="mt-2 flex-1 text-sm text-gray-500 line-clamp-3">{t.intro}</p>
-              <div className="mt-3 flex flex-wrap gap-1">
-                {t.lookingFor.map((r) => (
-                  <span key={r} className="rounded-md bg-blue-50 px-2 py-0.5 text-xs text-blue-700">
-                    {r}
-                  </span>
-                ))}
+              {t.lookingFor.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {t.lookingFor.map((r) => (
+                    <span key={r} className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs text-blue-700 font-medium">
+                      {r}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {/* Member capacity bar */}
+              <div className="mt-3 flex items-center gap-2">
+                <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-500 transition-all"
+                    style={{ width: `${Math.min((t.memberCount / 5) * 100, 100)}%` }}
+                  />
+                </div>
+                <span className="text-xs text-gray-500 font-medium">{t.memberCount}/5명</span>
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
-                <div className="flex items-center gap-2">
-                  <span>{t.memberCount}명 참여중</span>
-                  <span>· {formatDate(t.createdAt)}</span>
-                </div>
+                <span>{formatDate(t.createdAt)}</span>
                 <div className="flex items-center gap-2">
                   {isMyTeam(t.teamCode) ? (
                     <>
@@ -330,7 +374,7 @@ function CampContent() {
                             setToastMsg("모집이 마감되었습니다.");
                             setRefreshKey((n) => n + 1);
                           }}
-                          className="cursor-pointer font-medium text-orange-500 hover:text-orange-700"
+                          className="cursor-pointer font-medium text-orange-500 hover:text-orange-700 btn-press"
                         >
                           모집마감
                         </button>
@@ -341,14 +385,14 @@ function CampContent() {
                             setToastMsg("모집이 재개되었습니다.");
                             setRefreshKey((n) => n + 1);
                           }}
-                          className="cursor-pointer font-medium text-green-600 hover:text-green-800"
+                          className="cursor-pointer font-medium text-green-600 hover:text-green-800 btn-press"
                         >
                           모집재개
                         </button>
                       )}
                       <button
                         onClick={() => setDeleteTarget({ teamCode: t.teamCode, name: t.name })}
-                        className="cursor-pointer font-medium text-red-400 hover:text-red-600"
+                        className="cursor-pointer font-medium text-red-400 hover:text-red-600 btn-press"
                       >
                         삭제
                       </button>
@@ -358,14 +402,14 @@ function CampContent() {
                       {hasJoinedTeam(t.teamCode) ? (
                         <button
                           onClick={() => setLeaveTarget({ teamCode: t.teamCode, name: t.name })}
-                          className="cursor-pointer font-medium text-orange-500 hover:text-orange-700"
+                          className="cursor-pointer font-medium text-orange-500 hover:text-orange-700 btn-press"
                         >
                           탈퇴
                         </button>
                       ) : (
                         <button
                           onClick={() => setJoinTarget({ teamCode: t.teamCode, name: t.name })}
-                          className="cursor-pointer font-medium text-blue-600 hover:text-blue-800"
+                          className="cursor-pointer font-medium text-blue-600 hover:text-blue-800 btn-press"
                         >
                           참여하기
                         </button>
@@ -385,24 +429,43 @@ function CampContent() {
             </div>
           ))}
         </div>
+        {/* Pagination with page numbers */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 pt-4">
+          <div className="flex items-center justify-center gap-1 pt-4">
             <button
               onClick={() => setCampPage((p) => Math.max(1, p - 1))}
               disabled={campPage <= 1}
-              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed btn-press"
+              aria-label="이전 페이지"
             >
-              이전
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
             </button>
-            <span className="text-sm text-gray-600">
-              {campPage} / {totalPages}
-            </span>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => setCampPage(p)}
+                className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition btn-press ${
+                  p === campPage
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+                aria-label={`${p}페이지`}
+                aria-current={p === campPage ? "page" : undefined}
+              >
+                {p}
+              </button>
+            ))}
             <button
               onClick={() => setCampPage((p) => Math.min(totalPages, p + 1))}
               disabled={campPage >= totalPages}
-              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed btn-press"
+              aria-label="다음 페이지"
             >
-              다음
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           </div>
         )}
@@ -418,7 +481,7 @@ function CampContent() {
           <>
             <button
               onClick={() => setDeleteTarget(null)}
-              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
+              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition btn-press"
             >
               취소
             </button>
@@ -432,7 +495,7 @@ function CampContent() {
                   setToastMsg("팀이 삭제되었습니다.");
                 }
               }}
-              className="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition"
+              className="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition btn-press"
             >
               삭제
             </button>
@@ -450,7 +513,7 @@ function CampContent() {
           <>
             <button
               onClick={() => setJoinTarget(null)}
-              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
+              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition btn-press"
             >
               취소
             </button>
@@ -466,7 +529,7 @@ function CampContent() {
                   setJoinTarget(null);
                 }
               }}
-              className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+              className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition btn-press"
             >
               참여하기
             </button>
@@ -485,7 +548,7 @@ function CampContent() {
           <>
             <button
               onClick={() => setLeaveTarget(null)}
-              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition"
+              className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition btn-press"
             >
               취소
             </button>
@@ -499,7 +562,7 @@ function CampContent() {
                   setLeaveTarget(null);
                 }
               }}
-              className="cursor-pointer rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 transition"
+              className="cursor-pointer rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 transition btn-press"
             >
               탈퇴하기
             </button>
