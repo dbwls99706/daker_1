@@ -1,18 +1,9 @@
 "use client";
 
-const GRADIENT_PRESETS: Record<string, { gradient: string; pattern: string }> = {
-  ended: {
-    gradient: "from-slate-500 via-gray-600 to-zinc-700",
-    pattern: "opacity-20",
-  },
-  ongoing: {
-    gradient: "from-emerald-400 via-teal-500 to-cyan-600",
-    pattern: "opacity-30",
-  },
-  upcoming: {
-    gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
-    pattern: "opacity-25",
-  },
+const GRADIENT_PRESETS: Record<string, { gradient: string }> = {
+  ended: { gradient: "from-slate-500 via-gray-600 to-zinc-700" },
+  ongoing: { gradient: "from-emerald-400 via-teal-500 to-cyan-600" },
+  upcoming: { gradient: "from-violet-500 via-purple-500 to-fuchsia-500" },
 };
 
 const SLUG_GRADIENTS: Record<string, string> = {
@@ -43,13 +34,15 @@ export function HackathonThumbnail({ slug, title, status, className = "" }: Hack
         backgroundSize: "20px 20px",
       }} />
       {/* Dark scrim for text contrast (WCAG AA) */}
-      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-      {/* Title overlay */}
-      <div className="absolute inset-0 flex items-end p-3">
-        <span className="text-xs font-bold text-white drop-shadow-md line-clamp-2 leading-tight">
-          {title}
-        </span>
-      </div>
+      <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
+      {/* Title overlay — generous padding to prevent clipping */}
+      {title && (
+        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+          <span className="block text-[11px] sm:text-xs font-bold text-white drop-shadow-lg line-clamp-2 leading-snug break-words">
+            {title}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

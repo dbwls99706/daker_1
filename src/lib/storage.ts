@@ -5,7 +5,7 @@ import detailJson from "@/data/public_hackathon_detail.json";
 import leaderboardJson from "@/data/public_leaderboard.json";
 import teamsJson from "@/data/public_teams.json";
 
-const SEED_VERSION = "3";
+const SEED_VERSION = "4";
 
 const KEYS = {
   hackathons: "batonhub_hackathons",
@@ -115,9 +115,25 @@ function setItem(key: string, value: unknown): boolean {
   }
 }
 
-// Hackathons
+// Hackathons — compute status dynamically based on current date
 export function getHackathons(): Hackathon[] {
-  return getItem<Hackathon[]>(KEYS.hackathons, []);
+  const list = getItem<Hackathon[]>(KEYS.hackathons, []);
+  const now = new Date();
+  return list.map((h) => {
+    const deadline = new Date(h.period.submissionDeadlineAt);
+    const end = new Date(h.period.endAt);
+    let status: Hackathon["status"];
+    if (now > end) {
+      status = "ended";
+    } else if (now >= deadline) {
+      status = "ended";
+    } else {
+      // If deadline is more than 30 days away and original status was upcoming, keep upcoming
+      const daysToDeadline = (deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      status = daysToDeadline > 30 ? "upcoming" : "ongoing";
+    }
+    return { ...h, status };
+  });
 }
 
 // Details
