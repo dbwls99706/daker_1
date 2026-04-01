@@ -115,7 +115,7 @@ export function NotificationCenter() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => { setOpen(!open); }}
-        className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition btn-press"
+        className="cursor-pointer relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition btn-press"
         aria-label={`알림 ${unreadCount > 0 ? `(${unreadCount}개 읽지 않음)` : ""}`}
         aria-expanded={open}
       >
@@ -136,7 +136,7 @@ export function NotificationCenter() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium btn-press"
+                className="cursor-pointer text-xs text-blue-600 hover:text-blue-800 font-medium btn-press"
               >
                 모두 읽음
               </button>
