@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo, use } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathonDetail, getHackathons, getLeaderboard, getTeams, getSubmissions, saveSubmission, updateLeaderboard, addRecentlyViewed } from "@/lib/storage";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -36,9 +37,21 @@ type TabKey = (typeof TABS)[number]["key"];
 export default function HackathonDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const ready = useSeedData();
-  const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const searchParams = useSearchParams();
+  const urlTab = searchParams.get("tab") as TabKey | null;
+  const [activeTab, setActiveTab] = useState<TabKey>(
+    urlTab && TABS.some((t) => t.key === urlTab) ? urlTab : "overview"
+  );
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [dataVersion, setDataVersion] = useState(0);
+
+  // Sync tab to URL without full navigation
+  const handleTabChange = useCallback((tab: TabKey) => {
+    setActiveTab(tab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    window.history.replaceState({}, "", url.toString());
+  }, []);
 
   const refreshData = useCallback(() => {
     setDataVersion((n) => n + 1);
@@ -270,7 +283,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               else if (e.key === "End") next = TABS.length - 1;
               else if (e.key === "ArrowRight") next = (idx + 1) % TABS.length;
               else next = (idx - 1 + TABS.length) % TABS.length;
-              setActiveTab(TABS[next].key);
+              handleTabChange(TABS[next].key);
               document.getElementById(`tab-${TABS[next].key}`)?.focus();
             }
           }}
@@ -278,7 +291,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
           {TABS.map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => handleTabChange(tab.key)}
               role="tab"
               aria-selected={activeTab === tab.key}
               aria-controls={`tabpanel-${tab.key}`}

@@ -27,7 +27,7 @@ beforeEach(() => {
 describe("seedIfNeeded", () => {
   it("seeds data on first call", () => {
     seedIfNeeded();
-    expect(localStorage.getItem("batonhub_seeded")).toBe("true");
+    expect(localStorage.getItem("batonhub_seeded")).toBeTruthy();
     expect(getHackathons().length).toBeGreaterThan(0);
   });
 

@@ -251,7 +251,7 @@ export function removeMyTeam(teamCode: string) {
   setItem(MY_TEAMS_KEY, mine);
 }
 
-// Team membership — join a team (increment memberCount)
+// Team membership — join a team (increment memberCount, max 5)
 export function joinTeam(teamCode: string): boolean {
   const joined = getItem<string[]>("batonhub_joined_teams", []);
   if (joined.includes(teamCode)) return false; // already joined
@@ -259,6 +259,9 @@ export function joinTeam(teamCode: string): boolean {
   const all = getItem<Team[]>(KEYS.teams, []);
   const idx = all.findIndex((t) => t.teamCode === teamCode);
   if (idx < 0) return false;
+
+  // Enforce max team size
+  if (all[idx].memberCount >= 5) return false;
 
   all[idx] = { ...all[idx], memberCount: all[idx].memberCount + 1 };
   setItem(KEYS.teams, all);

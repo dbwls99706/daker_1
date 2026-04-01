@@ -42,9 +42,11 @@ export function HackathonThumbnail({ slug, title, status, className = "" }: Hack
         backgroundImage: "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
         backgroundSize: "20px 20px",
       }} />
+      {/* Dark scrim for text contrast (WCAG AA) */}
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
       {/* Title overlay */}
       <div className="absolute inset-0 flex items-end p-3">
-        <span className="text-xs font-bold text-white/90 drop-shadow-sm line-clamp-2 leading-tight">
+        <span className="text-xs font-bold text-white drop-shadow-md line-clamp-2 leading-tight">
           {title}
         </span>
       </div>

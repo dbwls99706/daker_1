@@ -19,10 +19,16 @@ function HackathonsContent() {
   const ready = useSeedData();
   const searchParams = useSearchParams();
   const urlKeyword = searchParams.get("keyword") || "";
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [tagFilter, setTagFilter] = useState<string>("");
+  const urlStatus = searchParams.get("status") as StatusFilter | null;
+  const urlTag = searchParams.get("tag") || "";
+  const urlSort = searchParams.get("sort") as SortKey | null;
+
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(
+    urlStatus && ["all", "ongoing", "ended", "upcoming"].includes(urlStatus) ? urlStatus : "all"
+  );
+  const [tagFilter, setTagFilter] = useState<string>(urlTag);
   const [keyword, setKeyword] = useState(urlKeyword);
-  const [sort, setSort] = useState<SortKey>("latest");
+  const [sort, setSort] = useState<SortKey>(urlSort === "deadline" ? "deadline" : "latest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [refreshKey, refresh] = useState(0);
@@ -30,6 +36,21 @@ function HackathonsContent() {
   useEffect(() => {
     if (urlKeyword) setKeyword(urlKeyword);
   }, [urlKeyword]);
+
+  // Sync filters to URL for shareability
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (statusFilter !== "all") url.searchParams.set("status", statusFilter);
+    else url.searchParams.delete("status");
+    if (tagFilter) url.searchParams.set("tag", tagFilter);
+    else url.searchParams.delete("tag");
+    if (keyword.trim()) url.searchParams.set("keyword", keyword.trim());
+    else url.searchParams.delete("keyword");
+    if (sort !== "latest") url.searchParams.set("sort", sort);
+    else url.searchParams.delete("sort");
+    window.history.replaceState({}, "", url.toString());
+  }, [statusFilter, tagFilter, keyword, sort]);
 
   const handleBookmark = useCallback((slug: string, e: React.MouseEvent) => {
     e.preventDefault();
