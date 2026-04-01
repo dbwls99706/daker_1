@@ -5,6 +5,7 @@ import { Footer } from "@/components/ui/Footer";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { KeyboardShortcuts } from "@/components/ui/KeyboardShortcuts";
+import { CommandPalette } from "@/components/features/CommandPalette";
 
 export const metadata: Metadata = {
   title: {
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   description: "해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지 한곳에서 완결하는 해커톤 통합 대시보드",
   keywords: ["해커톤", "DACON", "팀 빌딩", "대시보드", "BatonHub"],
   icons: {
-    icon: "/icon.svg",
+    icon: "/icon",
     apple: "/apple-icon",
   },
   openGraph: {
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <ScrollToTop />
         <KeyboardShortcuts />
+        <CommandPalette />
       </body>
     </html>
   );

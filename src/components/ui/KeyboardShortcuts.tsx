@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { Modal } from "./Modal";
 
 const shortcuts = [
-  { keys: ["Ctrl+K", "⌘+K"], description: "글로벌 검색 열기/닫기" },
+  { keys: ["Ctrl+K", "⌘+K"], description: "커맨드 팔레트 열기 (검색/이동/액션)" },
+  { keys: ["↑ / ↓"], description: "커맨드 팔레트 항목 선택" },
+  { keys: ["Enter"], description: "선택 항목 실행" },
   { keys: ["Escape"], description: "검색/모달 닫기" },
   { keys: ["?"], description: "키보드 단축키 도움말" },
   { keys: ["Tab"], description: "다음 요소로 이동" },
-  { keys: ["Shift+Tab"], description: "이전 요소로 이동" },
   { keys: ["← / →"], description: "해커톤 상세 탭 전환" },
 ];
 

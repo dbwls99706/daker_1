@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { NotificationCenter } from "@/components/features/NotificationCenter";
 
 const navLinks = [
@@ -14,13 +14,9 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
   const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
@@ -52,36 +48,11 @@ export function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
-    setSearchOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    if (searchOpen && searchRef.current) {
-      searchRef.current.focus();
-    }
-  }, [searchOpen]);
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setSearchOpen((prev) => !prev);
-      }
-      if (e.key === "Escape" && searchOpen) {
-        setSearchOpen(false);
-        setSearchQuery("");
-      }
-    }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [searchOpen]);
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    router.push(`/hackathons?keyword=${encodeURIComponent(searchQuery.trim())}`);
-    setSearchQuery("");
-    setSearchOpen(false);
+  // Open command palette via Ctrl+K — handled by CommandPalette component
+  function openCommandPalette() {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
   }
 
   return (
@@ -124,50 +95,22 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Right: Search + Dark + Mobile toggle */}
+        {/* Right: Search + Notifications + Dark + Mobile */}
         <div className="flex items-center gap-1.5">
-          {/* Search */}
-          {searchOpen ? (
-            <form onSubmit={handleSearch} className="flex items-center">
-              <div className="relative">
-                <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  ref={searchRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="해커톤 검색..."
-                  className="w-44 sm:w-64 rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                  aria-label="해커톤 검색"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                className="ml-1 cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 transition btn-press"
-                aria-label="검색 닫기"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </form>
-          ) : (
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="cursor-pointer flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition btn-press"
-              aria-label="검색 열기 (Ctrl+K)"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-gray-300 bg-gray-50 px-1.5 py-0.5 text-[10px] font-medium text-gray-400">
-                {isMac ? "⌘" : "Ctrl+"}K
-              </kbd>
-            </button>
-          )}
+          {/* Command Palette Trigger */}
+          <button
+            onClick={openCommandPalette}
+            className="cursor-pointer flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition btn-press"
+            aria-label="커맨드 팔레트 열기 (Ctrl+K)"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span className="hidden sm:inline text-xs text-gray-400">검색...</span>
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-400">
+              {isMac ? "⌘" : "Ctrl+"}K
+            </kbd>
+          </button>
 
           {/* Notifications */}
           <NotificationCenter />
