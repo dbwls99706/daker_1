@@ -318,7 +318,7 @@ export default function HomePage() {
 
       {/* Quick Nav Cards */}
       <Section>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3 overflow-visible">
           {[
             { href: "/hackathons", icon: "🏆", iconBg: "bg-blue-100", title: "해커톤 보러가기", desc: `${hackathons.length}개의 해커톤이 등록되어 있습니다`, hoverBorder: "hover:border-blue-300", hoverText: "group-hover:text-blue-600" },
             { href: "/camp", icon: "👥", iconBg: "bg-green-100", title: "팀 찾기", desc: `${openTeamCount}개 팀이 모집중입니다`, hoverBorder: "hover:border-green-300", hoverText: "group-hover:text-green-600" },

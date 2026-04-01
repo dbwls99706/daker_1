@@ -50,7 +50,7 @@ export function TiltCard({ children, className = "", intensity = 6, style: exter
   return (
     <div
       ref={cardRef}
-      className={`relative ${className}`}
+      className={`relative overflow-visible ${className}`}
       onMouseMove={isHovering ? handleMouseMove : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -65,7 +65,7 @@ export function TiltCard({ children, className = "", intensity = 6, style: exter
       {children}
       {/* Glare overlay */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-xl"
+        className="pointer-events-none absolute inset-0 rounded-xl overflow-hidden"
         style={{
           background: glare,
           opacity: isHovering ? 1 : 0,
