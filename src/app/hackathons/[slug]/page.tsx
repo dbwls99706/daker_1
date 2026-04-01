@@ -18,6 +18,7 @@ import { InfoTab } from "@/components/features/tabs/InfoTab";
 import { TeamsTab } from "@/components/features/tabs/TeamsTab";
 import { LeaderboardTab } from "@/components/features/tabs/LeaderboardTab";
 import { getDday, generateId, getTimeRemaining } from "@/lib/utils";
+import { Confetti } from "@/components/features/Confetti";
 import { CountdownTimer } from "@/components/features/CountdownTimer";
 import type { Submission } from "@/types";
 
@@ -44,6 +45,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   );
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [dataVersion, setDataVersion] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Sync tab to URL without full navigation
   const handleTabChange = useCallback((tab: TabKey) => {
@@ -178,12 +180,14 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
     }
 
     setToastMsg("제출이 완료되었습니다!");
+    setShowConfetti(true);
     refreshData();
   }
 
   return (
     <div className="space-y-6 animate-page-enter">
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
+      <Confetti trigger={showConfetti} onDone={() => setShowConfetti(false)} />
 
       {/* Header */}
       <div>

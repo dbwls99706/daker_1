@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { HackathonThumbnail } from "@/components/ui/HackathonThumbnail";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useSeedData } from "@/hooks/useSeedData";
 import { getHackathons, getTeams, getAllLeaderboards, getBookmarks, getSubmissions, toggleBookmark, getRecentlyViewed } from "@/lib/storage";
@@ -323,24 +324,24 @@ export default function HomePage() {
             { href: "/camp", icon: "👥", iconBg: "bg-green-100", title: "팀 찾기", desc: `${openTeamCount}개 팀이 모집중입니다`, hoverBorder: "hover:border-green-300", hoverText: "group-hover:text-green-600" },
             { href: "/rankings", icon: "📊", iconBg: "bg-purple-100", title: "랭킹 보기", desc: `${totalEntries}명의 참가자가 등록되었습니다`, hoverBorder: "hover:border-purple-300", hoverText: "group-hover:text-purple-600" },
           ].map((card, i) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              className={`group rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md ${card.hoverBorder} hover:-translate-y-1 animate-slide-up card-hover-glow`}
-              style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}
-            >
-              <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} text-2xl transition-transform group-hover:scale-110`} aria-hidden="true">
-                {card.icon}
-              </div>
-              <h2 className={`text-lg font-bold text-gray-900 ${card.hoverText}`}>{card.title}</h2>
-              <p className="mt-1.5 text-sm text-gray-500">{card.desc}</p>
-              <div className="mt-4 flex items-center gap-1 text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                <span>바로가기</span>
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Link>
+            <TiltCard key={card.href} className="animate-slide-up" style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}>
+              <Link
+                href={card.href}
+                className={`group block rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md ${card.hoverBorder} card-hover-glow`}
+              >
+                <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} text-2xl transition-transform group-hover:scale-110`} aria-hidden="true">
+                  {card.icon}
+                </div>
+                <h2 className={`text-lg font-bold text-gray-900 ${card.hoverText}`}>{card.title}</h2>
+                <p className="mt-1.5 text-sm text-gray-500">{card.desc}</p>
+                <div className="mt-4 flex items-center gap-1 text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span>바로가기</span>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
+            </TiltCard>
           ))}
         </div>
       </Section>
