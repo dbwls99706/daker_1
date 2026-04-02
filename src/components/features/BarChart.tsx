@@ -53,7 +53,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     <div role="figure" aria-label={title || "바 차트"}>
       {title && <h3 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{title}</h3>}
       <span className="sr-only">{description}</span>
-      <div className="relative flex items-end gap-3 justify-center overflow-hidden rounded-xl px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
+      <div className="relative flex items-end gap-3 justify-center rounded-xl px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[80%] opacity-100 dark:opacity-70"
           style={{

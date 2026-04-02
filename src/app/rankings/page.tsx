@@ -8,8 +8,6 @@ import { SkeletonPage } from "@/components/ui/SkeletonLoader";
 import { BarChart } from "@/components/features/BarChart";
 
 type PeriodFilter = "all" | "monthly" | "yearly";
-type SortField = "rank" | "teamName" | "totalScore" | "count";
-type SortDir = "asc" | "desc";
 
 interface RankedTeam {
   teamName: string;
@@ -37,24 +35,12 @@ export default function RankingsPage() {
   const ready = useSeedData();
   const [period, setPeriod] = useState<PeriodFilter>("all");
   const [hackathonFilter, setHackathonFilter] = useState<string>("all");
-  const [sortField, setSortField] = useState<SortField>("rank");
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(1);
 
   const hackathons = useMemo(() => {
     if (!ready) return [];
     return getHackathons();
   }, [ready]);
-
-  function toggleSort(field: SortField) {
-    if (sortField === field) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field);
-      setSortDir(field === "totalScore" ? "desc" : "asc");
-    }
-    setPage(1);
-  }
 
   const rankings = useMemo(() => {
     if (!ready) return [];
@@ -117,30 +103,12 @@ export default function RankingsPage() {
 
     const ranked = assignTieRanks(sorted);
 
-    if (sortField !== "rank" || sortDir !== "asc") {
-      ranked.sort((a, b) => {
-        let cmp = 0;
-        switch (sortField) {
-          case "rank": cmp = a.rank - b.rank; break;
-          case "teamName": cmp = a.teamName.localeCompare(b.teamName); break;
-          case "totalScore": cmp = a.totalScore - b.totalScore; break;
-          case "count": cmp = a.count - b.count; break;
-        }
-        return sortDir === "desc" ? -cmp : cmp;
-      });
-    }
-
     return ranked;
-  }, [ready, period, hackathonFilter, hackathons, sortField, sortDir]);
+  }, [ready, period, hackathonFilter, hackathons]);
 
   if (!ready) {
     return <SkeletonPage />;
   }
-
-  const sortIcon = (field: SortField) => {
-    if (sortField !== field) return " ↕";
-    return sortDir === "asc" ? " ↑" : " ↓";
-  };
 
   const totalPages = Math.ceil(rankings.length / PAGE_SIZE);
   const paginatedRankings = rankings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -249,20 +217,20 @@ export default function RankingsPage() {
 
         {/* Podium for top 3 */}
         {rankings.length >= 3 && (
-          <section className="hidden sm:flex items-end justify-center gap-6 py-8 animate-slide-up" aria-label="상위 3팀 포디움">
+          <section className="hidden select-none sm:flex items-end justify-center gap-6 py-8 animate-slide-up" aria-label="상위 3팀 포디움">
             {[rankings[1], rankings[0], rankings[2]].map((r, i) => {
               const heights = ["h-28", "h-40", "h-24"];
               const bgColors = [
-                "bg-gradient-to-t from-gray-200 to-gray-100 border-gray-300",
-                "bg-gradient-to-t from-yellow-200 to-yellow-50 border-yellow-300",
-                "bg-gradient-to-t from-orange-200 to-orange-50 border-orange-200"
+                "bg-gradient-to-t from-gray-200 to-gray-100 border-gray-300 dark:from-zinc-800 dark:to-zinc-700 dark:border-zinc-600",
+                "bg-gradient-to-t from-yellow-200 to-yellow-50 border-yellow-300 dark:from-amber-900/70 dark:to-amber-800/70 dark:border-amber-700",
+                "bg-gradient-to-t from-orange-200 to-orange-50 border-orange-200 dark:from-orange-900/70 dark:to-orange-800/70 dark:border-orange-700"
               ];
               const textSizes = ["text-lg", "text-2xl", "text-lg"];
               return (
-                <div key={r.teamName} className="flex flex-col items-center gap-2 w-44">
+                <div key={r.teamName} className="flex w-44 flex-col items-center gap-2" draggable={false}>
                   <span className="text-4xl" aria-hidden="true">{medals[i === 1 ? 0 : i === 0 ? 1 : 2]}</span>
-                  <span className={`font-bold text-gray-900 ${textSizes[i]} truncate max-w-full text-center`}>{r.teamName}</span>
-                  <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
+                  <span className={`max-w-full truncate text-center font-bold text-gray-900 dark:text-gray-100 ${textSizes[i]}`}>{r.teamName}</span>
+                  <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-semibold text-blue-600 dark:bg-blue-950/50 dark:text-blue-300">
                     {Number.isInteger(r.totalScore) ? r.totalScore : r.totalScore.toFixed(2)}점
                   </span>
                   <div className={`${heights[i]} w-full rounded-t-2xl border-2 ${bgColors[i]} flex items-center justify-center transition-all shadow-sm`}>
@@ -337,26 +305,10 @@ export default function RankingsPage() {
           <table className="w-full text-sm" aria-label="글로벌 랭킹">
             <thead>
               <tr className="border-b bg-gray-50 text-left">
-                <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600 w-16" aria-sort={sortField === "rank" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("rank")} className="cursor-pointer hover:text-blue-600 transition btn-press" aria-label={`순위 정렬 ${sortField === "rank" ? (sortDir === "asc" ? "오름차순" : "내림차순") : ""}`}>
-                    순위{sortIcon("rank")}
-                  </button>
-                </th>
-                <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600" aria-sort={sortField === "teamName" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("teamName")} className="cursor-pointer hover:text-blue-600 transition btn-press">
-                    팀{sortIcon("teamName")}
-                  </button>
-                </th>
-                <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600" aria-sort={sortField === "totalScore" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("totalScore")} className="cursor-pointer hover:text-blue-600 transition btn-press">
-                    총 점수{sortIcon("totalScore")}
-                  </button>
-                </th>
-                <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600 w-20" aria-sort={sortField === "count" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                  <button onClick={() => toggleSort("count")} className="cursor-pointer hover:text-blue-600 transition btn-press">
-                    참가{sortIcon("count")}
-                  </button>
-                </th>
+                <th scope="col" className="w-16 px-4 py-3.5 font-semibold text-gray-600">순위</th>
+                <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600">팀</th>
+                <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600">총 점수</th>
+                <th scope="col" className="w-20 px-4 py-3.5 font-semibold text-gray-600">참가</th>
                 <th scope="col" className="px-4 py-3.5 font-semibold text-gray-600">참가 해커톤</th>
               </tr>
             </thead>
