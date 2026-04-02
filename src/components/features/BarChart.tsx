@@ -25,6 +25,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     );
   }
   const maxValue = Math.max(...data.map((d) => d.value), 1);
+  const totalValue = data.reduce((sum, d) => sum + d.value, 0);
   const description = data.map((d) => `${d.label}: ${d.value}점`).join(", ");
 
   return (
@@ -35,7 +36,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
         {data.map((d, index) => {
           const barHeight = Math.max(4, (d.value / maxValue) * maxHeight);
           const color = d.color || "#3b82f6";
-          const ratio = Math.round((d.value / maxValue) * 100);
+          const share = totalValue > 0 ? ((d.value / totalValue) * 100).toFixed(1) : "0.0";
           return (
             <div
               key={d.label}
@@ -73,7 +74,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
                   activeIndex === index ? "opacity-100" : "opacity-0"
                 }`}
               >
-                {ratio}%
+                {d.value}점 · {share}%
               </span>
               <span
                 className={`w-full truncate text-center text-[10px] leading-tight transition-colors ${

@@ -164,6 +164,8 @@ body {
 /* Blue — CTA pops against neutral dark bg, WCAG AA verified */
 .dark .bg-blue-50 { background-color: #1e1b4b !important; }
 .dark .bg-blue-50\/50 { background-color: rgba(30, 27, 75, 0.5) !important; }
+.dark .from-blue-50 { --tw-gradient-from: #1e1b4b !important; --tw-gradient-to: rgba(30, 27, 75, 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.dark .to-indigo-50 { --tw-gradient-to: #1f1a45 !important; }
 .dark .bg-blue-600 { background-color: #3b82f6 !important; }
 .dark .text-blue-600 { color: #93c5fd !important; }
 .dark .text-blue-700 { color: #bfdbfe !important; }

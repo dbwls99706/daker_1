@@ -160,15 +160,17 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/hackathons"
-              className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition hover:bg-blue-50 hover:shadow-xl btn-press"
+              className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-[0_14px_28px_rgba(30,64,175,0.28)] btn-press"
             >
               해커톤 둘러보기
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
             </Link>
             <Link
               href="/camp"
-              className="rounded-lg border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 btn-press"
+              className="group inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:shadow-[0_12px_24px_rgba(255,255,255,0.18)] btn-press"
             >
               팀 찾기
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
