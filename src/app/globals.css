@@ -326,11 +326,22 @@ select:not(:focus):hover {
   background-image: linear-gradient(to bottom right, #312e81, #1e1b4b, #0f0a2e) !important;
   background-color: #1e1b4b !important;
 }
-.dark .progress-gradient {
+.dark .progress-gradient,
+.dark .participation-bar {
   --tw-gradient-from: #6366f1 !important;
   --tw-gradient-to: #a855f7 !important;
   background-image: linear-gradient(to right, #6366f1, #a855f7) !important;
   background-color: #6366f1 !important;
+}
+
+/* Participation bar hover bg — dark mode */
+.dark .hover\:bg-blue-50\/70:hover,
+.dark .hover\:bg-emerald-50\/70:hover,
+.dark .hover\:bg-violet-50\/70:hover,
+.dark .hover\:bg-orange-50\/70:hover,
+.dark .hover\:bg-pink-50\/70:hover,
+.dark .hover\:bg-cyan-50\/70:hover {
+  background-color: rgba(39, 39, 42, 0.7) !important;
 }
 .dark .progress-gradient-sm {
   --tw-gradient-from: #6366f1 !important;

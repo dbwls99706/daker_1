@@ -310,39 +310,43 @@ export default function HomePage() {
               <h2 className="mb-5 text-lg font-bold flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 text-sm shadow-sm" aria-hidden="true">📈</span>
                 해커톤별 참가 현황
-                <span className="ml-auto text-xs font-normal text-gray-400">{leaderboards.reduce((sum, lb) => sum + lb.entries.length, 0)}팀 참가중</span>
+                <span className="ml-auto text-xs font-normal text-gray-400 tabular-nums">{leaderboards.reduce((sum, lb) => sum + lb.entries.length, 0)}팀 참가중</span>
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {leaderboards.map((lb, idx) => {
                   const barTitle = hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug;
                   const maxEntries = Math.max(...leaderboards.map((l) => l.entries.length), 1);
                   const pct = Math.round((lb.entries.length / maxEntries) * 100);
-                  const colors = [
-                    "from-blue-500 to-indigo-500",
-                    "from-emerald-500 to-teal-500",
-                    "from-violet-500 to-purple-500",
-                    "from-orange-500 to-amber-500",
-                    "from-pink-500 to-rose-500",
-                    "from-cyan-500 to-sky-500",
+                  const barColors = [
+                    { gradient: "from-blue-500 to-indigo-500", bg: "bg-blue-50", hoverBg: "hover:bg-blue-50/70", text: "text-blue-600" },
+                    { gradient: "from-emerald-500 to-teal-500", bg: "bg-emerald-50", hoverBg: "hover:bg-emerald-50/70", text: "text-emerald-600" },
+                    { gradient: "from-violet-500 to-purple-500", bg: "bg-violet-50", hoverBg: "hover:bg-violet-50/70", text: "text-violet-600" },
+                    { gradient: "from-orange-500 to-amber-500", bg: "bg-orange-50", hoverBg: "hover:bg-orange-50/70", text: "text-orange-600" },
+                    { gradient: "from-pink-500 to-rose-500", bg: "bg-pink-50", hoverBg: "hover:bg-pink-50/70", text: "text-pink-600" },
+                    { gradient: "from-cyan-500 to-sky-500", bg: "bg-cyan-50", hoverBg: "hover:bg-cyan-50/70", text: "text-cyan-600" },
                   ];
-                  const colorClass = colors[idx % colors.length];
+                  const c = barColors[idx % barColors.length];
                   return (
-                    <div key={lb.hackathonSlug} className="group/bar animate-slide-up" style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "both" }}>
+                    <div
+                      key={lb.hackathonSlug}
+                      className={`rounded-xl px-3 py-2.5 transition-colors duration-200 ${c.hoverBg} animate-slide-up`}
+                      style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "both" }}
+                    >
                       <div className="mb-1.5 flex items-center justify-between text-sm">
-                        <span className="font-medium text-gray-700 truncate max-w-[250px]">{barTitle}</span>
-                        <span className="flex items-center gap-1.5">
-                          <span className="tabular-nums font-bold text-gray-900">{lb.entries.length}</span>
+                        <span className="font-medium text-gray-700 truncate max-w-[280px]">{barTitle}</span>
+                        <span className="flex items-center gap-1.5 flex-shrink-0">
+                          <span className={`tabular-nums font-bold ${c.text}`}>{lb.entries.length}</span>
                           <span className="text-gray-400 text-xs">팀</span>
                         </span>
                       </div>
-                      <div className="h-8 w-full rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${barTitle} 참가 현황 ${pct}%`}>
+                      <div className="h-7 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${barTitle} 참가 현황 ${pct}%`}>
                         <div
-                          className={`progress-gradient h-8 rounded-full bg-gradient-to-r ${colorClass} transition-all duration-1000 ease-out flex items-center justify-end pr-3 relative overflow-hidden group-hover/bar:shadow-lg`}
+                          className={`participation-bar h-7 rounded-full bg-gradient-to-r ${c.gradient} transition-all duration-1000 ease-out flex items-center justify-end pr-3 relative overflow-hidden`}
                           style={{ width: `${Math.max(pct, 10)}%` }}
                         >
                           <div className="absolute inset-0 shimmer-bar" />
-                          {pct > 20 && (
-                            <span className="relative text-xs font-bold text-white drop-shadow-sm">{lb.entries.length}</span>
+                          {pct > 25 && (
+                            <span className="relative text-xs font-bold text-white drop-shadow-sm tabular-nums">{lb.entries.length}</span>
                           )}
                         </div>
                       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 interface DonutChartProps {
   segments: { label: string; value: number; color: string }[];
@@ -32,7 +32,17 @@ export function DonutChart({ segments, size = 180, thickness = 28, title }: Donu
   const center = size / 2;
   const description = segments.map((s) => `${s.label}: ${s.value}개 (${Math.round((s.value / total) * 100)}%)`).join(", ");
 
-  let accumulatedOffset = 0;
+  // Pre-calculate offsets to avoid mutable variable in render
+  const segmentData = useMemo(() => {
+    let acc = 0;
+    return segments.map((seg) => {
+      const pct = seg.value / total;
+      const dashLength = pct * circumference;
+      const offset = acc;
+      acc += dashLength;
+      return { ...seg, dashLength, offset };
+    });
+  }, [segments, total, circumference]);
 
   return (
     <div role="figure" aria-label={`${title || "도넛 차트"}: 총 ${total}개`}>
@@ -51,11 +61,7 @@ export function DonutChart({ segments, size = 180, thickness = 28, title }: Donu
               className="text-gray-100 dark:text-gray-800"
               opacity={0.5}
             />
-            {segments.map((seg, idx) => {
-              const pct = seg.value / total;
-              const dashLength = pct * circumference;
-              const offset = accumulatedOffset;
-              accumulatedOffset += dashLength;
+            {segmentData.map((seg, idx) => {
               const isHovered = hoveredIndex === idx;
               return (
                 <circle
@@ -66,8 +72,8 @@ export function DonutChart({ segments, size = 180, thickness = 28, title }: Donu
                   fill="none"
                   stroke={seg.color}
                   strokeWidth={isHovered ? thickness + 6 : thickness}
-                  strokeDasharray={animated ? `${dashLength} ${circumference - dashLength}` : `0 ${circumference}`}
-                  strokeDashoffset={animated ? -offset : 0}
+                  strokeDasharray={animated ? `${seg.dashLength} ${circumference - seg.dashLength}` : `0 ${circumference}`}
+                  strokeDashoffset={animated ? -seg.offset : 0}
                   strokeLinecap="round"
                   className="transition-all duration-700 ease-out cursor-pointer"
                   style={{
@@ -80,36 +86,44 @@ export function DonutChart({ segments, size = 180, thickness = 28, title }: Donu
               );
             })}
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
-            <span className={`text-2xl font-bold text-gray-900 transition-all duration-300 ${animated ? "scale-100 opacity-100" : "scale-75 opacity-0"}`}>
-              {hoveredIndex !== null ? segments[hoveredIndex].value : total}
+          {/* Center label — always shows total; hovered segment shown below */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none" aria-hidden="true">
+            <span className={`text-2xl font-bold text-gray-900 tabular-nums transition-opacity duration-300 ${animated ? "opacity-100" : "opacity-0"}`}>
+              {total}
             </span>
-            <span className={`text-xs text-gray-500 transition-all duration-300 ${animated ? "opacity-100" : "opacity-0"}`}>
-              {hoveredIndex !== null ? segments[hoveredIndex].label : (title || "합계")}
+            <span className={`text-xs text-gray-500 transition-opacity duration-300 ${animated ? "opacity-100" : "opacity-0"}`}>
+              {title || "합계"}
             </span>
           </div>
         </div>
-        <div className="flex flex-col gap-2" role="list" aria-label="차트 범례">
-          {segments.map((seg, idx) => (
-            <div
-              key={seg.label}
-              className={`flex items-center gap-2 text-sm rounded-lg px-2 py-1.5 transition-all duration-200 cursor-pointer ${
-                hoveredIndex === idx ? "bg-gray-100 dark:bg-gray-800 scale-105" : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
-              }`}
-              role="listitem"
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
+        {/* Legend — no scale transform to avoid overlap */}
+        <div className="flex flex-col gap-1" role="list" aria-label="차트 범례">
+          {segments.map((seg, idx) => {
+            const isHovered = hoveredIndex === idx;
+            return (
               <div
-                className={`h-3 w-3 rounded-full flex-shrink-0 transition-transform duration-200 ${hoveredIndex === idx ? "scale-125" : ""}`}
-                style={{ backgroundColor: seg.color, boxShadow: hoveredIndex === idx ? `0 0 8px ${seg.color}60` : "none" }}
-                aria-hidden="true"
-              />
-              <span className="text-gray-700 font-medium">{seg.label}</span>
-              <span className="text-gray-500 ml-auto tabular-nums font-semibold">{seg.value}</span>
-              <span className="text-gray-400 text-xs">({total > 0 ? Math.round((seg.value / total) * 100) : 0}%)</span>
-            </div>
-          ))}
+                key={seg.label}
+                className={`flex items-center gap-2 text-sm rounded-lg px-2.5 py-1.5 transition-colors duration-150 cursor-pointer ${
+                  isHovered ? "bg-gray-100 dark:bg-gray-800" : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                }`}
+                role="listitem"
+                onMouseEnter={() => setHoveredIndex(idx)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <div
+                  className="h-3 w-3 rounded-full flex-shrink-0 transition-shadow duration-150"
+                  style={{
+                    backgroundColor: seg.color,
+                    boxShadow: isHovered ? `0 0 8px ${seg.color}60` : "none",
+                  }}
+                  aria-hidden="true"
+                />
+                <span className={`font-medium transition-colors duration-150 ${isHovered ? "text-gray-900" : "text-gray-700"}`}>{seg.label}</span>
+                <span className={`ml-auto tabular-nums font-semibold transition-colors duration-150 ${isHovered ? "text-gray-900" : "text-gray-500"}`}>{seg.value}</span>
+                <span className="text-gray-400 text-xs tabular-nums">({Math.round((seg.value / total) * 100)}%)</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
