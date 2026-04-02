@@ -55,6 +55,17 @@ function CampContent() {
     return getHackathons();
   }, [ready]);
 
+  const hackathonMap = useMemo(() => {
+    return new Map(hackathons.map((h) => [h.slug, h]));
+  }, [hackathons]);
+
+  const isRecruitmentOpen = (team: Team) => {
+    if (!team.hackathonSlug) return team.isOpen;
+    const hackathon = hackathonMap.get(team.hackathonSlug);
+    if (!hackathon) return team.isOpen;
+    return team.isOpen && new Date() < new Date(hackathon.period.submissionDeadlineAt);
+  };
+
   function handleCreate() {
     if (!name.trim() || !intro.trim()) return;
     if (contactUrl.trim() && !isValidUrl(contactUrl.trim())) {
@@ -306,7 +317,11 @@ function CampContent() {
         return (
         <>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {pagedTeams.map((t, i) => (
+          {pagedTeams.map((t, i) => {
+            const recruitmentOpen = isRecruitmentOpen(t);
+            const recruitmentClosedByDeadline = t.isOpen && !recruitmentOpen;
+
+            return (
             <div
               key={t.teamCode}
               className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 animate-slide-up card-hover-glow"
@@ -315,7 +330,7 @@ function CampContent() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <span className={`flex h-9 w-9 items-center justify-center rounded-full text-white text-sm font-bold shadow-sm ${
-                    t.isOpen
+                    recruitmentOpen
                       ? "bg-gradient-to-br from-green-400 to-emerald-500"
                       : "bg-gradient-to-br from-gray-400 to-gray-500"
                   }`}>
@@ -325,10 +340,10 @@ function CampContent() {
                 </div>
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    t.isOpen ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                    recruitmentOpen ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
                   }`}
                 >
-                  {t.isOpen ? "모집중" : "모집마감"}
+                  {recruitmentOpen ? "모집중" : "모집마감"}
                 </span>
               </div>
               {t.hackathonSlug && (
@@ -339,7 +354,7 @@ function CampContent() {
                   <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
                   </svg>
-                  {hackathons.find((h) => h.slug === t.hackathonSlug)?.title || t.hackathonSlug}
+                  {hackathonMap.get(t.hackathonSlug)?.title || t.hackathonSlug}
                 </Link>
               )}
               <p className="mt-2 flex-1 text-sm text-gray-500 line-clamp-3">{t.intro}</p>
@@ -367,7 +382,7 @@ function CampContent() {
                 <div className="flex items-center gap-2">
                   {isMyTeam(t.teamCode) ? (
                     <>
-                      {t.isOpen ? (
+                      {recruitmentOpen ? (
                         <button
                           onClick={() => {
                             updateTeam(t.teamCode, { isOpen: false });
@@ -378,6 +393,8 @@ function CampContent() {
                         >
                           모집마감
                         </button>
+                      ) : recruitmentClosedByDeadline ? (
+                        <span className="font-medium text-gray-400">모집기간종료</span>
                       ) : (
                         <button
                           onClick={() => {
@@ -397,7 +414,7 @@ function CampContent() {
                         삭제
                       </button>
                     </>
-                  ) : t.isOpen ? (
+                  ) : recruitmentOpen ? (
                     <>
                       {hasJoinedTeam(t.teamCode) ? (
                         <button
@@ -427,7 +444,8 @@ function CampContent() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
         {/* Pagination with page numbers */}
         {totalPages > 1 && (
