@@ -42,7 +42,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
   const getBarStyle = (color: string, barHeight: number, index: number, isActive: boolean) => ({
     height: animated ? barHeight : 4,
     backgroundColor: color,
-    minWidth: 24,
+    minWidth: "clamp(14px, 4vw, 24px)",
     transitionDelay: `${index * 70}ms`,
     border: "1px solid rgba(15, 23, 42, 0.08)",
     filter: isDark && !isActive ? "brightness(0.82) saturate(0.9)" : undefined,
@@ -53,7 +53,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     <div role="figure" aria-label={title || "바 차트"} className="text-gray-900 dark:text-gray-100">
       {title && <h3 className="mb-4 text-sm font-bold text-gray-900">{title}</h3>}
       <span className="sr-only">{description}</span>
-      <div className="relative flex items-end gap-3 justify-center rounded-xl px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
+      <div className="relative flex items-end justify-center gap-1 rounded-xl px-1 sm:gap-3 sm:px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
         <div
           className="pointer-events-none absolute inset-x-1 bottom-6 h-[80%] rounded-lg opacity-70 dark:opacity-45"
           style={{
@@ -66,7 +66,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
           return (
             <div
               key={d.label}
-              className="group relative flex flex-1 flex-col items-center gap-1 rounded-lg px-1 py-1.5 transition-colors hover:bg-blue-50/50 max-w-[80px]"
+              className="group relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-0.5 py-1.5 transition-colors hover:bg-blue-50/50 sm:max-w-[80px] sm:px-1"
               onMouseEnter={() => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
               onFocus={() => setActiveIndex(index)}
