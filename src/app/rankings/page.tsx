@@ -209,7 +209,7 @@ export default function RankingsPage() {
               data={rankings.slice(0, 8).map((r, i) => ({
                 label: r.teamName.length > 8 ? r.teamName.slice(0, 8) + ".." : r.teamName,
                 value: r.totalScore,
-                color: i === 0 ? "#eab308" : i === 1 ? "#9ca3af" : i === 2 ? "#f97316" : "#3b82f6",
+                color: i === 0 ? "#eab308" : i === 1 ? "#64748b" : i === 2 ? "#f97316" : "#3b82f6",
               }))}
             />
           </section>
