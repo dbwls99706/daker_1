@@ -35,14 +35,17 @@ function AnimatedStat({ value, label, icon, color, bg, border, delay }: { value:
   const animated = useCountUp(value);
   return (
     <div
-      className={`rounded-xl border ${border} ${bg} p-5 text-center shadow-sm transition-all hover:shadow-md hover:scale-[1.02] animate-slide-up card-hover-glow`}
+      className={`group relative overflow-hidden rounded-xl border ${border} ${bg} p-5 text-center shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.04] hover:-translate-y-1 animate-slide-up card-hover-glow`}
       style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
     >
-      <div className="mb-2 flex justify-center">
-        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${bg} text-lg`} aria-hidden="true">{icon}</span>
+      <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/20 blur-xl transition-transform duration-500 group-hover:scale-[2]" />
+      <div className="relative">
+        <div className="mb-2 flex justify-center">
+          <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${bg} text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`} aria-hidden="true">{icon}</span>
+        </div>
+        <div className={`text-3xl font-extrabold tabular-nums ${color} transition-transform duration-300 group-hover:scale-110`}>{animated}</div>
+        <div className="mt-1 text-sm text-gray-600">{label}</div>
       </div>
-      <div className={`text-3xl font-extrabold tabular-nums ${color}`}>{animated}</div>
-      <div className="mt-1 text-sm text-gray-600">{label}</div>
     </div>
   );
 }
@@ -258,36 +261,42 @@ export default function HomePage() {
       {/* Statistics Overview */}
       <Section>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm card-hover-glow">
-            <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm" aria-hidden="true">📊</span>
-              해커톤 현황
-            </h2>
-            <DonutChart
-              segments={[
-                { label: "진행중", value: hackathons.filter((h) => h.status === "ongoing").length, color: "#22c55e" },
-                { label: "예정", value: hackathons.filter((h) => h.status === "upcoming").length, color: "#3b82f6" },
-                { label: "종료", value: hackathons.filter((h) => h.status === "ended").length, color: "#9ca3af" },
-              ]}
-              title="해커톤"
-              size={140}
-              thickness={22}
-            />
+          <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-blue-200 card-hover-glow">
+            <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-blue-100/40 blur-2xl transition-transform duration-500 group-hover:scale-150" />
+            <div className="relative">
+              <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 text-sm shadow-sm" aria-hidden="true">📊</span>
+                해커톤 현황
+              </h2>
+              <DonutChart
+                segments={[
+                  { label: "진행중", value: hackathons.filter((h) => h.status === "ongoing").length, color: "#22c55e" },
+                  { label: "예정", value: hackathons.filter((h) => h.status === "upcoming").length, color: "#3b82f6" },
+                  { label: "종료", value: hackathons.filter((h) => h.status === "ended").length, color: "#9ca3af" },
+                ]}
+                title="해커톤"
+                size={140}
+                thickness={22}
+              />
+            </div>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm card-hover-glow">
-            <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-sm" aria-hidden="true">👥</span>
-              팀 모집 현황
-            </h2>
-            <DonutChart
-              segments={[
-                { label: "모집중", value: teams.filter((t) => t.isOpen).length, color: "#22c55e" },
-                { label: "모집마감", value: teams.filter((t) => !t.isOpen).length, color: "#9ca3af" },
-              ]}
-              title="팀"
-              size={140}
-              thickness={22}
-            />
+          <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-green-200 card-hover-glow">
+            <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-green-100/40 blur-2xl transition-transform duration-500 group-hover:scale-150" />
+            <div className="relative">
+              <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 text-sm shadow-sm" aria-hidden="true">👥</span>
+                팀 모집 현황
+              </h2>
+              <DonutChart
+                segments={[
+                  { label: "모집중", value: teams.filter((t) => t.isOpen).length, color: "#22c55e" },
+                  { label: "모집마감", value: teams.filter((t) => !t.isOpen).length, color: "#9ca3af" },
+                ]}
+                title="팀"
+                size={140}
+                thickness={22}
+              />
+            </div>
           </div>
         </div>
       </Section>
@@ -295,35 +304,52 @@ export default function HomePage() {
       {/* Participation Chart */}
       {leaderboards.length > 0 && (
         <Section>
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-sm" aria-hidden="true">📈</span>
-              해커톤별 참가 현황
-            </h2>
-            <div className="space-y-4">
-              {leaderboards.map((lb) => {
-                const title = hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug;
-                const maxEntries = Math.max(...leaderboards.map((l) => l.entries.length), 1);
-                const pct = Math.round((lb.entries.length / maxEntries) * 100);
-                return (
-                  <div key={lb.hackathonSlug}>
-                    <div className="mb-1.5 flex items-center justify-between text-sm">
-                      <span className="font-medium text-gray-700 truncate max-w-[250px]">{title}</span>
-                      <span className="text-gray-500 font-semibold">{lb.entries.length}팀</span>
-                    </div>
-                    <div className="h-7 w-full rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${title} 참가 현황 ${pct}%`}>
-                      <div
-                        className="progress-gradient h-7 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-700 flex items-center justify-end pr-3"
-                        style={{ width: `${Math.max(pct, 8)}%` }}
-                      >
-                        {pct > 20 && (
-                          <span className="text-xs font-semibold text-white">{lb.entries.length}</span>
-                        )}
+          <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
+            <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-indigo-100/30 blur-3xl transition-transform duration-500 group-hover:scale-125" />
+            <div className="relative">
+              <h2 className="mb-5 text-lg font-bold flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 text-sm shadow-sm" aria-hidden="true">📈</span>
+                해커톤별 참가 현황
+                <span className="ml-auto text-xs font-normal text-gray-400">{leaderboards.reduce((sum, lb) => sum + lb.entries.length, 0)}팀 참가중</span>
+              </h2>
+              <div className="space-y-4">
+                {leaderboards.map((lb, idx) => {
+                  const barTitle = hackathons.find((h) => h.slug === lb.hackathonSlug)?.title || lb.hackathonSlug;
+                  const maxEntries = Math.max(...leaderboards.map((l) => l.entries.length), 1);
+                  const pct = Math.round((lb.entries.length / maxEntries) * 100);
+                  const colors = [
+                    "from-blue-500 to-indigo-500",
+                    "from-emerald-500 to-teal-500",
+                    "from-violet-500 to-purple-500",
+                    "from-orange-500 to-amber-500",
+                    "from-pink-500 to-rose-500",
+                    "from-cyan-500 to-sky-500",
+                  ];
+                  const colorClass = colors[idx % colors.length];
+                  return (
+                    <div key={lb.hackathonSlug} className="group/bar animate-slide-up" style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "both" }}>
+                      <div className="mb-1.5 flex items-center justify-between text-sm">
+                        <span className="font-medium text-gray-700 truncate max-w-[250px]">{barTitle}</span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="tabular-nums font-bold text-gray-900">{lb.entries.length}</span>
+                          <span className="text-gray-400 text-xs">팀</span>
+                        </span>
+                      </div>
+                      <div className="h-8 w-full rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${barTitle} 참가 현황 ${pct}%`}>
+                        <div
+                          className={`progress-gradient h-8 rounded-full bg-gradient-to-r ${colorClass} transition-all duration-1000 ease-out flex items-center justify-end pr-3 relative overflow-hidden group-hover/bar:shadow-lg`}
+                          style={{ width: `${Math.max(pct, 10)}%` }}
+                        >
+                          <div className="absolute inset-0 shimmer-bar" />
+                          {pct > 20 && (
+                            <span className="relative text-xs font-bold text-white drop-shadow-sm">{lb.entries.length}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </Section>

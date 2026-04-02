@@ -4,6 +4,10 @@
   "sections": {
     "overview": {
       "summary": "제한된 평가 환경에서 모델의 성능과 추론 속도를 함께 최적화합니다.",
+      "description": "## 배경\n\n최근 AI 서비스는 클라우드 기반의 대규모 모델을 넘어, On-Device 환경에서도 빠르고 안정적으로 동작하는 경량 모델에 대한 요구가 급격히 증가하고 있습니다. 특히 응답 지연(latency), 메모리 사용량, 운영 비용 등의 제약으로 인해 모델 크기를 줄이면서도 성능을 유지하는 기술이 중요한 과제로 부상하고 있습니다.\n\nEXAONE은 Global Frontier 급의 Large-scale 모델과 함께, 노트북·모바일 등 제한된 환경에서도 활용 가능한 Small-scale 모델 라인업을 보유하고 있습니다. 그러나 단순히 파라미터 수를 줄이는 방식은 메모리와 속도 측면에서는 유리할 수 있으나, 정확도 저하라는 명확한 한계를 동반합니다.\n\n이에 따라, 모델 크기를 효과적으로 축소하면서도 성능 저하를 최소화하고, 실제 추론 환경에서의 효율을 극대화할 수 있는 경량화 기법을 탐구하는 것이 중요해졌습니다.\n\n이번 해커톤은 이러한 문제의식을 바탕으로, EXAONE 모델을 대상으로 한 실전 중심의 LLM 경량화를 수행하게 됩니다.\n\n## 주제\n\nLLM 경량화 (Large Language Model Compression)\n\n## 설명\n\n본 해커톤의 기본 모델인 EXAONE-4.0-1.2B 모델을 대상으로 한 경량화를 수행해야 합니다.\n참가자는 모델 구조와 특성을 분석한 뒤, 다양한 경량화 기법과 필요 시 추가 학습·튜닝을 적용하여 모델 크기, 추론 속도, 성능 간의 균형을 최적화하는 것을 목표로 합니다.\n경량화된 모델은 vLLM 기반 추론 엔진 환경에서 평가되며, 동일한 추론 파이프라인 조건 하에서 모델 성능과 효율을 비교하게 됩니다.\n이를 통해 단순한 파라미터 감소에 국한되지 않고, 실제 서비스 환경에서의 추론 효율과 성능을 함께 고려한 의미 있는 경량화 전략을 설계·검증하는 경험을 제공하고자 합니다.\n\n## 온라인 해커톤 (Phase 2)\n\n- 온라인 해커톤에서는 vLLM 라이브러리 자체 수정은 허용되지 않습니다.\n- 참가자는 허깅페이스(Hugging Face) 표준 방식으로 저장된 모델 가중치 및 설정 파일만을 제출해야 합니다.\n- 즉, 모델 가중치 및 config 수준에서의 결과물만 평가 대상이 되며, 모든 모델은 운영진이 제공하는 동일한 vLLM 추론 환경에서 실행됩니다.\n\n## 오프라인 해커톤 (Phase 3)\n\n- 오프라인 해커톤에서는 모델 가중치 경량화에 더해 vLLM 커스터마이징이 허용됩니다.\n- 참가자는 1)허깅페이스 방식의 경량화된 모델 가중치와 함께 2)커스텀된 vLLM 라이브러리 폴더를 제출할 수 있습니다.\n- 이를 통해 단순한 모델 가중치 수준의 경량화를 넘어, vLLM에서 기본적으로 지원하지 않는 추론·경량화 방법론이나 실행 전략을 직접 포팅·확장하는 등, 추론 엔진 수준까지 포함한 보다 폭넓은 최적화 설계가 가능합니다.\n\n온라인 해커톤(Phase2)에서 교육생들의 문제 해결 능력을 검증하여 오프라인 해커톤(Phase3)에 진출자(약 100명)를 선발하기 위한 과정입니다.\n오프라인 해커톤(Phase3)은 1박 2일간 오프라인으로 진행되며, 온라인 해커톤(Phase2)과 주제는 동일합니다.\n\n## 코드 제출 대회\n\n본 대회는 submit.zip 업로드 방식의 코드 제출 형식 대회로 진행됩니다.\nsubmit.zip에는 허깅페이스(Hugging Face) 표준 형식의 모델 가중치 및 설정 파일만 포함되어야 하며, 제출된 모델은 참가자 코드가 아닌, 운영진이 제공하는 고정된 추론 스크립트에서 실행되어 평가됩니다.\n\n- 전체 추론 실행 시간 ≤ 20분\n- 제출 파일 용량 ≤ 10GB (압축해제 후 32GB)\n- 6 vCPU, 28GB RAM, L4 GPU 22.4GiB VRAM 환경에서 실행\n\n## 주최 / 주관\n\n- 주최 : LG AI 연구원\n- 주관 : 데이콘\n- 참여 : 한경닷컴\n\n## 참가 자격\n\nLG Aimers 8기 교육생이라면 누구나 참가 가능\n\n- Phase 1(온라인 AI 교육) 이수와 관계없이 참가 가능\n- 참여 버튼을 누른 뒤 팝업 창에서 성명, LG Aimers 가입 메일을 기재 (데이콘 계정 메일과 LG Aimers 메일이 일치할 필요 없음)\n- Phase 3(오프라인 해커톤)는 Phase1과 Phase2를 모두 이수한 교육생만 참가 가능합니다. Phase1을 이수하지 않은 경우, Phase2에서 우수한 성적을 거두었더라도 Phase3에 참여할 수 없습니다.",
+      "tags": ["LG Aimers", "채용", "알고리즘", "LLM", "코드제출", "경량화"],
+      "host": "LG AI 연구원",
+      "organizer": "데이콘",
       "teamPolicy": {
         "allowSolo": true,
         "maxTeamSize": 5
@@ -32,11 +36,11 @@
       "milestones": [
         {
           "name": "리더보드 제출 마감",
-          "at": "2026-02-25T10:00:00+09:00"
+          "at": "2026-03-15T10:00:00+09:00"
         },
         {
           "name": "대회 종료",
-          "at": "2026-02-26T10:00:00+09:00"
+          "at": "2026-03-16T10:00:00+09:00"
         }
       ]
     },
@@ -82,6 +86,10 @@
       "sections": {
         "overview": {
           "summary": "바이브 코딩(Vibe Coding) 워크플로우를 개선할 수 있는 AI 아이디어를 자유롭게 제안하는 월간 공모전입니다. 생성형 AI를 활용한 혁신적인 개발 방법론, 도구, 플러그인 등을 제안해 주세요.",
+          "description": "## 대회 소개\n\n본 대회는 바이브 코딩(Vibe Coding) 개발 환경에서 발생하는 한계에 대한 개선을 주제로 한 아이디어 공모전입니다. 참가자는 실제 개발 및 운영 과정에서 나타나는 품질, 안정성, 보안, 유지보수 측면의 문제를 바탕으로, 기술·프로세스·운영·검증 등 다양한 관점에서 현실적인 개선 아이디어를 제안합니다.\n\n본 대회는 구현이나 코딩을 요구하지 않으며, 설계·기획 중심의 아이디어 제안을 평가합니다.\n\n## 대회 목적\n\n- 바이브 코딩 환경의 구조적 한계에 대한 이해 및 문제 인식 역량 강화\n- 품질·안정성·보안·유지보수 이슈에 대한 개선 아이디어 발굴\n- 구현 중심이 아닌 설계·기획 중심의 사고를 통한 AI 활용 관점 확장\n- 참가자 간 아이디어 공유를 통한 기술 트렌드 인식 및 네트워킹 기회 제공\n\n## 평가 기준 (총 100점)\n\n| 항목 | 배점 | 설명 |\n|------|------|------|\n| 문제 인식의 정확성 | 25점 | 바이브 코딩 환경에서 발생하는 실제 문제를 명확히 정의했는가 |\n| 개선 아이디어의 타당성 | 30점 | 제안한 아이디어가 문제 해결과 논리적으로 연결되는가 |\n| 실무 적용 가능성 | 30점 | 실제 개발·운영 환경에서 적용 가능한 수준의 아이디어인가 |\n| 사고의 깊이 및 확장성 | 15점 | 단순 개선을 넘어 구조적·장기적 관점을 제시했는가 |\n\n## 참가 대상\n\n- 데이커 회원 누구나 참가 가능\n- 참가팀(최대 2인) 구성\n\n## 주최\n\n- 주최 : DACON",
+          "tags": ["VibeCoding", "아이디어", "기획", "AI"],
+          "host": "DACON",
+          "organizer": "데이콘",
           "teamPolicy": {
             "allowSolo": true,
             "maxTeamSize": 3
@@ -123,19 +131,19 @@
           "milestones": [
             {
               "name": "접수 시작",
-              "at": "2026-02-10T10:00:00+09:00"
+              "at": "2026-03-01T10:00:00+09:00"
             },
             {
               "name": "아이디어 제출 마감",
-              "at": "2026-03-03T10:00:00+09:00"
+              "at": "2026-03-25T10:00:00+09:00"
             },
             {
               "name": "투표 기간",
-              "at": "2026-03-05T10:00:00+09:00"
+              "at": "2026-03-27T10:00:00+09:00"
             },
             {
               "name": "결과 발표",
-              "at": "2026-03-09T10:00:00+09:00"
+              "at": "2026-03-30T10:00:00+09:00"
             }
           ]
         },
@@ -195,6 +203,10 @@
       "sections": {
         "overview": {
           "summary": "기능 명세서만 남기고 사라진 개발자의 문서를 기반으로 바이브 코딩을 통해 웹서비스를 구현·배포하는 해커톤입니다.",
+          "description": "## 대회 소개\n\n웹페이지 형태의 서비스를 개발해야 합니다.\n하지만, 기능은 아직 미완성이고 초보 개발자는 어디서부터 구현해야할지 막막한 상황입니다.\n이번 해커톤에서는 바이브 코딩을 활용해 제공된 자료를 기반으로 웹페이지를 완성하고 팀만의 아이디어로 확장해 더 좋은 서비스 경험을 제안해 주세요.\n\n## 목표\n\n- 제공된 자료를 기반으로 웹페이지를 완성\n- 자료를 바탕으로 팀의 아이디어로 확장 기능/UX 개선을 목표로 함\n\n## 기술/환경\n\n- 개발 도구 : 기술 제한 없이 바이브 코딩 툴을 활용하여 개발\n- 배포 : Vercel 배포 필수\n\n## 평가 기준 (총 100점)\n\n| 항목 | 배점 | 설명 |\n|------|------|------|\n| 기본 구현 | 30점 | 페이지 렌더링, 데이터 기반 렌더링, 필터/정렬, 빈 상태 UI |\n| 확장(아이디어) | 30점 | 독창적 기능/UX 개선, 서비스 가치, 일관된 플로우 |\n| 완성도 | 25점 | 사용성, 안정성(에러 처리), 성능(로딩/반응속도), 접근성/반응형 |\n| 문서화 | 15점 | 기획서 명확성, PPT 설명 품질, 재현 가능성 |\n\n## 주최 / 주관\n\n- 주최 : DACON\n- 주관 : 데이콘",
+          "tags": ["VibeCoding", "Web", "Vercel", "인수인계", "바이브코딩"],
+          "host": "DACON",
+          "organizer": "데이콘",
           "teamPolicy": {
             "allowSolo": true,
             "maxTeamSize": 5
@@ -237,35 +249,35 @@
           "milestones": [
             {
               "name": "접수/기획서 제출 기간",
-              "at": "2026-03-04T10:00:00+09:00"
+              "at": "2026-04-05T10:00:00+09:00"
             },
             {
               "name": "접수/기획서 제출 마감",
-              "at": "2026-04-03T23:59:00+09:00"
+              "at": "2026-05-03T23:59:00+09:00"
             },
             {
               "name": "최종 웹링크 제출 마감",
-              "at": "2026-04-06T10:00:00+09:00"
+              "at": "2026-05-06T10:00:00+09:00"
             },
             {
               "name": "최종 솔루션 PDF 제출 마감",
-              "at": "2026-04-13T10:00:00+09:00"
+              "at": "2026-05-13T10:00:00+09:00"
             },
             {
               "name": "1차 투표평가 시작",
-              "at": "2026-04-13T12:00:00+09:00"
+              "at": "2026-05-13T12:00:00+09:00"
             },
             {
               "name": "1차 투표평가 마감",
-              "at": "2026-04-17T10:00:00+09:00"
+              "at": "2026-05-17T10:00:00+09:00"
             },
             {
               "name": "2차 내부평가 종료",
-              "at": "2026-04-24T23:59:00+09:00"
+              "at": "2026-05-24T23:59:00+09:00"
             },
             {
               "name": "최종 결과 발표",
-              "at": "2026-04-27T10:00:00+09:00"
+              "at": "2026-05-27T10:00:00+09:00"
             }
           ]
         },
@@ -322,6 +334,284 @@
         "leaderboard": {
           "publicLeaderboardUrl": "/hackathons/daker-handover-2026-03#leaderboard",
           "note": "아이디어 해커톤의 점수(score)는 투표 결과를 기반으로 표시됩니다."
+        }
+      }
+    },
+    {
+      "slug": "sesac-hackathon-2026",
+      "title": "2026 새싹 해커톤 : AI와 함께 만드는 서울의 미래",
+      "sections": {
+        "overview": {
+          "summary": "서울의 미래를 AI와 함께 설계하는 아이디어 해커톤입니다. 생성형 AI를 활용하여 도시 문제를 해결하는 혁신적인 서비스를 기획·발표합니다.",
+          "description": "## 대회 소개\n\n본 대회는 서울시의 공공데이터와 생성형 AI를 활용하여 도시 문제를 해결하는 서비스 아이디어를 제안하는 해커톤입니다.\n\n## 주제\n\nAI와 함께 만드는 새로운 변화 — 서울시 공공서비스 혁신\n\n## 평가 기준\n\n| 항목 | 배점 | 설명 |\n|------|------|------|\n| 문제 인식 | 25점 | 도시 문제를 명확히 정의했는가 |\n| 솔루션 타당성 | 30점 | AI 활용 방안이 논리적인가 |\n| 실현 가능성 | 30점 | 실제 구현 가능한 수준인가 |\n| 발표 품질 | 15점 | 기획서와 발표의 완성도 |\n\n## 주최 / 주관\n\n- 주최 : 서울특별시\n- 주관 : 데이콘",
+          "tags": ["AI", "서비스기획", "Seoul", "GenAI", "공공데이터"],
+          "host": "서울특별시",
+          "organizer": "데이콘",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 4 }
+        },
+        "info": {
+          "notice": [
+            "서울시 공공데이터 활용을 권장합니다.",
+            "구현보다 기획/아이디어 품질을 중점 평가합니다."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/sesac2026",
+            "faq": "https://example.com/public/faq/sesac2026"
+          }
+        },
+        "eval": {
+          "metricName": "IdeaScore",
+          "description": "아이디어의 문제 인식, 솔루션 타당성, 실현 가능성을 종합 평가합니다.",
+          "scoreSource": "vote",
+          "scoreDisplay": {
+            "label": "종합 점수",
+            "breakdown": [
+              { "key": "participant", "label": "참가자 투표", "weightPercent": 30 },
+              { "key": "judge", "label": "심사위원", "weightPercent": 70 }
+            ]
+          }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "접수 시작", "at": "2026-02-20T10:00:00+09:00" },
+            { "name": "예선 제출 마감", "at": "2026-03-20T10:00:00+09:00" },
+            { "name": "본선 발표", "at": "2026-03-21T10:00:00+09:00" },
+            { "name": "결과 발표", "at": "2026-03-22T10:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 5000000 },
+            { "place": "2nd", "amountKRW": 3000000 },
+            { "place": "3rd", "amountKRW": 1000000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=sesac-hackathon-2026" },
+        "submit": {
+          "allowedArtifactTypes": ["text", "url", "pdf"],
+          "submissionUrl": "/hackathons/sesac-hackathon-2026#submit",
+          "guide": ["기획서를 텍스트 또는 URL로 제출합니다.", "발표 자료는 PDF로 변환하여 제출합니다."]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/sesac-hackathon-2026#leaderboard",
+          "note": "투표 기반 점수입니다."
+        }
+      }
+    },
+    {
+      "slug": "cyber-attack-prediction-2026",
+      "title": "사이버 공격 유형 예측 해커톤 : 트래픽 속 위협을 식별하라!",
+      "sections": {
+        "overview": {
+          "summary": "네트워크 트래픽 데이터를 분석하여 사이버 공격 유형을 분류하는 AI 모델을 개발하는 해커톤입니다.",
+          "description": "## 대회 소개\n\n실제 네트워크 트래픽 데이터를 기반으로 다양한 사이버 위협(DDoS, 피싱, 악성코드 등)을 식별하는 AI 알고리즘을 개발합니다.\n\n## 주제\n\n사이버 공격 유형 분류 (Cyber Attack Classification)\n\n## 평가 지표\n\nMacro F1 Score\n\n## 주최 / 주관\n\n- 주최 : KISA (한국인터넷진흥원)\n- 주관 : 데이콘",
+          "tags": ["Cybersecurity", "Classification", "NLP", "MacroF1"],
+          "host": "KISA",
+          "organizer": "데이콘",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 3 }
+        },
+        "info": {
+          "notice": [
+            "외부 데이터 사용은 금지됩니다.",
+            "제공된 학습 데이터만 활용하세요."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/cyber2026",
+            "faq": "https://example.com/public/faq/cyber2026"
+          }
+        },
+        "eval": {
+          "metricName": "Macro F1 Score",
+          "description": "각 공격 유형별 F1 Score의 평균으로 평가합니다.",
+          "limits": { "maxRuntimeSec": 600, "maxSubmissionsPerDay": 5 }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "대회 시작", "at": "2026-03-25T10:00:00+09:00" },
+            { "name": "리더보드 제출 마감", "at": "2026-04-20T10:00:00+09:00" },
+            { "name": "대회 종료", "at": "2026-04-25T10:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 2000000 },
+            { "place": "2nd", "amountKRW": 1000000 },
+            { "place": "3rd", "amountKRW": 500000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=cyber-attack-prediction-2026" },
+        "submit": {
+          "allowedArtifactTypes": ["zip"],
+          "submissionUrl": "/hackathons/cyber-attack-prediction-2026#submit",
+          "guide": ["제출물은 csv 파일을 포함한 zip으로 업로드합니다."]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/cyber-attack-prediction-2026#leaderboard",
+          "note": "Public 리더보드는 전체 테스트 데이터의 30%로 산출됩니다."
+        }
+      }
+    },
+    {
+      "slug": "voice-classification-2026",
+      "title": "음성 분류 AI 해커톤 : 소리로 세상을 읽다",
+      "sections": {
+        "overview": {
+          "summary": "음성 데이터를 활용하여 숫자(0-9)를 분류하는 AI 모델을 개발합니다. MFCC 기반 특성 추출과 CNN/RandomForest 등 다양한 모델을 실험합니다.",
+          "description": "## 대회 소개\n\n음성 데이터를 기반으로 발화된 숫자(0~9)를 정확하게 분류하는 AI 알고리즘을 개발합니다. 초보자를 위한 베이스라인 코드가 제공됩니다.\n\n## 주제\n\n음성 분류 (Voice/Audio Classification)\n\n## 평가 지표\n\nAccuracy\n\n## 주최 / 주관\n\n- 주최 : DACON\n- 주관 : 데이콘",
+          "tags": ["Audio", "DeepLearning", "CNN", "MFCC", "Beginner"],
+          "host": "DACON",
+          "organizer": "데이콘",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 3 }
+        },
+        "info": {
+          "notice": [
+            "매주 2회 베이스라인 코드가 제공됩니다.",
+            "외부 음성 데이터 사용은 금지됩니다."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/voice2026",
+            "faq": "https://example.com/public/faq/voice2026"
+          }
+        },
+        "eval": {
+          "metricName": "Accuracy",
+          "description": "테스트 데이터에 대한 정확도로 평가합니다.",
+          "limits": { "maxRuntimeSec": 300, "maxSubmissionsPerDay": 10 }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "대회 시작", "at": "2026-04-01T10:00:00+09:00" },
+            { "name": "리더보드 제출 마감", "at": "2026-04-25T10:00:00+09:00" },
+            { "name": "대회 종료", "at": "2026-04-30T10:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 1000000 },
+            { "place": "2nd", "amountKRW": 500000 },
+            { "place": "3rd", "amountKRW": 300000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=voice-classification-2026" },
+        "submit": {
+          "allowedArtifactTypes": ["zip"],
+          "submissionUrl": "/hackathons/voice-classification-2026#submit",
+          "guide": ["csv 파일을 zip으로 압축하여 제출합니다."]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/voice-classification-2026#leaderboard",
+          "note": "Public 리더보드는 전체 테스트 데이터의 40%로 산출됩니다."
+        }
+      }
+    },
+    {
+      "slug": "smart-factory-ai-2026",
+      "title": "스마트 공장 제품 품질 분류 AI 해커톤",
+      "sections": {
+        "overview": {
+          "summary": "실제 스마트 공장 데이터를 활용하여 제품 품질 상태를 분류하는 AI 모델을 개발합니다. LG Aimers 프로그램과 연계됩니다.",
+          "description": "## 대회 소개\n\n실제 스마트 공장 센서 데이터를 활용하여 제품의 품질 상태(양품/불량)를 분류하는 AI 알고리즘을 개발합니다.\n\n## 주제\n\n스마트 공장 품질 분류 (Smart Factory Quality Classification)\n\n## 평가 지표\n\nMacro F1 Score\n\n## 주최 / 주관\n\n- 주최 : LG AI 연구원\n- 주관 : 데이콘",
+          "tags": ["Manufacturing", "QualityControl", "MacroF1", "SmartFactory"],
+          "host": "LG AI 연구원",
+          "organizer": "데이콘",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 5 }
+        },
+        "info": {
+          "notice": [
+            "온라인(Phase 2) → 오프라인(Phase 3) 2단계로 진행됩니다.",
+            "외부 데이터 사용이 금지됩니다."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/smartfactory2026",
+            "faq": "https://example.com/public/faq/smartfactory2026"
+          }
+        },
+        "eval": {
+          "metricName": "Macro F1 Score",
+          "description": "양품/불량 각 클래스의 F1 Score 평균으로 평가합니다.",
+          "limits": { "maxRuntimeSec": 600, "maxSubmissionsPerDay": 5 }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "접수 시작", "at": "2026-05-01T10:00:00+09:00" },
+            { "name": "리더보드 제출 마감", "at": "2026-05-20T10:00:00+09:00" },
+            { "name": "대회 종료", "at": "2026-05-25T10:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 3000000 },
+            { "place": "2nd", "amountKRW": 1500000 },
+            { "place": "3rd", "amountKRW": 800000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=smart-factory-ai-2026" },
+        "submit": {
+          "allowedArtifactTypes": ["zip"],
+          "submissionUrl": "/hackathons/smart-factory-ai-2026#submit",
+          "guide": ["csv 파일을 zip으로 압축하여 제출합니다."]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/smart-factory-ai-2026#leaderboard",
+          "note": "Public 리더보드는 전체 테스트 데이터의 30%로 산출됩니다."
+        }
+      }
+    },
+    {
+      "slug": "ev-price-prediction-2026",
+      "title": "전기차 가격 예측 해커톤 : 데이터로 EV를 읽다!",
+      "sections": {
+        "overview": {
+          "summary": "전기차 시장 데이터를 분석하여 차량 가격을 예측하는 AI 모델을 개발합니다. 입문자부터 중급자까지 참여 가능한 교육형 해커톤입니다.",
+          "description": "## 대회 소개\n\n전기차(EV) 관련 데이터를 분석하여 가격을 예측하는 AI 알고리즘을 개발합니다.\n\n## 주제\n\n전기차 가격 예측 (EV Price Prediction)\n\n## 평가 지표\n\nRMSE (Root Mean Squared Error)\n\n## 활용 분야\n\n- 시장 경쟁력 분석\n- 소비자 구매 의사결정 지원\n- 생산 최적화\n\n## 주최 / 주관\n\n- 주최 : DACON\n- 주관 : 데이콘",
+          "tags": ["Regression", "EV", "DataScience", "RMSE", "Beginner"],
+          "host": "DACON",
+          "organizer": "데이콘",
+          "teamPolicy": { "allowSolo": true, "maxTeamSize": 3 }
+        },
+        "info": {
+          "notice": [
+            "입문~중급 수준의 대회입니다.",
+            "외부 데이터 사용이 허용됩니다 (출처 명시 필요)."
+          ],
+          "links": {
+            "rules": "https://example.com/public/rules/ev2026",
+            "faq": "https://example.com/public/faq/ev2026"
+          }
+        },
+        "eval": {
+          "metricName": "RMSE",
+          "description": "실제 가격과 예측 가격의 RMSE로 평가합니다. 낮을수록 우수합니다.",
+          "limits": { "maxRuntimeSec": 300, "maxSubmissionsPerDay": 10 }
+        },
+        "schedule": {
+          "timezone": "Asia/Seoul",
+          "milestones": [
+            { "name": "접수 시작", "at": "2026-05-15T10:00:00+09:00" },
+            { "name": "리더보드 제출 마감", "at": "2026-06-01T10:00:00+09:00" },
+            { "name": "대회 종료", "at": "2026-06-07T10:00:00+09:00" }
+          ]
+        },
+        "prize": {
+          "items": [
+            { "place": "1st", "amountKRW": 1000000 },
+            { "place": "2nd", "amountKRW": 500000 },
+            { "place": "3rd", "amountKRW": 300000 }
+          ]
+        },
+        "teams": { "campEnabled": true, "listUrl": "/camp?hackathon=ev-price-prediction-2026" },
+        "submit": {
+          "allowedArtifactTypes": ["zip"],
+          "submissionUrl": "/hackathons/ev-price-prediction-2026#submit",
+          "guide": ["csv 파일을 zip으로 압축하여 제출합니다."]
+        },
+        "leaderboard": {
+          "publicLeaderboardUrl": "/hackathons/ev-price-prediction-2026#leaderboard",
+          "note": "Public 리더보드는 전체 테스트 데이터의 40%로 산출됩니다."
         }
       }
     }

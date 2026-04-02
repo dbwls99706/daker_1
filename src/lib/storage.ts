@@ -5,7 +5,7 @@ import detailJson from "@/data/public_hackathon_detail.json";
 import leaderboardJson from "@/data/public_leaderboard.json";
 import teamsJson from "@/data/public_teams.json";
 
-const SEED_VERSION = "5";
+const SEED_VERSION = "6";
 
 const KEYS = {
   hackathons: "batonhub_hackathons",
