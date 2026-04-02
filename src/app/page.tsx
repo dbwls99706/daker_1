@@ -15,9 +15,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { CountdownTimer } from "@/components/features/CountdownTimer";
 import { DonutChart } from "@/components/features/DonutChart";
 import { ShareButton } from "@/components/features/ShareButton";
-import { TeamActivityLog } from "@/components/features/TeamActivityLog";
-import { ParticipationTrend } from "@/components/features/Sparkline";
-import { TrophyIcon, UsersIcon, ChartBarIcon, TrendingUpIcon, ClockIcon, FireIcon, CheckCircleIcon, StarIcon, HistoryIcon } from "@/components/ui/Icons";
+import { TrophyIcon, UsersIcon, ChartBarIcon, TrendingUpIcon, FireIcon, CheckCircleIcon, StarIcon, HistoryIcon } from "@/components/ui/Icons";
 
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -363,23 +361,6 @@ export default function HomePage() {
         </Section>
       )}
 
-      {/* Submission Trend + Team Activity */}
-      <Section>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm card-hover-glow">
-            <ParticipationTrend leaderboards={leaderboards} hackathons={hackathons} />
-          </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm card-hover-glow">
-            <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-100 to-red-100 shadow-sm" aria-hidden="true">
-                <ClockIcon size={16} className="text-orange-600" />
-              </span>
-              최근 팀 활동
-            </h2>
-            <TeamActivityLog />
-          </div>
-        </div>
-      </Section>
 
       {/* Quick Nav Cards */}
       <Section>
