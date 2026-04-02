@@ -166,12 +166,14 @@ body {
 .dark .bg-white { background-color: var(--bg-surface) !important; }
 .dark .bg-white\/80 { background-color: rgba(9, 9, 11, 0.8) !important; }
 .dark .bg-gray-50 { background-color: var(--bg-muted) !important; }
+.dark .bg-gray-50\/80 { background-color: rgba(9, 9, 11, 0.8) !important; }
 .dark .bg-gray-100 { background-color: #18181b !important; }
 .dark .bg-gray-200 { background-color: #27272a !important; }
 
 /* Borders */
 .dark .border-gray-100 { border-color: #18181b !important; }
 .dark .border-gray-200 { border-color: var(--border-color) !important; }
+.dark .border-gray-200\/50 { border-color: rgba(39, 39, 42, 0.5) !important; }
 .dark .border-gray-300 { border-color: #3f3f46 !important; }
 .dark .border-dashed { border-color: #3f3f46 !important; }
 
