@@ -119,9 +119,9 @@ export function DonutChart({ segments, size = 180, thickness = 28, title }: Donu
                   }}
                   aria-hidden="true"
                 />
-                <span className="font-semibold text-gray-900 dark:text-gray-100">{seg.label}</span>
-                <span className="ml-auto tabular-nums font-bold text-gray-900 dark:text-gray-100">{seg.value}</span>
-                <span className="text-gray-500 dark:text-gray-400 text-xs font-medium tabular-nums">({Math.round((seg.value / total) * 100)}%)</span>
+                <span className="font-semibold" style={{ color: seg.color }}>{seg.label}</span>
+                <span className="ml-auto tabular-nums font-bold" style={{ color: seg.color }}>{seg.value}</span>
+                <span className="text-xs font-medium tabular-nums" style={{ color: seg.color, opacity: 0.7 }}>({Math.round((seg.value / total) * 100)}%)</span>
               </div>
             );
           })}
