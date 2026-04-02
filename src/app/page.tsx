@@ -65,6 +65,124 @@ function Section({ children, className = "", delay = 0 }: { children: React.Reac
   );
 }
 
+const FLOWERS = ["🌸", "🌺", "🌻", "🌷", "🌼", "💐", "🌹", "🪻", "🏵️", "✿"];
+
+function HeroSection() {
+  const heroRef = useRef<HTMLElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [flowers, setFlowers] = useState<{ id: number; x: number; y: number; emoji: string; size: number; delay: number }[]>([]);
+  const flowerId = useRef(0);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const el = heroRef.current;
+    const glow = glowRef.current;
+    if (!el || !glow) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    glow.style.transform = `translate(${x - 150}px, ${y - 150}px)`;
+    glow.style.opacity = "1";
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (glowRef.current) glowRef.current.style.opacity = "0";
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+  }, []);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const el = heroRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const baseX = e.clientX - rect.left;
+    const baseY = e.clientY - rect.top;
+    holdTimer.current = setTimeout(() => {
+      const batch = Array.from({ length: 12 }, (_, i) => ({
+        id: flowerId.current++,
+        x: baseX + (Math.random() - 0.5) * 200,
+        y: baseY + (Math.random() - 0.5) * 160,
+        emoji: FLOWERS[Math.floor(Math.random() * FLOWERS.length)],
+        size: 16 + Math.random() * 20,
+        delay: i * 80,
+      }));
+      setFlowers((prev) => [...prev, ...batch]);
+      setTimeout(() => setFlowers((prev) => prev.filter((f) => !batch.some((b) => b.id === f.id))), 3000);
+    }, 5000);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+  }, []);
+
+  return (
+    <section
+      ref={heroRef}
+      className="hero-gradient hero-animated relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-12 sm:px-10 sm:py-16 text-white animate-slide-up"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+    >
+      {/* Mouse-follow glow */}
+      <div
+        ref={glowRef}
+        className="pointer-events-none absolute h-[300px] w-[300px] rounded-full bg-white/[0.07] blur-[80px] transition-opacity duration-300"
+        style={{ opacity: 0 }}
+        aria-hidden="true"
+      />
+      {/* Flower easter egg */}
+      {flowers.map((f) => (
+        <span
+          key={f.id}
+          className="pointer-events-none absolute animate-[flowerBloom_1.5s_ease-out_forwards]"
+          style={{
+            left: f.x,
+            top: f.y,
+            fontSize: f.size,
+            animationDelay: `${f.delay}ms`,
+            opacity: 0,
+            zIndex: 20,
+          }}
+          aria-hidden="true"
+        >
+          {f.emoji}
+        </span>
+      ))}
+      <div className="relative z-10">
+        <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-blue-200 backdrop-blur-sm">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+          해커톤 통합 플랫폼
+        </p>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl hero-title-gradient">BatonHub</h1>
+        <p className="mt-4 max-w-xl text-lg text-blue-100 leading-relaxed">
+          해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지<br className="hidden sm:block" />
+          한곳에서 완결하는 해커톤 통합 대시보드
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/hackathons"
+            className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-[0_14px_28px_rgba(30,64,175,0.28)] btn-press"
+          >
+            해커톤 둘러보기
+            <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
+          </Link>
+          <Link
+            href="/camp"
+            className="group inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:shadow-[0_12px_24px_rgba(255,255,255,0.18)] btn-press"
+          >
+            팀 찾기
+            <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
+          </Link>
+        </div>
+      </div>
+      <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-white/5 blur-2xl" />
+      <div className="absolute right-1/4 top-1/2 h-40 w-40 rounded-full bg-indigo-400/20 blur-2xl" />
+      <div className="absolute left-1/3 -top-8 h-24 w-24 rounded-full bg-purple-400/15 blur-xl" />
+    </section>
+  );
+}
+
 export default function HomePage() {
   const ready = useSeedData();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -151,39 +269,7 @@ export default function HomePage() {
       )}
 
       {/* Hero */}
-      <section className="hero-gradient hero-animated relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-12 sm:px-10 sm:py-16 text-white animate-slide-up">
-        <div className="relative z-10">
-          <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-blue-200 backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
-            해커톤 통합 플랫폼
-          </p>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl hero-title-gradient">BatonHub</h1>
-          <p className="mt-4 max-w-xl text-lg text-blue-100 leading-relaxed">
-            해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지<br className="hidden sm:block" />
-            한곳에서 완결하는 해커톤 통합 대시보드
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/hackathons"
-              className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-[0_14px_28px_rgba(30,64,175,0.28)] btn-press"
-            >
-              해커톤 둘러보기
-              <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
-            </Link>
-            <Link
-              href="/camp"
-              className="group inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:shadow-[0_12px_24px_rgba(255,255,255,0.18)] btn-press"
-            >
-              팀 찾기
-              <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-        <div className="absolute -right-10 -top-10 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-white/5 blur-2xl" />
-        <div className="absolute right-1/4 top-1/2 h-40 w-40 rounded-full bg-indigo-400/20 blur-2xl" />
-        <div className="absolute left-1/3 -top-8 h-24 w-24 rounded-full bg-purple-400/15 blur-xl" />
-      </section>
+      <HeroSection />
 
       {/* Deadline Alert */}
       {(() => {

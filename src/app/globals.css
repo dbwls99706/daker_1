@@ -109,6 +109,14 @@ body {
   100% { background-position: 200% 0; }
 }
 
+/* Flower easter egg bloom */
+@keyframes flowerBloom {
+  0% { opacity: 0; transform: scale(0) rotate(0deg) translateY(0); }
+  30% { opacity: 1; transform: scale(1.2) rotate(20deg) translateY(-10px); }
+  60% { opacity: 1; transform: scale(1) rotate(-10deg) translateY(-30px); }
+  100% { opacity: 0; transform: scale(0.6) rotate(15deg) translateY(-60px); }
+}
+
 /* Progress bar shimmer sweep */
 @keyframes shimmer-sweep {
   0% { transform: translateX(-100%); }
