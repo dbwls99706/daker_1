@@ -99,6 +99,13 @@ export default function HomePage() {
     return <SkeletonPage />;
   }
 
+  const onboardingSteps = [
+    { label: "1. 해커톤 둘러보기", href: "/hackathons" },
+    { label: "2. 팀 찾기 / 생성", href: "/camp" },
+    { label: "3. 결과 제출", href: "/hackathons" },
+    { label: "4. 랭킹 확인", href: "/rankings" },
+  ] as const;
+
   return (
     <div className="space-y-10 animate-page-enter">
       <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
@@ -113,10 +120,14 @@ export default function HomePage() {
                 <h2 className="font-bold text-blue-900">BatonHub에 오신 것을 환영합니다!</h2>
                 <p className="mt-1 text-sm text-blue-700">해커톤 탐색, 팀 빌딩, 제출, 순위 확인을 한곳에서 할 수 있습니다.</p>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  {["1. 해커톤 둘러보기", "2. 팀 찾기 / 생성", "3. 결과 제출", "4. 랭킹 확인"].map((step, i) => (
-                    <span key={i} className="rounded-full bg-white/80 px-3 py-1.5 text-blue-700 font-medium shadow-sm border border-blue-100">
-                      {step}
-                    </span>
+                  {onboardingSteps.map((step) => (
+                    <Link
+                      key={step.label}
+                      href={step.href}
+                      className="cursor-pointer rounded-full bg-white/80 px-3 py-1.5 text-blue-700 font-medium shadow-sm border border-blue-100 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                    >
+                      {step.label}
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -149,15 +160,17 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/hackathons"
-              className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition hover:bg-blue-50 hover:shadow-xl btn-press"
+              className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-[0_14px_28px_rgba(30,64,175,0.28)] btn-press"
             >
               해커톤 둘러보기
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
             </Link>
             <Link
               href="/camp"
-              className="rounded-lg border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 btn-press"
+              className="group inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:bg-white/20 hover:shadow-[0_12px_24px_rgba(255,255,255,0.18)] btn-press"
             >
               팀 찾기
+              <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
