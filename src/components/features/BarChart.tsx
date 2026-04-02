@@ -44,19 +44,20 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     backgroundColor: color,
     minWidth: 24,
     transitionDelay: `${index * 70}ms`,
+    border: "1px solid rgba(15, 23, 42, 0.08)",
     filter: isDark && !isActive ? "brightness(0.82) saturate(0.9)" : undefined,
     opacity: isDark && !isActive ? 0.92 : 1,
   });
 
   return (
     <div role="figure" aria-label={title || "바 차트"} className="text-gray-900 dark:text-gray-100">
-      {title && <h3 className="mb-4 text-sm font-bold text-black dark:text-gray-300">{title}</h3>}
+      {title && <h3 className="mb-4 text-sm font-bold text-gray-700 dark:text-gray-200">{title}</h3>}
       <span className="sr-only">{description}</span>
-      <div className="relative flex items-end gap-3 justify-center rounded-xl border border-gray-200 bg-gray-50 px-2 dark:border-gray-700 dark:bg-gray-900/40" style={{ height: maxHeight + 40 }} aria-hidden="true">
+      <div className="relative flex items-end gap-3 justify-center rounded-xl px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[80%] opacity-100 dark:opacity-70"
+          className="pointer-events-none absolute inset-x-1 bottom-6 h-[80%] rounded-lg opacity-70 dark:opacity-45"
           style={{
-            backgroundImage: "repeating-linear-gradient(to top, rgba(148,163,184,0.16) 0px, rgba(148,163,184,0.16) 1px, transparent 1px, transparent 20px)",
+            backgroundImage: "repeating-linear-gradient(to top, rgba(148,163,184,0.14) 0px, rgba(148,163,184,0.14) 1px, transparent 1px, transparent 20px)",
           }}
         />
         {data.map((d, index) => {
@@ -76,7 +77,9 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
             >
               <span
                 className={`text-sm font-extrabold tabular-nums transition-colors ${
-                  activeIndex === index ? "text-blue-700 dark:text-blue-300" : "text-black dark:text-gray-100"
+                  activeIndex === index
+                    ? "rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+                    : "rounded-full bg-white/95 px-2 py-0.5 text-gray-700 shadow-sm dark:bg-zinc-900/90 dark:text-gray-100"
                 }`}
               >
                 {d.value}
@@ -98,7 +101,9 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
               </span>
               <span
                 className={`w-full truncate text-center text-xs font-bold leading-tight transition-colors ${
-                  activeIndex === index ? "text-blue-800 dark:text-blue-300" : "text-black dark:text-gray-300"
+                  activeIndex === index
+                    ? "rounded-md bg-blue-50 px-1.5 py-0.5 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300"
+                    : "rounded-md bg-white/95 px-1.5 py-0.5 text-gray-600 shadow-sm dark:bg-zinc-900/90 dark:text-gray-300"
                 }`}
               >
                 {d.label}
