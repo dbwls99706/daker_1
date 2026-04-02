@@ -38,6 +38,7 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
   const [showConfirm, setShowConfirm] = useState(false);
   const [showResubmit, setShowResubmit] = useState(false);
   const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
+  const [teamNameError, setTeamNameError] = useState("");
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load draft from localStorage on mount (only if no existing submission)
@@ -85,20 +86,33 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
     }
   }
 
-  function validateUrls(): boolean {
+  function validateForm(requireTeamName: boolean): boolean {
+    let valid = true;
     const errors: Record<string, string> = {};
+
+    if (requireTeamName && !teamName.trim()) {
+      setTeamNameError("팀명을 입력해주세요.");
+      valid = false;
+    } else {
+      setTeamNameError("");
+    }
+
     if (hasSteps) {
       for (const step of sections.submissionItems!) {
-        if (step.format === "url" || step.format === "pdf_url") {
-          const val = items.find((i) => i.key === step.key)?.value || "";
-          if (val && !isValidUrl(val)) {
-            errors[step.key] = "올바른 URL 형식이 아닙니다 (https://...)";
-          }
+        const val = items.find((i) => i.key === step.key)?.value || "";
+        // Validate required fields are not empty on final submit
+        if (requireTeamName && !val.trim()) {
+          errors[step.key] = "필수 항목입니다.";
+          valid = false;
+        } else if ((step.format === "url" || step.format === "pdf_url") && val && !isValidUrl(val)) {
+          errors[step.key] = "올바른 URL 형식이 아닙니다 (https://...)";
         }
       }
     }
     setUrlErrors(errors);
-    return Object.keys(errors).length === 0;
+    if (Object.keys(errors).length > 0) valid = false;
+
+    return valid;
   }
 
   const isSubmitted = existingSubmission?.status === "submitted";
@@ -167,14 +181,19 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
             id="submit-team-name"
             type="text"
             value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
+            onChange={(e) => { setTeamName(e.target.value); if (teamNameError) setTeamNameError(""); }}
             disabled={isSubmitted}
             aria-required="true"
+            aria-invalid={!!teamNameError || undefined}
+            aria-describedby={teamNameError ? "submit-team-name-error" : undefined}
             maxLength={MAX_TEAM_NAME}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
+            className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 ${teamNameError ? "border-red-400" : "border-gray-300"}`}
             placeholder="리더보드에 표시될 팀명을 입력하세요"
           />
-          {!isSubmitted && (
+          {teamNameError && (
+            <p id="submit-team-name-error" className="text-xs text-red-500 mt-0.5" role="alert">{teamNameError}</p>
+          )}
+          {!isSubmitted && !teamNameError && (
             <p className="text-xs text-gray-400 text-right mt-0.5">{teamName.length}/{MAX_TEAM_NAME}</p>
           )}
         </div>
@@ -184,15 +203,23 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
               <div key={step.key} className="space-y-2">
                 <label htmlFor={`submit-${step.key}`} className="block text-sm font-semibold text-gray-700">{step.title}</label>
                 {step.format === "text_or_url" ? (
-                  <textarea
-                    id={`submit-${step.key}`}
-                    value={items.find((i) => i.key === step.key)?.value || ""}
-                    onChange={(e) => updateItem(step.key, e.target.value)}
-                    rows={3}
-                    disabled={isSubmitted}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
-                    placeholder="텍스트 또는 URL을 입력하세요"
-                  />
+                  <>
+                    <textarea
+                      id={`submit-${step.key}`}
+                      value={items.find((i) => i.key === step.key)?.value || ""}
+                      onChange={(e) => updateItem(step.key, e.target.value)}
+                      rows={3}
+                      disabled={isSubmitted}
+                      aria-required="true"
+                      aria-invalid={!!urlErrors[step.key] || undefined}
+                      aria-describedby={urlErrors[step.key] ? `submit-error-${step.key}` : undefined}
+                      className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 ${urlErrors[step.key] ? "border-red-400" : "border-gray-300"}`}
+                      placeholder="텍스트 또는 URL을 입력하세요"
+                    />
+                    {urlErrors[step.key] && (
+                      <p id={`submit-error-${step.key}`} className="text-xs text-red-500" role="alert">{urlErrors[step.key]}</p>
+                    )}
+                  </>
                 ) : (
                   <>
                     <input
@@ -201,8 +228,9 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
                       value={items.find((i) => i.key === step.key)?.value || ""}
                       onChange={(e) => updateItem(step.key, e.target.value)}
                       disabled={isSubmitted}
+                      aria-required="true"
                       aria-describedby={urlErrors[step.key] ? `submit-error-${step.key}` : undefined}
-                      aria-invalid={!!urlErrors[step.key]}
+                      aria-invalid={!!urlErrors[step.key] || undefined}
                       className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 ${urlErrors[step.key] ? "border-red-400" : "border-gray-300"}`}
                       placeholder="https://..."
                     />
@@ -231,6 +259,7 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
                   value={items.find((i) => i.key === k)?.value || ""}
                   onChange={(e) => updateItem(k, e.target.value)}
                   disabled={isSubmitted}
+                  aria-required="true"
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
                   placeholder={`${k} 파일 경로 또는 URL`}
                 />
@@ -269,13 +298,13 @@ export function SubmitTab({ sections, existingSubmission, onSave, onSubmit }: Su
           )}
           <div className="flex gap-3">
             <button
-              onClick={() => { if (validateUrls()) { clearDraft(); onSave(items, memo, teamName); } }}
+              onClick={() => { if (validateForm(false)) { clearDraft(); onSave(items, memo, teamName); } }}
               className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium hover:bg-gray-50"
             >
               임시 저장
             </button>
             <button
-              onClick={() => { if (validateUrls()) setShowConfirm(true); }}
+              onClick={() => { if (validateForm(true)) setShowConfirm(true); }}
               disabled={!teamName.trim()}
               className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >

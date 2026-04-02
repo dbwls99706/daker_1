@@ -1,3 +1,5 @@
+import React from "react";
+
 interface EmptyStateProps {
   title?: string;
   description?: string;
@@ -52,7 +54,7 @@ function EmptyIcon({ type }: { type: string }) {
   }
 }
 
-export function EmptyState({
+export const EmptyState = React.memo(function EmptyState({
   title = "데이터가 없습니다",
   description = "아직 등록된 항목이 없습니다.",
   action,
@@ -66,4 +68,4 @@ export function EmptyState({
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
-}
+});

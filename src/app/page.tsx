@@ -14,6 +14,10 @@ import { getDday, formatDate, getTimeRemaining } from "@/lib/utils";
 import { useCountUp } from "@/hooks/useCountUp";
 import { CountdownTimer } from "@/components/features/CountdownTimer";
 import { DonutChart } from "@/components/features/DonutChart";
+import { ShareButton } from "@/components/features/ShareButton";
+import { TeamActivityLog } from "@/components/features/TeamActivityLog";
+import { ParticipationTrend } from "@/components/features/Sparkline";
+import { TrophyIcon, UsersIcon, ChartBarIcon, TrendingUpIcon, ClockIcon, FireIcon, CheckCircleIcon, StarIcon, HistoryIcon } from "@/components/ui/Icons";
 
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -31,7 +35,7 @@ function useInView(threshold = 0.1) {
   return { ref, inView };
 }
 
-function AnimatedStat({ value, label, icon, color, bg, border, delay }: { value: number; label: string; icon: string; color: string; bg: string; border: string; delay: number }) {
+function AnimatedStat({ value, label, icon, color, bg, border, delay }: { value: number; label: string; icon: React.ReactNode; color: string; bg: string; border: string; delay: number }) {
   const animated = useCountUp(value);
   return (
     <div
@@ -41,7 +45,7 @@ function AnimatedStat({ value, label, icon, color, bg, border, delay }: { value:
       <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/20 blur-xl transition-transform duration-500 group-hover:scale-[2]" />
       <div className="relative">
         <div className="mb-2 flex justify-center">
-          <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${bg} text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`} aria-hidden="true">{icon}</span>
+          <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${bg} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`} aria-hidden="true">{icon}</span>
         </div>
         <div className={`text-3xl font-extrabold tabular-nums ${color} transition-transform duration-300 group-hover:scale-110`}>{animated}</div>
         <div className="mt-1 text-sm text-gray-600">{label}</div>
@@ -149,13 +153,13 @@ export default function HomePage() {
       )}
 
       {/* Hero */}
-      <section className="hero-gradient relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-12 sm:px-10 sm:py-16 text-white animate-slide-up">
+      <section className="hero-gradient hero-animated relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-6 py-12 sm:px-10 sm:py-16 text-white animate-slide-up">
         <div className="relative z-10">
           <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-blue-200 backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
             해커톤 통합 플랫폼
           </p>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">BatonHub</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl hero-title-gradient">BatonHub</h1>
           <p className="mt-4 max-w-xl text-lg text-blue-100 leading-relaxed">
             해커톤 탐색부터 팀 빌딩, 제출, 순위 확인까지<br className="hidden sm:block" />
             한곳에서 완결하는 해커톤 통합 대시보드
@@ -220,10 +224,10 @@ export default function HomePage() {
       {/* Stats Dashboard */}
       <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {[
-          { value: hackathons.length, label: "등록된 해커톤", icon: "🏆", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
-          { value: ongoingCount, label: "진행중인 해커톤", icon: "🔥", color: "text-green-600", bg: "bg-green-50", border: "border-green-100" },
-          { value: openTeamCount, label: "모집중인 팀", icon: "👥", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
-          { value: submittedCount, label: "제출 완료", icon: "✅", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-100" },
+          { value: hackathons.length, label: "등록된 해커톤", icon: <TrophyIcon size={22} className="text-blue-600" />, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
+          { value: ongoingCount, label: "진행중인 해커톤", icon: <FireIcon size={22} className="text-green-600" />, color: "text-green-600", bg: "bg-green-50", border: "border-green-100" },
+          { value: openTeamCount, label: "모집중인 팀", icon: <UsersIcon size={22} className="text-purple-600" />, color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
+          { value: submittedCount, label: "제출 완료", icon: <CheckCircleIcon size={22} className="text-orange-600" />, color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-100" },
         ].map((stat, i) => (
           <AnimatedStat key={stat.label} {...stat} delay={i * 80} />
         ))}
@@ -359,20 +363,38 @@ export default function HomePage() {
         </Section>
       )}
 
+      {/* Submission Trend + Team Activity */}
+      <Section>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm card-hover-glow">
+            <ParticipationTrend leaderboards={leaderboards} hackathons={hackathons} />
+          </div>
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm card-hover-glow">
+            <h2 className="mb-4 text-lg font-bold flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-100 to-red-100 shadow-sm" aria-hidden="true">
+                <ClockIcon size={16} className="text-orange-600" />
+              </span>
+              최근 팀 활동
+            </h2>
+            <TeamActivityLog />
+          </div>
+        </div>
+      </Section>
+
       {/* Quick Nav Cards */}
       <Section>
         <div className="grid gap-4 sm:grid-cols-3 overflow-visible">
           {[
-            { href: "/hackathons", icon: "🏆", iconBg: "bg-blue-100", title: "해커톤 보러가기", desc: `${hackathons.length}개의 해커톤이 등록되어 있습니다`, hoverBorder: "hover:border-blue-300", hoverText: "group-hover:text-blue-600" },
-            { href: "/camp", icon: "👥", iconBg: "bg-green-100", title: "팀 찾기", desc: `${openTeamCount}개 팀이 모집중입니다`, hoverBorder: "hover:border-green-300", hoverText: "group-hover:text-green-600" },
-            { href: "/rankings", icon: "📊", iconBg: "bg-purple-100", title: "랭킹 보기", desc: `${totalEntries}명의 참가자가 등록되었습니다`, hoverBorder: "hover:border-purple-300", hoverText: "group-hover:text-purple-600" },
+            { href: "/hackathons", icon: <TrophyIcon size={24} className="text-blue-600" />, iconBg: "bg-blue-100", title: "해커톤 보러가기", desc: `${hackathons.length}개의 해커톤이 등록되어 있습니다`, hoverBorder: "hover:border-blue-300", hoverText: "group-hover:text-blue-600" },
+            { href: "/camp", icon: <UsersIcon size={24} className="text-green-600" />, iconBg: "bg-green-100", title: "팀 찾기", desc: `${openTeamCount}개 팀이 모집중입니다`, hoverBorder: "hover:border-green-300", hoverText: "group-hover:text-green-600" },
+            { href: "/rankings", icon: <ChartBarIcon size={24} className="text-purple-600" />, iconBg: "bg-purple-100", title: "랭킹 보기", desc: `${totalEntries}명의 참가자가 등록되었습니다`, hoverBorder: "hover:border-purple-300", hoverText: "group-hover:text-purple-600" },
           ].map((card, i) => (
             <TiltCard key={card.href} className="animate-slide-up" style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}>
               <Link
                 href={card.href}
                 className={`group block rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md ${card.hoverBorder} card-hover-glow`}
               >
-                <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} text-2xl transition-transform group-hover:scale-110`} aria-hidden="true">
+                <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} transition-transform group-hover:scale-110`} aria-hidden="true">
                   {card.icon}
                 </div>
                 <h2 className={`text-lg font-bold text-gray-900 ${card.hoverText}`}>{card.title}</h2>

@@ -38,6 +38,8 @@ function CampContent() {
   const [lookingFor, setLookingFor] = useState("");
   const [selectedHackathon, setSelectedHackathon] = useState(hackathonFilter);
   const [contactError, setContactError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [introError, setIntroError] = useState("");
 
   useEffect(() => {
     setSelectedHackathon(hackathonFilter);
@@ -67,12 +69,26 @@ function CampContent() {
   };
 
   function handleCreate() {
-    if (!name.trim() || !intro.trim()) return;
+    let valid = true;
+    if (!name.trim()) {
+      setNameError("팀명을 입력해주세요.");
+      valid = false;
+    } else {
+      setNameError("");
+    }
+    if (!intro.trim()) {
+      setIntroError("소개를 입력해주세요.");
+      valid = false;
+    } else {
+      setIntroError("");
+    }
     if (contactUrl.trim() && !isValidUrl(contactUrl.trim())) {
       setContactError("올바른 URL 형식이 아닙니다 (https://...)");
-      return;
+      valid = false;
+    } else {
+      setContactError("");
     }
-    setContactError("");
+    if (!valid) return;
 
     const team: Team = {
       teamCode: `T-${generateId().toUpperCase()}`,
@@ -193,7 +209,7 @@ function CampContent() {
 
       {/* Create Form */}
       {showCreate && (
-        <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6 space-y-4 animate-slide-up">
+        <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 p-6 space-y-4 animate-slide-up" role="form" aria-label="새 팀 모집글 작성">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-sm" aria-hidden="true">✏️</span>
             새 팀 모집글
@@ -207,13 +223,18 @@ function CampContent() {
                 id="camp-team-name"
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); if (nameError) setNameError(""); }}
                 aria-required="true"
+                aria-invalid={!!nameError || undefined}
+                aria-describedby={nameError ? "camp-team-name-error" : undefined}
                 maxLength={30}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${nameError ? "border-red-400" : "border-gray-300"}`}
                 placeholder="팀 이름 (최대 30자)"
               />
-              <p className="text-xs text-gray-400 text-right mt-0.5">{name.length}/30</p>
+              {nameError && (
+                <p id="camp-team-name-error" className="text-xs text-red-500 mt-0.5" role="alert">{nameError}</p>
+              )}
+              {!nameError && <p className="text-xs text-gray-400 text-right mt-0.5">{name.length}/30</p>}
             </div>
             <div>
               <label htmlFor="camp-hackathon" className="block text-sm font-semibold text-gray-700 mb-1">해커톤 연결</label>
@@ -239,14 +260,19 @@ function CampContent() {
             <textarea
               id="camp-intro"
               value={intro}
-              onChange={(e) => setIntro(e.target.value)}
+              onChange={(e) => { setIntro(e.target.value); if (introError) setIntroError(""); }}
               rows={2}
               aria-required="true"
+              aria-invalid={!!introError || undefined}
+              aria-describedby={introError ? "camp-intro-error" : undefined}
               maxLength={200}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${introError ? "border-red-400" : "border-gray-300"}`}
               placeholder="팀 소개를 작성하세요 (최대 200자)"
             />
-            <p className="text-xs text-gray-400 text-right mt-0.5">{intro.length}/200</p>
+            {introError && (
+              <p id="camp-intro-error" className="text-xs text-red-500 mt-0.5" role="alert">{introError}</p>
+            )}
+            {!introError && <p className="text-xs text-gray-400 text-right mt-0.5">{intro.length}/200</p>}
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -275,12 +301,10 @@ function CampContent() {
               {contactError && <p id="camp-contact-error" className="text-xs text-red-500 mt-0.5" role="alert">{contactError}</p>}
             </div>
           </div>
-          {(!name.trim() || !intro.trim()) && (name || intro) && (
-            <p className="text-xs text-red-500">팀명과 소개를 모두 입력해야 생성할 수 있습니다.</p>
-          )}
+          {/* Per-field validation errors are shown inline above each field */}
           <button
             onClick={handleCreate}
-            disabled={!name.trim() || !intro.trim() || !!contactError}
+            disabled={!name.trim() || !intro.trim() || !!contactError || !!nameError || !!introError}
             className="cursor-pointer rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition btn-press shadow-sm"
           >
             생성하기

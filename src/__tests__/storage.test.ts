@@ -52,7 +52,7 @@ describe("Hackathons", () => {
 
   it("returns hackathon list", () => {
     const hackathons = getHackathons();
-    expect(hackathons.length).toBe(3);
+    expect(hackathons.length).toBe(8);
     expect(hackathons[0]).toHaveProperty("slug");
     expect(hackathons[0]).toHaveProperty("title");
     expect(hackathons[0]).toHaveProperty("status");
