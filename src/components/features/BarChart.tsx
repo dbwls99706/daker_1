@@ -44,6 +44,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     backgroundColor: color,
     minWidth: 24,
     transitionDelay: `${index * 70}ms`,
+    border: "1px solid rgba(15, 23, 42, 0.08)",
     filter: isDark && !isActive ? "brightness(0.82) saturate(0.9)" : undefined,
     opacity: isDark && !isActive ? 0.92 : 1,
   });
@@ -52,11 +53,11 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     <div role="figure" aria-label={title || "바 차트"} className="text-gray-900 dark:text-gray-100">
       {title && <h3 className="mb-4 text-sm font-bold text-black dark:text-gray-300">{title}</h3>}
       <span className="sr-only">{description}</span>
-      <div className="relative flex items-end gap-3 justify-center rounded-xl border border-gray-200 bg-gray-50 px-2 dark:border-gray-700 dark:bg-gray-900/40" style={{ height: maxHeight + 40 }} aria-hidden="true">
+      <div className="relative flex items-end gap-3 justify-center rounded-xl border border-gray-200 bg-white px-2 dark:border-gray-700 dark:bg-gray-900/40" style={{ height: maxHeight + 40 }} aria-hidden="true">
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[80%] opacity-100 dark:opacity-70"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[80%] opacity-80 dark:opacity-60"
           style={{
-            backgroundImage: "repeating-linear-gradient(to top, rgba(148,163,184,0.16) 0px, rgba(148,163,184,0.16) 1px, transparent 1px, transparent 20px)",
+            backgroundImage: "repeating-linear-gradient(to top, rgba(148,163,184,0.12) 0px, rgba(148,163,184,0.12) 1px, transparent 1px, transparent 20px)",
           }}
         />
         {data.map((d, index) => {
