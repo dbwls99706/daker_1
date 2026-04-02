@@ -301,7 +301,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               aria-controls={`tabpanel-${tab.key}`}
               id={`tab-${tab.key}`}
               tabIndex={activeTab === tab.key ? 0 : -1}
-              className={`whitespace-nowrap flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition btn-press ${
+              className={`cursor-pointer whitespace-nowrap flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition btn-press ${
                 activeTab === tab.key
                   ? "bg-white text-blue-700 shadow-sm"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
