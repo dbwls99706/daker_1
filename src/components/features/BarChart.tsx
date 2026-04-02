@@ -37,7 +37,6 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
     );
   }
   const maxValue = Math.max(...data.map((d) => d.value), 1);
-  const totalValue = data.reduce((sum, d) => sum + d.value, 0);
   const description = data.map((d) => `${d.label}: ${d.value}점`).join(", ");
 
   const getBarStyle = (color: string, barHeight: number, index: number, isActive: boolean) => ({
@@ -51,7 +50,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
 
   return (
     <div role="figure" aria-label={title || "바 차트"}>
-      {title && <h3 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">{title}</h3>}
+      {title && <h3 className="mb-4 text-sm font-bold text-black dark:text-gray-300">{title}</h3>}
       <span className="sr-only">{description}</span>
       <div className="relative flex items-end gap-3 justify-center rounded-xl px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
         <div
@@ -63,7 +62,6 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
         {data.map((d, index) => {
           const barHeight = Math.max(4, (d.value / maxValue) * maxHeight);
           const color = d.color || "#3b82f6";
-          const share = totalValue > 0 ? ((d.value / totalValue) * 100).toFixed(1) : "0.0";
           return (
             <div
               key={d.label}
@@ -78,7 +76,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
             >
               <span
                 className={`text-xs font-bold tabular-nums transition-colors ${
-                  activeIndex === index ? "text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-200"
+                  activeIndex === index ? "text-blue-700 dark:text-blue-300" : "text-black dark:text-gray-100"
                 }`}
               >
                 {d.value}
@@ -92,15 +90,15 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
                 style={getBarStyle(color, barHeight, index, activeIndex === index)}
               />
               <span
-                className={`pointer-events-none absolute -top-5 rounded-full bg-gray-900/90 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm transition-opacity dark:bg-black/85 ${
+                className={`pointer-events-none absolute -top-7 whitespace-nowrap rounded-full bg-gray-900/90 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm transition-opacity dark:bg-black/85 ${
                   activeIndex === index ? "opacity-100" : "opacity-0"
                 }`}
               >
-                {d.value}점 · {share}%
+                {d.value}점
               </span>
               <span
-                className={`w-full truncate text-center text-[10px] leading-tight transition-colors ${
-                  activeIndex === index ? "text-blue-700 dark:text-blue-300" : "text-gray-500 dark:text-gray-400"
+                className={`w-full truncate text-center text-[10px] font-semibold leading-tight transition-colors ${
+                  activeIndex === index ? "text-blue-800 dark:text-blue-300" : "text-black dark:text-gray-300"
                 }`}
               >
                 {d.label}

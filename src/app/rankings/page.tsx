@@ -234,7 +234,7 @@ export default function RankingsPage() {
                     {Number.isInteger(r.totalScore) ? r.totalScore : r.totalScore.toFixed(2)}점
                   </span>
                   <div className={`${heights[i]} w-full rounded-t-2xl border-2 ${bgColors[i]} flex items-center justify-center transition-all shadow-sm`}>
-                    <span className="text-3xl font-extrabold text-gray-400/60">{r.rank}</span>
+                    <span className="text-3xl font-extrabold text-gray-700/90 dark:text-gray-100/90">{r.rank}</span>
                   </div>
                 </div>
               );
