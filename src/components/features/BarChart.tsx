@@ -103,7 +103,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
                 className={`w-full truncate text-center text-xs font-bold leading-tight transition-colors ${
                   activeIndex === index
                     ? "text-blue-800 dark:text-blue-300"
-                    : "text-gray-600 dark:text-gray-300"
+                    : "text-gray-800 dark:text-gray-100"
                 }`}
               >
                 {d.label}
