@@ -50,7 +50,7 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
 
   return (
     <div role="figure" aria-label={title || "바 차트"}>
-      {title && <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-gray-100">{title}</h3>}
+      {title && <h3 className="mb-4 text-sm font-bold text-gray-950 dark:text-gray-100">{title}</h3>}
       <span className="sr-only">{description}</span>
       <div className="relative flex items-end gap-3 justify-center rounded-xl px-2" style={{ height: maxHeight + 40 }} aria-hidden="true">
         <div
@@ -97,8 +97,8 @@ export function BarChart({ data, maxHeight = 160, title }: BarChartProps) {
                 {d.value}점
               </span>
               <span
-                className={`w-full truncate text-center text-[10px] leading-tight transition-colors ${
-                  activeIndex === index ? "text-blue-700 dark:text-blue-300" : "text-gray-500 dark:text-gray-400"
+                className={`w-full truncate text-center text-[10px] font-semibold leading-tight transition-colors ${
+                  activeIndex === index ? "text-blue-800 dark:text-blue-300" : "text-gray-800 dark:text-gray-300"
                 }`}
               >
                 {d.label}
