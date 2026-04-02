@@ -20,6 +20,7 @@ import { LeaderboardTab } from "@/components/features/tabs/LeaderboardTab";
 import { getDday, generateId, getTimeRemaining } from "@/lib/utils";
 import { Confetti } from "@/components/features/Confetti";
 import { CountdownTimer } from "@/components/features/CountdownTimer";
+import { ShareButton } from "@/components/features/ShareButton";
 import type { Submission } from "@/types";
 
 const TABS = [
@@ -127,7 +128,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   const sec = detail.sections;
 
   function handleSaveSubmission(items: { key: string; value: string }[], memo: string, teamName: string) {
-    const existing = submissions.length > 0 ? submissions[0] : null;
+    const existing = submissions?.length > 0 ? submissions?.[0] : null;
     const sub: Submission = {
       id: existing?.id || generateId(),
       hackathonSlug: slug,
@@ -143,7 +144,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
   }
 
   function handleSubmit(items: { key: string; value: string }[], memo: string, teamName: string) {
-    const existing = submissions.length > 0 ? submissions[0] : null;
+    const existing = submissions?.length > 0 ? submissions?.[0] : null;
     const finalTeamName = teamName.trim();
     const sub: Submission = {
       id: existing?.id || generateId(),
@@ -193,14 +194,14 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
       <div>
         <nav className="mb-3 flex items-center gap-1.5 text-sm text-gray-500" aria-label="브레드크럼">
           <Link href="/" className="hover:text-gray-700 transition">홈</Link>
-          <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
           <Link href="/hackathons" className="hover:text-gray-700 transition">해커톤</Link>
-          <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
-          <span className="text-gray-900 font-medium truncate max-w-[200px]">{detail.title}</span>
+          <span className="text-gray-900 font-medium truncate max-w-[200px]" aria-current="page">{detail.title}</span>
         </nav>
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl sm:text-3xl font-bold">{detail.title}</h1>
@@ -210,19 +211,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
               {getDday(hackathon.period.submissionDeadlineAt)}
             </span>
           )}
-          <button
-            onClick={() => {
-              const url = window.location.href;
-              if (navigator.clipboard) {
-                navigator.clipboard.writeText(url).then(() => setToastMsg("링크가 복사되었습니다!"));
-              }
-            }}
-            className="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition flex items-center gap-1 btn-press"
-            aria-label="링크 복사"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-            공유
-          </button>
+          <ShareButton title={detail.title} description={detail.sections?.overview?.summary} />
         </div>
         {hackathon.status !== "ended" && (
           <div className="mt-4 max-w-md">
@@ -262,9 +251,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
           </div>
           {submissions.length > 0 && (
             <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm border border-gray-100">
-              <div className={`h-2.5 w-2.5 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
+              <div className={`h-2.5 w-2.5 rounded-full ${submissions?.[0]?.status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
               <span className="font-semibold text-gray-900">
-                {submissions[0].status === "submitted" ? "제출 완료" : "임시 저장됨"}
+                {submissions?.[0]?.status === "submitted" ? "제출 완료" : "임시 저장됨"}
               </span>
             </div>
           )}
@@ -307,7 +296,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
             >
-              <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
               </svg>
               <span className="hidden sm:inline">{tab.label}</span>
@@ -319,7 +308,7 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
                 <span className="rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600">{leaderboard.entries.length}</span>
               )}
               {tab.key === "submit" && submissions.length > 0 && (
-                <span className={`ml-0.5 inline-flex h-2 w-2 rounded-full ${submissions[0].status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
+                <span className={`ml-0.5 inline-flex h-2 w-2 rounded-full ${submissions?.[0]?.status === "submitted" ? "bg-green-500" : "bg-yellow-500"}`} />
               )}
             </button>
           ))}
@@ -337,9 +326,9 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ slug
         {activeTab === "submit" && (
           sec.submit ? (
             <SubmitTab
-              key={submissions[0]?.id || "new"}
+              key={submissions?.[0]?.id || "new"}
               sections={sec.submit}
-              existingSubmission={submissions[0] || null}
+              existingSubmission={submissions?.[0] ?? null}
               onSave={handleSaveSubmission}
               onSubmit={handleSubmit}
             />

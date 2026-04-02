@@ -86,7 +86,12 @@ function getItem<T>(key: string, fallback: T): T {
   const raw = localStorage.getItem(key);
   if (!raw) return fallback;
   try {
-    return JSON.parse(raw) as T;
+    const parsed = JSON.parse(raw);
+    // Basic type-shape validation
+    if (Array.isArray(fallback) && !Array.isArray(parsed)) return fallback;
+    if (!Array.isArray(fallback) && typeof fallback === "object" && fallback !== null && (typeof parsed !== "object" || parsed === null || Array.isArray(parsed))) return fallback;
+    if (typeof fallback === "string" && typeof parsed !== "string") return fallback;
+    return parsed as T;
   } catch {
     return fallback;
   }
@@ -226,6 +231,7 @@ export function getSubmissions(hackathonSlug?: string): Submission[] {
 
 export function saveSubmission(submission: Submission) {
   if (!submission.id || !submission.hackathonSlug || !submission.teamName) return false;
+  if (!Array.isArray(submission.items)) return false;
   const all = getItem<Submission[]>(KEYS.submissions, []);
   const idx = all.findIndex((s) => s.id === submission.id);
   if (idx >= 0) all[idx] = submission;

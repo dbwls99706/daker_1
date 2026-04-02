@@ -41,7 +41,7 @@ DACON 월간 해커톤 "긴급 인수인계 해커톤" 출품작
 | **기본 구현** | 30% | 5개 페이지 + 8개 탭 완전 구현, 필터/정렬/검색/뷰 토글, 빈 상태 UI (5종 SVG 아이콘), CRUD, localStorage 시드 |
 | **확장/아이디어** | 30% | 실시간 카운트다운(긴급도 색상변화), SVG 차트(도넛+바), AI 팀 매칭, 드래그&드롭 업로드(10MB 제한), 알림 센터, 북마크, 다크모드, 통계 대시보드, CSV 내보내기, 온보딩, 링크 공유, 스켈레톤 로딩, 키보드 단축키, URL 상태 동기화, 스크롤 진행률 표시 |
 | **완성도** | 25% | error.tsx/loading.tsx/not-found.tsx, ErrorBoundary, 입력 검증(URL/파일크기/팀인원), XSS 방지(sanitizeUrl), 접근성(ARIA/포커스트랩/skip-link), 반응형(모바일/태블릿/데스크톱), WCAG AA 명도 대비, prefers-reduced-motion, useMemo/useCallback 최적화, 스티키 필터바 |
-| **문서화** | 15% | README(구조/흐름/접근성/에러처리), 테스트 67개 통과, 원클릭 실행, 재현 가능성 |
+| **문서화** | 15% | README(구조/흐름/접근성/에러처리), 테스트 70개 통과, 원클릭 실행, 재현 가능성 |
 
 ---
 
@@ -140,7 +140,7 @@ DACON 월간 해커톤 "긴급 인수인계 해커톤" 출품작
 | Styling | Tailwind CSS 4 + CSS Custom Properties |
 | Font | Pretendard Variable (한글 최적화) |
 | Data | localStorage (JSON seed, 버전 관리) |
-| Testing | Vitest + @testing-library/react (67 tests) |
+| Testing | Vitest + @testing-library/react (70 tests) |
 | Deployment | Vercel |
 
 ---
@@ -210,7 +210,7 @@ src/
 ├── lib/                        # 유틸리티 (storage.ts, utils.ts)
 ├── types/                      # TypeScript 타입 정의
 ├── data/                       # 시드 JSON 데이터
-└── __tests__/                  # 테스트 (67개)
+└── __tests__/                  # 테스트 (70개)
 ```
 
 ## 데이터 구조

@@ -10,6 +10,11 @@ const SLUG_GRADIENTS: Record<string, string> = {
   "aimers-8-model-lite": "from-blue-600 via-indigo-600 to-purple-700",
   "monthly-vibe-coding-2026-02": "from-rose-500 via-pink-500 to-orange-400",
   "daker-handover-2026-03": "from-cyan-500 via-blue-500 to-indigo-600",
+  "sesac-hackathon-2026": "from-emerald-500 via-green-500 to-teal-600",
+  "cyber-attack-prediction-2026": "from-red-600 via-rose-600 to-pink-700",
+  "voice-classification-2026": "from-amber-500 via-orange-500 to-red-500",
+  "smart-factory-ai-2026": "from-slate-600 via-zinc-600 to-gray-700",
+  "ev-price-prediction-2026": "from-lime-500 via-green-500 to-emerald-600",
 };
 
 interface HackathonThumbnailProps {
