@@ -209,7 +209,7 @@ export default function RankingsPage() {
               data={rankings.slice(0, 8).map((r, i) => ({
                 label: r.teamName.length > 8 ? r.teamName.slice(0, 8) + ".." : r.teamName,
                 value: r.totalScore,
-                color: i === 0 ? "#eab308" : i === 1 ? "#9ca3af" : i === 2 ? "#f97316" : "#3b82f6",
+                color: i === 0 ? "#eab308" : i === 1 ? "#64748b" : i === 2 ? "#f97316" : "#3b82f6",
               }))}
             />
           </section>
@@ -229,7 +229,7 @@ export default function RankingsPage() {
               return (
                 <div key={r.teamName} className="flex w-44 flex-col items-center gap-2" draggable={false}>
                   <span className="text-4xl" aria-hidden="true">{medals[i === 1 ? 0 : i === 0 ? 1 : 2]}</span>
-                  <span className={`max-w-full truncate text-center font-bold text-gray-900 dark:text-gray-100 ${textSizes[i]}`}>{r.teamName}</span>
+                  <span className={`max-w-full truncate text-center font-extrabold text-gray-800 dark:text-gray-100 ${textSizes[i]}`}>{r.teamName}</span>
                   <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-semibold text-blue-600 dark:bg-blue-950/50 dark:text-blue-300">
                     {Number.isInteger(r.totalScore) ? r.totalScore : r.totalScore.toFixed(2)}점
                   </span>
