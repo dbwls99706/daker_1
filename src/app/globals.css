@@ -109,6 +109,19 @@ body {
   100% { background-position: 200% 0; }
 }
 
+/* Progress bar shimmer sweep */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+.shimmer-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  animation: shimmer-sweep 2.5s ease-in-out infinite;
+}
+
 /* Skip to main content */
 .skip-link {
   position: absolute;
@@ -509,6 +522,18 @@ select:not(:focus):hover {
 
 /* Dark empty state */
 .dark .bg-gray-50\/50 { background-color: rgba(24, 24, 27, 0.5) !important; }
+
+/* Dark gradient icon bgs */
+.dark .from-blue-100 { --tw-gradient-from: #312e81 !important; }
+.dark .to-indigo-100 { --tw-gradient-to: #312e81 !important; }
+.dark .from-green-100 { --tw-gradient-from: #064e3b !important; }
+.dark .to-emerald-100 { --tw-gradient-to: #064e3b !important; }
+.dark .from-indigo-100 { --tw-gradient-from: #312e81 !important; }
+.dark .to-purple-100 { --tw-gradient-to: #2e1065 !important; }
+.dark .bg-indigo-100\/30 { background-color: rgba(49, 46, 129, 0.3) !important; }
+.dark .bg-blue-100\/40 { background-color: rgba(49, 46, 129, 0.4) !important; }
+.dark .bg-green-100\/40 { background-color: rgba(6, 78, 59, 0.4) !important; }
+.dark .bg-white\/20 { background-color: rgba(255, 255, 255, 0.05) !important; }
 
 /* Smooth scrolling */
 html {

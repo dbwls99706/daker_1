@@ -3,16 +3,12 @@
     "slug": "aimers-8-model-lite",
     "title": "Aimers 8기 : 모델 경량화 온라인 해커톤",
     "status": "ended",
-    "tags": [
-      "LLM",
-      "Compression",
-      "vLLM"
-    ],
+    "tags": ["LLM", "Compression", "vLLM"],
     "thumbnailUrl": "https://example.com/public/img/aimers8.png",
     "period": {
       "timezone": "Asia/Seoul",
-      "submissionDeadlineAt": "2026-02-25T10:00:00+09:00",
-      "endAt": "2026-02-26T10:00:00+09:00"
+      "submissionDeadlineAt": "2026-03-15T10:00:00+09:00",
+      "endAt": "2026-03-16T10:00:00+09:00"
     },
     "links": {
       "detail": "/hackathons/aimers-8-model-lite",
@@ -23,17 +19,13 @@
   {
     "slug": "monthly-vibe-coding-2026-02",
     "title": "월간 해커톤 : 바이브 코딩 개선 AI 아이디어 공모전 (2026.02)",
-    "status": "ongoing",
-    "tags": [
-      "Idea",
-      "GenAI",
-      "Workflow"
-    ],
+    "status": "ended",
+    "tags": ["Idea", "GenAI", "Workflow"],
     "thumbnailUrl": "https://example.com/public/img/vibe202602.png",
     "period": {
       "timezone": "Asia/Seoul",
-      "submissionDeadlineAt": "2026-03-03T10:00:00+09:00",
-      "endAt": "2026-03-09T10:00:00+09:00"
+      "submissionDeadlineAt": "2026-03-25T10:00:00+09:00",
+      "endAt": "2026-03-30T10:00:00+09:00"
     },
     "links": {
       "detail": "/hackathons/monthly-vibe-coding-2026-02",
@@ -42,25 +34,105 @@
     }
   },
   {
+    "slug": "sesac-hackathon-2026",
+    "title": "2026 새싹 해커톤 : AI와 함께 만드는 서울의 미래",
+    "status": "ended",
+    "tags": ["AI", "서비스기획", "Seoul", "GenAI"],
+    "thumbnailUrl": "https://example.com/public/img/sesac2026.png",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-03-20T10:00:00+09:00",
+      "endAt": "2026-03-22T10:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/sesac-hackathon-2026",
+      "rules": "https://example.com/public/rules/sesac2026",
+      "faq": "https://example.com/public/faq/sesac2026"
+    }
+  },
+  {
+    "slug": "cyber-attack-prediction-2026",
+    "title": "사이버 공격 유형 예측 해커톤 : 트래픽 속 위협을 식별하라!",
+    "status": "ongoing",
+    "tags": ["Cybersecurity", "Classification", "NLP"],
+    "thumbnailUrl": "https://example.com/public/img/cyber2026.png",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-20T10:00:00+09:00",
+      "endAt": "2026-04-25T10:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/cyber-attack-prediction-2026",
+      "rules": "https://example.com/public/rules/cyber2026",
+      "faq": "https://example.com/public/faq/cyber2026"
+    }
+  },
+  {
+    "slug": "voice-classification-2026",
+    "title": "음성 분류 AI 해커톤 : 소리로 세상을 읽다",
+    "status": "ongoing",
+    "tags": ["Audio", "DeepLearning", "CNN", "MFCC"],
+    "thumbnailUrl": "https://example.com/public/img/voice2026.png",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-04-25T10:00:00+09:00",
+      "endAt": "2026-04-30T10:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/voice-classification-2026",
+      "rules": "https://example.com/public/rules/voice2026",
+      "faq": "https://example.com/public/faq/voice2026"
+    }
+  },
+  {
     "slug": "daker-handover-2026-03",
     "title": "긴급 인수인계 해커톤: 명세서만 보고 구현하라",
-    "status": "upcoming",
-    "tags": [
-      "VibeCoding",
-      "Web",
-      "Vercel",
-      "Handover"
-    ],
+    "status": "ongoing",
+    "tags": ["VibeCoding", "Web", "Vercel", "Handover"],
     "thumbnailUrl": "https://example.com/public/img/daker-handover-202603.png",
     "period": {
       "timezone": "Asia/Seoul",
-      "submissionDeadlineAt": "2026-04-03T23:59:00+09:00",
-      "endAt": "2026-04-27T10:00:00+09:00"
+      "submissionDeadlineAt": "2026-05-03T23:59:00+09:00",
+      "endAt": "2026-05-27T10:00:00+09:00"
     },
     "links": {
       "detail": "/hackathons/daker-handover-2026-03",
       "rules": "https://example.com/public/rules/daker-handover-202603",
       "faq": "https://example.com/public/faq/daker-handover-202603"
+    }
+  },
+  {
+    "slug": "smart-factory-ai-2026",
+    "title": "스마트 공장 제품 품질 분류 AI 해커톤",
+    "status": "upcoming",
+    "tags": ["Manufacturing", "QualityControl", "MacroF1"],
+    "thumbnailUrl": "https://example.com/public/img/smartfactory2026.png",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-05-20T10:00:00+09:00",
+      "endAt": "2026-05-25T10:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/smart-factory-ai-2026",
+      "rules": "https://example.com/public/rules/smartfactory2026",
+      "faq": "https://example.com/public/faq/smartfactory2026"
+    }
+  },
+  {
+    "slug": "ev-price-prediction-2026",
+    "title": "전기차 가격 예측 해커톤 : 데이터로 EV를 읽다!",
+    "status": "upcoming",
+    "tags": ["Regression", "EV", "DataScience"],
+    "thumbnailUrl": "https://example.com/public/img/ev2026.png",
+    "period": {
+      "timezone": "Asia/Seoul",
+      "submissionDeadlineAt": "2026-06-01T10:00:00+09:00",
+      "endAt": "2026-06-07T10:00:00+09:00"
+    },
+    "links": {
+      "detail": "/hackathons/ev-price-prediction-2026",
+      "rules": "https://example.com/public/rules/ev2026",
+      "faq": "https://example.com/public/faq/ev2026"
     }
   }
 ]

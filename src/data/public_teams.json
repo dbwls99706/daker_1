@@ -5,15 +5,9 @@
     "name": "Team Alpha",
     "isOpen": true,
     "memberCount": 3,
-    "lookingFor": [
-      "Backend",
-      "ML Engineer"
-    ],
+    "lookingFor": ["Backend", "ML Engineer"],
     "intro": "추론 최적화/경량화 실험을 함께 진행할 팀원을 찾습니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://open.kakao.com/o/example1"
-    },
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example1" },
     "createdAt": "2026-02-20T11:00:00+09:00"
   },
   {
@@ -22,15 +16,9 @@
     "name": "PromptRunners",
     "isOpen": true,
     "memberCount": 1,
-    "lookingFor": [
-      "Frontend",
-      "Designer"
-    ],
+    "lookingFor": ["Frontend", "Designer"],
     "intro": "프롬프트 품질 점수화 + 개선 가이드 UX를 기획합니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://forms.gle/example2"
-    },
+    "contact": { "type": "link", "url": "https://forms.gle/example2" },
     "createdAt": "2026-02-18T18:30:00+09:00"
   },
   {
@@ -39,15 +27,9 @@
     "name": "404found",
     "isOpen": true,
     "memberCount": 3,
-    "lookingFor": [
-      "Frontend",
-      "Designer"
-    ],
+    "lookingFor": ["Frontend", "Designer"],
     "intro": "명세서 기반으로 기본 기능을 빠르게 완성하고 UX 확장을 노립니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://open.kakao.com/o/example3"
-    },
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example3" },
     "createdAt": "2026-03-04T11:00:00+09:00"
   },
   {
@@ -58,10 +40,84 @@
     "memberCount": 5,
     "lookingFor": [],
     "intro": "기획서-구현-문서화를 깔끔하게 맞추는 방향으로 진행합니다.",
-    "contact": {
-      "type": "link",
-      "url": "https://forms.gle/example4"
-    },
+    "contact": { "type": "link", "url": "https://forms.gle/example4" },
     "createdAt": "2026-03-05T09:20:00+09:00"
+  },
+  {
+    "teamCode": "T-SESAC-01",
+    "hackathonSlug": "sesac-hackathon-2026",
+    "name": "SeoulDreamers",
+    "isOpen": false,
+    "memberCount": 4,
+    "lookingFor": [],
+    "intro": "서울시 공공데이터를 활용한 AI 서비스 기획팀입니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example5" },
+    "createdAt": "2026-02-25T10:00:00+09:00"
+  },
+  {
+    "teamCode": "T-SESAC-02",
+    "hackathonSlug": "sesac-hackathon-2026",
+    "name": "CityLens",
+    "isOpen": true,
+    "memberCount": 2,
+    "lookingFor": ["Data Analyst", "PM"],
+    "intro": "도시 문제를 데이터로 해결하는 팀. 기획부터 MVP까지 함께할 분 모집합니다.",
+    "contact": { "type": "link", "url": "https://forms.gle/example6" },
+    "createdAt": "2026-02-27T14:00:00+09:00"
+  },
+  {
+    "teamCode": "T-CYBER-01",
+    "hackathonSlug": "cyber-attack-prediction-2026",
+    "name": "PacketHunters",
+    "isOpen": true,
+    "memberCount": 2,
+    "lookingFor": ["ML Engineer", "Security Engineer"],
+    "intro": "네트워크 트래픽 분석 기반 위협 탐지 모델을 개발합니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example7" },
+    "createdAt": "2026-03-28T09:00:00+09:00"
+  },
+  {
+    "teamCode": "T-CYBER-02",
+    "hackathonSlug": "cyber-attack-prediction-2026",
+    "name": "ZeroDay",
+    "isOpen": true,
+    "memberCount": 3,
+    "lookingFor": ["Backend"],
+    "intro": "사이버 보안 전공자 3명으로 구성. 백엔드 인프라 담당자 1명 모집합니다.",
+    "contact": { "type": "link", "url": "https://forms.gle/example8" },
+    "createdAt": "2026-03-30T15:00:00+09:00"
+  },
+  {
+    "teamCode": "T-VOICE-01",
+    "hackathonSlug": "voice-classification-2026",
+    "name": "SoundWave",
+    "isOpen": true,
+    "memberCount": 1,
+    "lookingFor": ["ML Engineer", "Data Engineer"],
+    "intro": "음성/오디오 AI 모델 개발 경험자를 찾습니다. MFCC, Wav2Vec 활용 예정.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example9" },
+    "createdAt": "2026-04-01T10:00:00+09:00"
+  },
+  {
+    "teamCode": "T-FACTORY-01",
+    "hackathonSlug": "smart-factory-ai-2026",
+    "name": "QualityFirst",
+    "isOpen": true,
+    "memberCount": 2,
+    "lookingFor": ["ML Engineer", "Domain Expert"],
+    "intro": "제조 데이터 분석 경험이 있는 분 환영합니다. Macro F1 최적화 전략 함께 고민해요.",
+    "contact": { "type": "link", "url": "https://forms.gle/example10" },
+    "createdAt": "2026-04-02T09:00:00+09:00"
+  },
+  {
+    "teamCode": "T-EV-01",
+    "hackathonSlug": "ev-price-prediction-2026",
+    "name": "EVInsight",
+    "isOpen": true,
+    "memberCount": 1,
+    "lookingFor": ["Data Scientist", "Frontend"],
+    "intro": "전기차 시장 데이터 분석과 가격 예측 모델을 만들고 시각화할 팀원 모집합니다.",
+    "contact": { "type": "link", "url": "https://open.kakao.com/o/example11" },
+    "createdAt": "2026-04-02T11:00:00+09:00"
   }
 ]
