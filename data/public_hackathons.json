@@ -54,7 +54,7 @@
     "thumbnailUrl": "https://example.com/public/img/daker-handover-202603.png",
     "period": {
       "timezone": "Asia/Seoul",
-      "submissionDeadlineAt": "2026-03-30T10:00:00+09:00",
+      "submissionDeadlineAt": "2026-04-03T23:59:00+09:00",
       "endAt": "2026-04-27T10:00:00+09:00"
     },
     "links": {
