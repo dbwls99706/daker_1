@@ -103,19 +103,25 @@ export function DonutChart({ segments, size = 180, thickness = 28, title }: Donu
             return (
               <div
                 key={seg.label}
-                className="flex items-center gap-2 text-sm rounded-lg px-2.5 py-1.5 cursor-pointer"
+                className={`flex items-center gap-2 text-sm rounded-lg px-2.5 py-1.5 cursor-pointer transition-all duration-150 ${
+                  isHovered ? "ring-1 ring-gray-300 dark:ring-gray-600 shadow-sm -translate-y-0.5" : ""
+                }`}
+                style={isHovered ? { backgroundColor: `${seg.color}12` } : undefined}
                 role="listitem"
                 onMouseEnter={() => setHoveredIndex(idx)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
                 <div
-                  className="h-3 w-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: seg.color }}
+                  className="h-3 w-3 rounded-full flex-shrink-0 transition-shadow duration-150"
+                  style={{
+                    backgroundColor: seg.color,
+                    boxShadow: isHovered ? `0 0 8px ${seg.color}60` : "none",
+                  }}
                   aria-hidden="true"
                 />
-                <span className="font-medium text-gray-700 dark:text-gray-300">{seg.label}</span>
-                <span className="ml-auto tabular-nums font-semibold text-gray-600 dark:text-gray-400">{seg.value}</span>
-                <span className="text-gray-400 text-xs tabular-nums">({Math.round((seg.value / total) * 100)}%)</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-100">{seg.label}</span>
+                <span className="ml-auto tabular-nums font-bold text-gray-900 dark:text-gray-100">{seg.value}</span>
+                <span className="text-gray-500 dark:text-gray-400 text-xs font-medium tabular-nums">({Math.round((seg.value / total) * 100)}%)</span>
               </div>
             );
           })}
