@@ -115,6 +115,31 @@ function setItem(key: string, value: unknown): boolean {
   }
 }
 
+function clamp(num: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, num));
+}
+
+function sanitizeTeamInput(team: Team): Team {
+  return {
+    ...team,
+    teamCode: team.teamCode.trim(),
+    hackathonSlug: team.hackathonSlug.trim(),
+    name: team.name.trim().slice(0, 30),
+    isOpen: Boolean(team.isOpen),
+    memberCount: clamp(Number.isFinite(team.memberCount) ? team.memberCount : 1, 1, 5),
+    lookingFor: team.lookingFor
+      .map((role) => role.trim().slice(0, 30))
+      .filter(Boolean)
+      .slice(0, 10),
+    intro: team.intro.trim().slice(0, 200),
+    contact: {
+      type: team.contact?.type ?? "link",
+      url: team.contact?.url?.trim() || "#",
+    },
+    createdAt: team.createdAt,
+  };
+}
+
 // Hackathons — compute status dynamically based on current date
 export function getHackathons(): Hackathon[] {
   const list = getItem<Hackathon[]>(KEYS.hackathons, []);
@@ -168,30 +193,28 @@ export function getTeams(hackathonSlug?: string): Team[] {
 }
 
 export function addTeam(team: Team) {
-  // Enforce length limits on user input
-  const sanitized: Team = {
-    ...team,
-    name: team.name.slice(0, 30),
-    intro: team.intro.slice(0, 200),
-    lookingFor: team.lookingFor.map((r) => r.slice(0, 30)).slice(0, 10),
-  };
+  const sanitized = sanitizeTeamInput(team);
+  if (!sanitized.teamCode || !sanitized.name || !sanitized.intro) return false;
   const all = getItem<Team[]>(KEYS.teams, []);
+  if (all.some((existing) => existing.teamCode === sanitized.teamCode)) return false;
   all.push(sanitized);
-  setItem(KEYS.teams, all);
+  return setItem(KEYS.teams, all);
 }
 
 export function updateTeam(teamCode: string, updates: Partial<Team>) {
   const all = getItem<Team[]>(KEYS.teams, []);
   const idx = all.findIndex((t) => t.teamCode === teamCode);
   if (idx >= 0) {
-    all[idx] = { ...all[idx], ...updates };
-    setItem(KEYS.teams, all);
+    const merged = sanitizeTeamInput({ ...all[idx], ...updates });
+    all[idx] = merged;
+    return setItem(KEYS.teams, all);
   }
+  return false;
 }
 
 export function deleteTeam(teamCode: string) {
   const all = getItem<Team[]>(KEYS.teams, []);
-  setItem(KEYS.teams, all.filter((t) => t.teamCode !== teamCode));
+  return setItem(KEYS.teams, all.filter((t) => t.teamCode !== teamCode));
 }
 
 // Submissions
@@ -202,11 +225,12 @@ export function getSubmissions(hackathonSlug?: string): Submission[] {
 }
 
 export function saveSubmission(submission: Submission) {
+  if (!submission.id || !submission.hackathonSlug || !submission.teamName) return false;
   const all = getItem<Submission[]>(KEYS.submissions, []);
   const idx = all.findIndex((s) => s.id === submission.id);
   if (idx >= 0) all[idx] = submission;
   else all.push(submission);
-  setItem(KEYS.submissions, all);
+  return setItem(KEYS.submissions, all);
 }
 
 // Bookmarks
@@ -215,14 +239,16 @@ export function getBookmarks(): string[] {
 }
 
 export function toggleBookmark(slug: string): boolean {
+  const normalizedSlug = slug.trim();
+  if (!normalizedSlug) return false;
   const bookmarks = getBookmarks();
-  const idx = bookmarks.indexOf(slug);
+  const idx = bookmarks.indexOf(normalizedSlug);
   if (idx >= 0) {
     bookmarks.splice(idx, 1);
     setItem(KEYS.bookmarks, bookmarks);
     return false;
   } else {
-    bookmarks.push(slug);
+    bookmarks.push(normalizedSlug);
     setItem(KEYS.bookmarks, bookmarks);
     return true;
   }
@@ -237,9 +263,11 @@ const RECENT_KEY = "batonhub_recent";
 const MAX_RECENT = 5;
 
 export function addRecentlyViewed(slug: string) {
+  const normalizedSlug = slug.trim();
+  if (!normalizedSlug) return;
   const recent = getItem<string[]>(RECENT_KEY, []);
-  const filtered = recent.filter((s) => s !== slug);
-  filtered.unshift(slug);
+  const filtered = recent.filter((s) => s !== normalizedSlug);
+  filtered.unshift(normalizedSlug);
   setItem(RECENT_KEY, filtered.slice(0, MAX_RECENT));
 }
 
@@ -269,21 +297,27 @@ export function removeMyTeam(teamCode: string) {
 
 // Team membership — join a team (increment memberCount, max 5)
 export function joinTeam(teamCode: string): boolean {
+  const normalizedCode = teamCode.trim();
+  if (!normalizedCode) return false;
   const joined = getItem<string[]>("batonhub_joined_teams", []);
-  if (joined.includes(teamCode)) return false; // already joined
+  if (joined.includes(normalizedCode)) return false; // already joined
 
   const all = getItem<Team[]>(KEYS.teams, []);
-  const idx = all.findIndex((t) => t.teamCode === teamCode);
+  const idx = all.findIndex((t) => t.teamCode === normalizedCode);
   if (idx < 0) return false;
 
   // Enforce max team size
   if (all[idx].memberCount >= 5) return false;
 
   all[idx] = { ...all[idx], memberCount: all[idx].memberCount + 1 };
-  setItem(KEYS.teams, all);
+  if (!setItem(KEYS.teams, all)) return false;
 
-  joined.push(teamCode);
-  setItem("batonhub_joined_teams", joined);
+  joined.push(normalizedCode);
+  if (!setItem("batonhub_joined_teams", joined)) {
+    all[idx] = { ...all[idx], memberCount: all[idx].memberCount - 1 };
+    setItem(KEYS.teams, all);
+    return false;
+  }
   return true;
 }
 
@@ -292,16 +326,22 @@ export function hasJoinedTeam(teamCode: string): boolean {
 }
 
 export function leaveTeam(teamCode: string): boolean {
+  const normalizedCode = teamCode.trim();
+  if (!normalizedCode) return false;
   const joined = getItem<string[]>("batonhub_joined_teams", []);
-  if (!joined.includes(teamCode)) return false;
+  if (!joined.includes(normalizedCode)) return false;
 
   const all = getItem<Team[]>(KEYS.teams, []);
-  const idx = all.findIndex((t) => t.teamCode === teamCode);
+  const idx = all.findIndex((t) => t.teamCode === normalizedCode);
   if (idx < 0) return false;
 
   all[idx] = { ...all[idx], memberCount: Math.max(1, all[idx].memberCount - 1) };
-  setItem(KEYS.teams, all);
+  if (!setItem(KEYS.teams, all)) return false;
 
-  setItem("batonhub_joined_teams", joined.filter((c) => c !== teamCode));
+  if (!setItem("batonhub_joined_teams", joined.filter((c) => c !== normalizedCode))) {
+    all[idx] = { ...all[idx], memberCount: all[idx].memberCount + 1 };
+    setItem(KEYS.teams, all);
+    return false;
+  }
   return true;
 }

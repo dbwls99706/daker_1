@@ -17,6 +17,9 @@ import {
   isBookmarked,
   addRecentlyViewed,
   getRecentlyViewed,
+  joinTeam,
+  leaveTeam,
+  hasJoinedTeam,
 } from "@/lib/storage";
 import type { Team, Submission, LeaderboardData } from "@/types";
 
@@ -135,8 +138,25 @@ describe("Teams", () => {
       contact: { type: "link", url: "https://test.com" },
       createdAt: new Date().toISOString(),
     };
-    addTeam(team);
+    const ok = addTeam(team);
+    expect(ok).toBe(true);
     expect(getTeams().length).toBe(before + 1);
+  });
+
+  it("prevents duplicate teamCode", () => {
+    const team: Team = {
+      teamCode: "T-DUP-01",
+      hackathonSlug: "daker-handover-2026-03",
+      name: "First Team",
+      isOpen: true,
+      memberCount: 1,
+      lookingFor: ["Frontend"],
+      intro: "Test intro",
+      contact: { type: "link", url: "https://test.com" },
+      createdAt: new Date().toISOString(),
+    };
+    expect(addTeam(team)).toBe(true);
+    expect(addTeam({ ...team, name: "Second Team" })).toBe(false);
   });
 
   it("sanitizes team name and intro length", () => {
@@ -160,7 +180,8 @@ describe("Teams", () => {
   it("updates a team", () => {
     const teams = getTeams();
     const first = teams[0];
-    updateTeam(first.teamCode, { isOpen: false });
+    const ok = updateTeam(first.teamCode, { isOpen: false });
+    expect(ok).toBe(true);
     const updated = getTeams().find((t) => t.teamCode === first.teamCode)!;
     expect(updated.isOpen).toBe(false);
   });
@@ -168,8 +189,22 @@ describe("Teams", () => {
   it("deletes a team", () => {
     const before = getTeams().length;
     const first = getTeams()[0];
-    deleteTeam(first.teamCode);
+    const ok = deleteTeam(first.teamCode);
+    expect(ok).toBe(true);
     expect(getTeams().length).toBe(before - 1);
+  });
+
+  it("joins and leaves team safely", () => {
+    const team = getTeams()[0];
+    const originalMembers = team.memberCount;
+
+    expect(joinTeam(team.teamCode)).toBe(true);
+    expect(hasJoinedTeam(team.teamCode)).toBe(true);
+    expect(getTeams().find((t) => t.teamCode === team.teamCode)?.memberCount).toBe(originalMembers + 1);
+
+    expect(leaveTeam(team.teamCode)).toBe(true);
+    expect(hasJoinedTeam(team.teamCode)).toBe(false);
+    expect(getTeams().find((t) => t.teamCode === team.teamCode)?.memberCount).toBe(originalMembers);
   });
 });
 
@@ -190,7 +225,7 @@ describe("Submissions", () => {
       memo: "test memo",
       createdAt: new Date().toISOString(),
     };
-    saveSubmission(sub);
+    expect(saveSubmission(sub)).toBe(true);
     expect(getSubmissions().length).toBe(1);
     expect(getSubmissions("test-hack").length).toBe(1);
   });
@@ -208,14 +243,14 @@ describe("Submissions", () => {
     saveSubmission(sub);
     sub.status = "submitted";
     sub.submittedAt = new Date().toISOString();
-    saveSubmission(sub);
+    expect(saveSubmission(sub)).toBe(true);
     expect(getSubmissions().length).toBe(1);
     expect(getSubmissions()[0].status).toBe("submitted");
   });
 
   it("filters submissions by hackathonSlug", () => {
-    saveSubmission({ id: "s1", hackathonSlug: "h1", teamName: "T1", status: "draft", items: [], memo: "", createdAt: "" });
-    saveSubmission({ id: "s2", hackathonSlug: "h2", teamName: "T2", status: "draft", items: [], memo: "", createdAt: "" });
+    expect(saveSubmission({ id: "s1", hackathonSlug: "h1", teamName: "T1", status: "draft", items: [], memo: "", createdAt: "" })).toBe(true);
+    expect(saveSubmission({ id: "s2", hackathonSlug: "h2", teamName: "T2", status: "draft", items: [], memo: "", createdAt: "" })).toBe(true);
     expect(getSubmissions("h1").length).toBe(1);
     expect(getSubmissions("h2").length).toBe(1);
   });
@@ -236,6 +271,11 @@ describe("Bookmarks", () => {
     const removed = toggleBookmark("test-slug");
     expect(removed).toBe(false);
     expect(isBookmarked("test-slug")).toBe(false);
+  });
+
+  it("ignores blank bookmark slug", () => {
+    expect(toggleBookmark("   ")).toBe(false);
+    expect(getBookmarks()).toEqual([]);
   });
 
   it("manages multiple bookmarks", () => {
